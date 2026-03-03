@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero-feature">
+    <img
+        src="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80"
+        data-slider-images="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80"
+        data-slider-interval="4500"
+        alt="Runway editorial"
+    >
+    <div class="hero-feature__content">
+        <p class="eyebrow">Hero Feature</p>
+        <h1>The Defining Trends of 2026</h1>
+        <p>From precision tailoring to heritage textures, fashion is balancing authority and wearability like never before.</p>
+        <a class="btn-primary inline-btn" href="{% url 'article-detail' %}">Read Article</a>
+    </div>
+</section>
+
+<section>
+    <div class="section-head">
+        <h2>Trending Stories</h2>
+    </div>
+    <div class="cards-grid trend-grid">
+        {% for story in trending_stories %}
+        <article class="card story-card">
+            <img src="{{ story.image }}" alt="{{ story.title }}">
+            <p class="story-category">{{ story.category }}</p>
+            <h3>{{ story.title }}</h3>
+            <p>{{ story.excerpt }}</p>
+            <p class="meta">By {{ story.author }} · {{ story.date }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="split-section">
+    <article class="card">
+        <p class="eyebrow">Seasonal Highlight</p>
+        <h3>Spring/Summer 2026 Trend Forecast</h3>
+        <p>A clear shift toward lightweight tailoring, muted earthy tones, and refined utility details defines this season’s most commercial direction.</p>
+        <a href="{% url 'trends' %}">Read full report</a>
+    </article>
+
+    <article class="card spotlight-card">
+        <p class="eyebrow">Designer Spotlight</p>
+        <h3>Amara Voss</h3>
+        <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80" alt="Designer portrait">
+        <p>Amara Voss has become one of the defining voices in contemporary tailoring, known for architectural cuts softened by fluid movement.</p>
+        <p>Her latest collection reframes minimalist power dressing through softened shoulders, low-contrast palettes, and precision construction that moves with the body.</p>
+        <p>Editors and buyers are watching her approach closely as it bridges runway clarity with everyday utility.</p>
+    </article>
+</section>
+
+<section>
+    <div class="section-head">
+        <h2>Street Style Gallery</h2>
+    </div>
+    <div class="masonry-grid">
+        {% for item in gallery_items %}
+        <a class="gallery-item" href="{% url 'article-detail' %}" title="Open full story: {{ item.title }}">
+            <img src="{{ item.image }}" alt="{{ item.title }}">
+            <span>{{ item.title }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Django in Chrome",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Start-Process chrome \"http://127.0.0.1:8000\"; c:/Users/alber/OneDrive/Desktop/IPT/dj-env/Scripts/python.exe manage.py runserver"
+			],
+			"isBackground": true
+		}
+	]
+}

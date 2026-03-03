@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}About | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">About Page</p>
+    <h1>About FashionPulse</h1>
+    <p>An independent digital magazine dedicated to trend intelligence, cultural context, and industry-level fashion analysis.</p>
+</section>
+
+<section class="page-banner cardless">
+    <img
+        src="https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=1600&q=80"
+        data-slider-images="https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1495121553079-4c61bcce1894?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80"
+        data-slider-interval="4200"
+        alt="Magazine editorial room"
+    >
+</section>
+
+<section class="card about-intro">
+    <img class="wide-media" src="https://images.unsplash.com/photo-1495121553079-4c61bcce1894?auto=format&fit=crop&w=1400&q=80" alt="Fashion editorial desk">
+    <h3>Who We Are</h3>
+    <p>FashionPulse is built for readers who want more than quick trend summaries. We combine editorial storytelling with analytical depth to explain how and why fashion movements emerge, spread, and evolve.</p>
+    <p>Our publication sits at the intersection of runway observation, street-style documentation, and long-term market interpretation.</p>
+</section>
+
+<section class="cards-grid two-col">
+    <article class="card">
+        <img class="card-thumb" src="/static/images/editorial mission.jpg" alt="Mission image">
+        <h3>Editorial Mission</h3>
+        <p>To translate global fashion signals into clear, high-value reporting that helps readers understand what matters now and what lasts.</p>
+    </article>
+    <article class="card">
+        <img class="card-thumb" src="/static/images/vision.jpg" alt="Vision image">
+        <h3>Vision</h3>
+        <p>To become a trusted magazine reference for thoughtful trend interpretation across runway, street style, and consumer behavior.</p>
+    </article>
+    <article class="card">
+        <img class="card-thumb" src="/static/images/contributors.jpg" alt="Contributors image">
+        <h3>Contributors</h3>
+        <p>Our contributors include fashion journalists, stylists, data-informed analysts, and cultural researchers from major fashion hubs.</p>
+    </article>
+    <article class="card">
+        <img class="card-thumb" src="/static/images/submission.jpg" alt="Submission guidelines image">
+        <h3>Submission Guidelines</h3>
+        <p>We accept original editorial submissions focused on trend analysis, fashion psychology, sustainability, and cultural commentary. Include a short pitch, writing sample, and relevant references.</p>
+    </article>
+</section>
+
+<section class="cards-grid two-col about-extra">
+    <article class="card">
+        <h3>Editorial Standards</h3>
+        <ul class="clean-list">
+            <li>Context-first reporting grounded in observable industry shifts.</li>
+            <li>Clear separation between reporting, opinion, and sponsored content.</li>
+            <li>Global perspective with practical relevance for everyday readers.</li>
+        </ul>
+    </article>
+    <article class="card">
+        <h3>Publishing Rhythm</h3>
+        <p>We publish daily updates, weekly insights, and monthly deep-dive trend dossiers. Seasonal forecast editions are released ahead of major retail planning cycles.</p>
+    </article>
+</section>
+{% endblock %}

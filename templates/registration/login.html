@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="cards-grid two-col auth-layout">
+        <div class="card auth-card">
+            <h1>Login</h1>
+            <p class="meta">Access your personalized editorial dashboard and saved reading lists.</p>
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+        </div>
+        <aside class="card auth-aside">
+            <img class="card-thumb" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80" alt="Member access preview">
+            <h3>Member Access Includes</h3>
+            <ul class="clean-list">
+                <li>Early trend forecast releases</li>
+                <li>Curated reading collections</li>
+                <li>Priority access to editorial briefs</li>
+            </ul>
+        </aside>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Insights | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Blog / Insights</p>
+    <h1>Editorial Insights</h1>
+    <p>Opinion-led analysis on fashion psychology, cultural shifts, industry commentary, and sustainability.</p>
+</section>
+
+<section class="page-banner cardless">
+    <img
+        src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80"
+        data-slider-images="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80"
+        data-slider-interval="4200"
+        alt="Editorial insights moodboard"
+    >
+</section>
+
+<section class="card featured-insight">
+    <img class="wide-media" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1400&q=80" alt="Fashion editorial feature">
+    <p class="story-category">Featured Essay</p>
+    <h3>Why Consumers Are Choosing Fewer, Better Pieces</h3>
+    <p>Editorial teams are observing a clear shift toward intentional purchasing behavior. Readers are prioritizing adaptable essentials, stronger material quality, and long-term wearability over novelty-heavy cycles.</p>
+    <p>This shift is influencing both luxury and contemporary markets, where brands are now designing with durability, emotional value, and wardrobe integration in mind.</p>
+</section>
+
+<section class="cards-grid">
+    {% for post in insight_posts %}
+    <article class="card">
+        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}">
+        <p class="story-category">{{ post.category }}</p>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.excerpt }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="cards-grid two-col insight-bottom">
+    <article class="card">
+        <h3>Topics We Cover Weekly</h3>
+        <ul class="clean-list">
+            <li>Fashion psychology and identity signaling</li>
+            <li>Cultural analysis behind global trend adoption</li>
+            <li>Industry strategy and retail behavior</li>
+            <li>Sustainability, durability, and circular systems</li>
+        </ul>
+    </article>
+    <article class="card">
+        <h3>Editorial Format</h3>
+        <p>Each insight article includes context, evidence-backed perspective, and a practical implication for readers, creators, and brands.</p>
+        <p>Our goal is to make complex fashion shifts clear, actionable, and intellectually grounded.</p>
+    </article>
+</section>
+{% endblock %}
