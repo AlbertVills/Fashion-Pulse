@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Login | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="cards-grid two-col auth-layout">
+        <div class="card auth-card">
+            <h1>Admin Login</h1>
+            <p class="meta">Sign in with an admin account to access the admin dashboard forms.</p>
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-primary">Login as Admin</button>
+            </form>
+        </div>
+        <aside class="card auth-aside">
+            <img class="card-thumb" src="https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&w=900&q=80" alt="Admin dashboard">
+            <h3>Admin Access</h3>
+            <ul class="clean-list">
+                <li>Manage articles and trends</li>
+                <li>Edit contact messages</li>
+                <li>Review and update user profiles</li>
+            </ul>
+        </aside>
+    </div>
+</section>
+{% endblock %}

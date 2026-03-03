@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    AdminLoginView,
     admin_article_create,
     admin_article_delete,
     admin_article_edit,
@@ -24,6 +25,7 @@ from .views import (
 
 urlpatterns = [
     path('', article_list, name='home'),
+    path('admin-dashboard/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin-dashboard/', admin_dashboard, name='admin-dashboard'),
     path('admin-dashboard/articles/', admin_articles_list, name='admin-articles-list'),
     path('admin-dashboard/articles/add/', admin_article_create, name='admin-article-add'),

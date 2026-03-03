@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
 
 from .forms import (
+    AdminLoginForm,
     AdminArticleForm,
     AdminContactMessageForm,
     AdminUserProfileForm,
@@ -20,8 +21,29 @@ from .models import Article, ContactMessage, UserProfile
 
 staff_required = user_passes_test(
     lambda user: user.is_authenticated and (user.is_staff or user.is_superuser),
-    login_url='login',
+    login_url='admin-dashboard',
 )
+
+
+class AdminLoginView(LoginView):
+    template_name = 'admin/login.html'
+    authentication_form = AdminLoginForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            return redirect('admin-dashboard')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Admin login successful.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Admin login failed. Check your credentials.')
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return self.get_redirect_url() or reverse_lazy('admin-dashboard')
 
 
 class AdminAwareLoginView(LoginView):
@@ -256,8 +278,10 @@ def profile_view(request):
     )
 
 
-@staff_required
 def admin_dashboard(request):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return AdminLoginView.as_view()(request)
+
     article_count = Article.objects.count()
     trending_count = Article.objects.filter(is_trending=True).count()
     profile_count = UserProfile.objects.count()

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -30,6 +31,21 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class AdminLoginForm(AuthenticationForm):
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        'invalid_login': 'Please enter a correct admin username and password.',
+    }
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        if not (user.is_staff or user.is_superuser):
+            raise forms.ValidationError(
+                'This account is not allowed to access the admin dashboard.',
+                code='invalid_login',
+            )
 
 
 class ContactForm(forms.Form):
