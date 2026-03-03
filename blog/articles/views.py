@@ -191,6 +191,14 @@ def profile_view(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
+        if 'remove_profile_image' in request.POST:
+            if profile.profile_image:
+                profile.profile_image.delete(save=False)
+                profile.profile_image = ''
+                profile.save(update_fields=['profile_image'])
+                messages.success(request, 'Profile image removed.')
+            return redirect('profile')
+
         account_form = UserAccountForm(request.POST, instance=request.user)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if account_form.is_valid() and profile_form.is_valid():

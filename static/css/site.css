@@ -648,9 +648,49 @@ img.is-fading {
     margin-top: 0.4rem;
 }
 
-.profile-upload input[type="file"] {
+.file-upload-btn {
+    display: inline-block;
+    border: 1px solid var(--accent);
+    color: var(--text);
+    background: rgba(137, 173, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.file-upload-btn:hover {
+    background: rgba(137, 173, 255, 0.18);
+}
+
+.file-remove-btn {
+    display: inline-block;
+    border: 1px solid var(--border);
     color: var(--muted);
-    max-width: 100%;
+    background: transparent;
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 0.45rem;
+}
+
+.file-remove-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.file-upload-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .is-hidden {

@@ -30,7 +30,11 @@
                     <div>
                         <h3>{{ user.username }}</h3>
                         <div class="profile-upload">
-                            <input type="file" name="profile_image" accept="image/*" id="id_profile_image">
+                            <button type="button" id="profileImageTrigger" class="file-upload-btn">Choose File</button>
+                            {% if profile_form.instance.profile_image %}
+                                <button type="submit" name="remove_profile_image" value="1" class="file-remove-btn">Remove</button>
+                            {% endif %}
+                            <input type="file" name="profile_image" accept="image/*" id="id_profile_image" class="file-upload-input">
                             {{ profile_form.profile_image.errors }}
                         </div>
                     </div>

@@ -160,8 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const profileImageInput = document.querySelector('input[type="file"][name="profile_image"]');
+    const profileImageTrigger = document.getElementById('profileImageTrigger');
     const profileAvatarImage = document.getElementById('profileAvatarImage');
     const profileAvatarFallback = document.getElementById('profileAvatarFallback');
+
+    if (profileImageInput && profileImageTrigger) {
+        profileImageTrigger.addEventListener('click', () => {
+            profileImageInput.click();
+        });
+    }
 
     if (profileImageInput && profileAvatarImage && profileAvatarFallback) {
         profileImageInput.addEventListener('change', (event) => {
