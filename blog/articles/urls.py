@@ -1,6 +1,17 @@
 from django.urls import path
 
 from .views import (
+    admin_article_create,
+    admin_article_delete,
+    admin_article_edit,
+    admin_articles_list,
+    admin_contact_delete,
+    admin_contact_edit,
+    admin_contacts_list,
+    admin_dashboard,
+    admin_profile_delete,
+    admin_profile_edit,
+    admin_profiles_list,
     about_page,
     article_list,
     contact_page,
@@ -13,6 +24,17 @@ from .views import (
 
 urlpatterns = [
     path('', article_list, name='home'),
+    path('admin-dashboard/', admin_dashboard, name='admin-dashboard'),
+    path('admin-dashboard/articles/', admin_articles_list, name='admin-articles-list'),
+    path('admin-dashboard/articles/add/', admin_article_create, name='admin-article-add'),
+    path('admin-dashboard/articles/<int:article_id>/edit/', admin_article_edit, name='admin-article-edit'),
+    path('admin-dashboard/articles/<int:article_id>/delete/', admin_article_delete, name='admin-article-delete'),
+    path('admin-dashboard/contacts/', admin_contacts_list, name='admin-contacts-list'),
+    path('admin-dashboard/contacts/<int:contact_id>/edit/', admin_contact_edit, name='admin-contact-edit'),
+    path('admin-dashboard/contacts/<int:contact_id>/delete/', admin_contact_delete, name='admin-contact-delete'),
+    path('admin-dashboard/profiles/', admin_profiles_list, name='admin-profiles-list'),
+    path('admin-dashboard/profiles/<int:profile_id>/edit/', admin_profile_edit, name='admin-profile-edit'),
+    path('admin-dashboard/profiles/<int:profile_id>/delete/', admin_profile_delete, name='admin-profile-delete'),
     path('trends/', trends_page, name='trends'),
     path('article/minimalist-power-dressing/', full_article_page, name='article-detail'),
     path('insights/', insights_page, name='insights'),

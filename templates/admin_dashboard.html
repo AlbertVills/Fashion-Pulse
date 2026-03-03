@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Administration</p>
+    <h1>Admin Dashboard</h1>
+    <p>Overview of content, users, and recent platform activity.</p>
+</section>
+
+<section class="cards-grid admin-stats-grid">
+    <article class="card admin-stat-card">
+        <p class="admin-stat-label">Articles</p>
+        <h3>{{ article_count }}</h3>
+        <p class="meta">Published and drafted content entries.</p>
+    </article>
+    <article class="card admin-stat-card">
+        <p class="admin-stat-label">Trending Articles</p>
+        <h3>{{ trending_count }}</h3>
+        <p class="meta">Stories currently flagged as trending.</p>
+    </article>
+    <article class="card admin-stat-card">
+        <p class="admin-stat-label">User Profiles</p>
+        <h3>{{ profile_count }}</h3>
+        <p class="meta">Registered user profiles in the platform.</p>
+    </article>
+    <article class="card admin-stat-card">
+        <p class="admin-stat-label">Contact Messages</p>
+        <h3>{{ contact_count }}</h3>
+        <p class="meta">Total inquiries received from contact form.</p>
+    </article>
+</section>
+
+<section class="admin-links-row">
+    <a class="file-upload-btn" href="{% url 'admin-articles-list' %}">Manage Articles</a>
+    <a class="file-upload-btn" href="{% url 'admin-contacts-list' %}">Manage Contact Messages</a>
+    <a class="file-upload-btn" href="{% url 'admin-profiles-list' %}">Manage User Profiles</a>
+    <a class="file-upload-btn" href="{% url 'home' %}">View Public Site</a>
+</section>
+
+<section class="cards-grid admin-panels-grid">
+    <article class="card admin-panel">
+        <div class="section-title-row">
+            <h3>Recent Articles</h3>
+        </div>
+        {% if recent_articles %}
+            <ul class="admin-list">
+                {% for article in recent_articles %}
+                    <li>
+                        <span>{{ article.title }}</span>
+                        <small>{{ article.author }} · {{ article.published_at }}</small>
+                        <div class="admin-actions compact">
+                            <a class="admin-action-link" href="{% url 'admin-article-edit' article.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-article-delete' article.id %}">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="meta">No articles yet.</p>
+        {% endif %}
+    </article>
+
+    <article class="card admin-panel">
+        <div class="section-title-row">
+            <h3>Recent Contact Messages</h3>
+        </div>
+        {% if recent_contacts %}
+            <ul class="admin-list">
+                {% for message in recent_contacts %}
+                    <li>
+                        <span>{{ message.subject }}</span>
+                        <small>{{ message.name }} · {{ message.created_at|date:"M d, Y H:i" }}</small>
+                        <div class="admin-actions compact">
+                            <a class="admin-action-link" href="{% url 'admin-contact-edit' message.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-contact-delete' message.id %}">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="meta">No messages yet.</p>
+        {% endif %}
+    </article>
+
+    <article class="card admin-panel">
+        <div class="section-title-row">
+            <h3>Latest User Profiles</h3>
+        </div>
+        {% if recent_profiles %}
+            <ul class="admin-list">
+                {% for profile in recent_profiles %}
+                    <li>
+                        <span>{{ profile.user.username }}</span>
+                        <small>{% if profile.location %}{{ profile.location }}{% else %}No location set{% endif %}</small>
+                        <div class="admin-actions compact">
+                            <a class="admin-action-link" href="{% url 'admin-profile-edit' profile.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-profile-delete' profile.id %}">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="meta">No user profiles yet.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

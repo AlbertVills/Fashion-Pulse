@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Profile | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Admin</p>
+    <h1>Delete User Profile</h1>
+    <p>Are you sure you want to delete the profile for <strong>{{ profile_obj.user.username }}</strong>?</p>
+</section>
+
+<section class="card admin-form-card">
+    <form method="post" class="admin-links-row">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary">Delete</button>
+        <a class="file-remove-btn" href="{% url 'admin-profiles-list' %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

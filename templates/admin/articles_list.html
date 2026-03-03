@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Articles | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero admin-hero-row">
+    <div>
+        <p class="eyebrow">Admin</p>
+        <h1>Manage Articles</h1>
+    </div>
+    <a class="file-upload-btn" href="{% url 'admin-article-add' %}">Add Article</a>
+</section>
+
+<section class="card admin-table-card">
+    {% if articles %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Published</th>
+                    <th>Trending</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.title }}</td>
+                        <td>{{ article.author }}</td>
+                        <td>{{ article.published_at }}</td>
+                        <td>{% if article.is_trending %}Yes{% else %}No{% endif %}</td>
+                        <td class="admin-actions">
+                            <a class="admin-action-link" href="{% url 'admin-article-edit' article.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-article-delete' article.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="meta">No articles found.</p>
+    {% endif %}
+</section>
+{% endblock %}

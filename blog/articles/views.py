@@ -1,12 +1,27 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404
 
-from .forms import ContactForm, SignUpForm, UserAccountForm, UserProfileForm
+from .forms import (
+    AdminArticleForm,
+    AdminContactMessageForm,
+    AdminUserProfileForm,
+    ContactForm,
+    SignUpForm,
+    UserAccountForm,
+    UserProfileForm,
+)
 from .models import Article, ContactMessage, UserProfile
+
+
+staff_required = user_passes_test(
+    lambda user: user.is_authenticated and (user.is_staff or user.is_superuser),
+    login_url='login',
+)
 
 
 class AdminAwareLoginView(LoginView):
@@ -23,7 +38,7 @@ class AdminAwareLoginView(LoginView):
 
     def get_success_url(self):
         if self.request.user.is_staff or self.request.user.is_superuser:
-            return reverse_lazy('admin:index')
+            return reverse_lazy('admin-dashboard')
         return reverse_lazy('home')
 
 
@@ -238,4 +253,193 @@ def profile_view(request):
             'progress_items': progress_items,
             'completion_percent': completion_percent,
         },
+    )
+
+
+@staff_required
+def admin_dashboard(request):
+    article_count = Article.objects.count()
+    trending_count = Article.objects.filter(is_trending=True).count()
+    profile_count = UserProfile.objects.count()
+    contact_count = ContactMessage.objects.count()
+
+    recent_articles = Article.objects.only('title', 'published_at', 'author')[:5]
+    recent_contacts = ContactMessage.objects.only('name', 'subject', 'created_at')[:6]
+    recent_profiles = UserProfile.objects.select_related('user').only('user__username', 'location')[:6]
+
+    return render(
+        request,
+        'admin_dashboard.html',
+        {
+            'article_count': article_count,
+            'trending_count': trending_count,
+            'profile_count': profile_count,
+            'contact_count': contact_count,
+            'recent_articles': recent_articles,
+            'recent_contacts': recent_contacts,
+            'recent_profiles': recent_profiles,
+        },
+    )
+
+
+@staff_required
+def admin_articles_list(request):
+    articles = Article.objects.all()
+    return render(request, 'admin/articles_list.html', {'articles': articles})
+
+
+@staff_required
+def admin_article_create(request):
+    if request.method == 'POST':
+        form = AdminArticleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Article created successfully.')
+            return redirect('admin-articles-list')
+    else:
+        form = AdminArticleForm()
+
+    return render(
+        request,
+        'admin/article_form.html',
+        {
+            'form': form,
+            'form_title': 'Add Article',
+            'submit_label': 'Create Article',
+        },
+    )
+
+
+@staff_required
+def admin_article_edit(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+
+    if request.method == 'POST':
+        form = AdminArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Article updated successfully.')
+            return redirect('admin-articles-list')
+    else:
+        form = AdminArticleForm(instance=article)
+
+    return render(
+        request,
+        'admin/article_form.html',
+        {
+            'form': form,
+            'form_title': 'Edit Article',
+            'submit_label': 'Save Changes',
+            'article': article,
+        },
+    )
+
+
+@staff_required
+def admin_article_delete(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+
+    if request.method == 'POST':
+        article.delete()
+        messages.success(request, 'Article deleted successfully.')
+        return redirect('admin-articles-list')
+
+    return render(
+        request,
+        'admin/article_confirm_delete.html',
+        {'article': article},
+    )
+
+
+@staff_required
+def admin_contacts_list(request):
+    contacts = ContactMessage.objects.all()
+    return render(request, 'admin/contacts_list.html', {'contacts': contacts})
+
+
+@staff_required
+def admin_contact_edit(request, contact_id):
+    contact = get_object_or_404(ContactMessage, pk=contact_id)
+
+    if request.method == 'POST':
+        form = AdminContactMessageForm(request.POST, instance=contact)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Contact message updated successfully.')
+            return redirect('admin-contacts-list')
+    else:
+        form = AdminContactMessageForm(instance=contact)
+
+    return render(
+        request,
+        'admin/contact_form.html',
+        {
+            'form': form,
+            'form_title': 'Edit Contact Message',
+            'submit_label': 'Save Changes',
+            'contact': contact,
+        },
+    )
+
+
+@staff_required
+def admin_contact_delete(request, contact_id):
+    contact = get_object_or_404(ContactMessage, pk=contact_id)
+
+    if request.method == 'POST':
+        contact.delete()
+        messages.success(request, 'Contact message deleted successfully.')
+        return redirect('admin-contacts-list')
+
+    return render(
+        request,
+        'admin/contact_confirm_delete.html',
+        {'contact': contact},
+    )
+
+
+@staff_required
+def admin_profiles_list(request):
+    profiles = UserProfile.objects.select_related('user').all()
+    return render(request, 'admin/profiles_list.html', {'profiles': profiles})
+
+
+@staff_required
+def admin_profile_edit(request, profile_id):
+    profile = get_object_or_404(UserProfile.objects.select_related('user'), pk=profile_id)
+
+    if request.method == 'POST':
+        form = AdminUserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User profile updated successfully.')
+            return redirect('admin-profiles-list')
+    else:
+        form = AdminUserProfileForm(instance=profile)
+
+    return render(
+        request,
+        'admin/profile_form.html',
+        {
+            'form': form,
+            'form_title': f'Edit Profile: {profile.user.username}',
+            'submit_label': 'Save Changes',
+            'profile_obj': profile,
+        },
+    )
+
+
+@staff_required
+def admin_profile_delete(request, profile_id):
+    profile = get_object_or_404(UserProfile.objects.select_related('user'), pk=profile_id)
+
+    if request.method == 'POST':
+        profile.delete()
+        messages.success(request, 'User profile deleted successfully.')
+        return redirect('admin-profiles-list')
+
+    return render(
+        request,
+        'admin/profile_confirm_delete.html',
+        {'profile_obj': profile},
     )

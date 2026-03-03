@@ -14,7 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
@@ -24,7 +23,6 @@ from django.urls import reverse_lazy
 from articles.views import AdminAwareLoginView, logout_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('accounts/login/', AdminAwareLoginView.as_view(), name='login'),
     path('accounts/logout/', logout_view, name='logout'),
     path(

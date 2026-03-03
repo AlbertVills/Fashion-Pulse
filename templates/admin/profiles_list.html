@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage User Profiles | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Admin</p>
+    <h1>Manage User Profiles</h1>
+</section>
+
+<section class="card admin-table-card">
+    {% if profiles %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Location</th>
+                    <th>Fashion Style</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                    <tr>
+                        <td>{{ profile.user.username }}</td>
+                        <td>{% if profile.location %}{{ profile.location }}{% else %}-{% endif %}</td>
+                        <td>{% if profile.fashion_style %}{{ profile.fashion_style }}{% else %}-{% endif %}</td>
+                        <td>{% if profile.phone_number %}{{ profile.phone_number }}{% else %}-{% endif %}</td>
+                        <td class="admin-actions">
+                            <a class="admin-action-link" href="{% url 'admin-profile-edit' profile.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-profile-delete' profile.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="meta">No user profiles found.</p>
+    {% endif %}
+</section>
+{% endblock %}

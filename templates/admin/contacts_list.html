@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Contact Messages | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Admin</p>
+    <h1>Manage Contact Messages</h1>
+</section>
+
+<section class="card admin-table-card">
+    {% if contacts %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                    <tr>
+                        <td>{{ contact.name }}</td>
+                        <td>{{ contact.email }}</td>
+                        <td>{{ contact.subject }}</td>
+                        <td>{{ contact.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="admin-actions">
+                            <a class="admin-action-link" href="{% url 'admin-contact-edit' contact.id %}">Edit</a>
+                            <a class="admin-action-link is-danger" href="{% url 'admin-contact-delete' contact.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="meta">No contact messages found.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import UserProfile
+from .models import Article, ContactMessage, UserProfile
 
 
 class SignUpForm(UserCreationForm):
@@ -53,3 +53,33 @@ class UserAccountForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
+
+
+class AdminArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ('title', 'slug', 'excerpt', 'content', 'author', 'is_trending', 'published_at')
+        widgets = {
+            'excerpt': forms.Textarea(attrs={'rows': 3}),
+            'content': forms.Textarea(attrs={'rows': 8}),
+            'published_at': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class AdminContactMessageForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ('name', 'email', 'subject', 'message')
+        widgets = {
+            'message': forms.Textarea(attrs={'rows': 6}),
+        }
+
+
+class AdminUserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('age', 'fashion_style', 'phone_number', 'location', 'about_self', 'profile_image')
+        widgets = {
+            'about_self': forms.Textarea(attrs={'rows': 5}),
+            'profile_image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
