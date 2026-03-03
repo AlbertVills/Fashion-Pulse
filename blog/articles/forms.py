@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from .models import UserProfile
+
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -35,3 +37,19 @@ class ContactForm(forms.Form):
     email = forms.EmailField()
     subject = forms.CharField(min_length=5, max_length=150)
     message = forms.CharField(min_length=20, widget=forms.Textarea)
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('profile_image', 'age', 'phone_number', 'location', 'fashion_style', 'about_self')
+        widgets = {
+            'about_self': forms.Textarea(attrs={'rows': 5}),
+            'profile_image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
+
+
+class UserAccountForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')

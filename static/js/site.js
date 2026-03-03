@@ -158,4 +158,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const profileImageInput = document.querySelector('input[type="file"][name="profile_image"]');
+    const profileAvatarImage = document.getElementById('profileAvatarImage');
+    const profileAvatarFallback = document.getElementById('profileAvatarFallback');
+
+    if (profileImageInput && profileAvatarImage && profileAvatarFallback) {
+        profileImageInput.addEventListener('change', (event) => {
+            const selectedFile = event.target.files && event.target.files[0];
+            if (!selectedFile) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                profileAvatarImage.src = loadEvent.target?.result || '';
+                profileAvatarImage.classList.remove('is-hidden');
+                profileAvatarFallback.classList.add('is-hidden');
+            };
+            reader.readAsDataURL(selectedFile);
+        });
+    }
 });

@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 
-from .forms import ContactForm, SignUpForm
-from .models import Article
+from .forms import ContactForm, SignUpForm, UserAccountForm, UserProfileForm
+from .models import Article, ContactMessage, UserProfile
 
 
 class AdminAwareLoginView(LoginView):
@@ -152,6 +153,7 @@ def contact_page(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
+            ContactMessage.objects.create(**form.cleaned_data)
             messages.success(request, 'Your message was sent successfully.')
             return redirect('contact')
     else:
@@ -182,3 +184,50 @@ def signup_view(request):
         form = SignUpForm()
 
     return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        account_form = UserAccountForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if account_form.is_valid() and profile_form.is_valid():
+            account_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile was updated.')
+            return redirect('profile')
+    else:
+        account_form = UserAccountForm(instance=request.user)
+        profile_form = UserProfileForm(instance=profile)
+
+    progress_items = [
+        {'label': 'Setup account', 'done': bool(request.user.username and request.user.email)},
+        {
+            'label': 'Personal info',
+            'done': bool(
+                request.user.first_name
+                and request.user.last_name
+                and profile.phone_number
+            ),
+        },
+        {'label': 'Location', 'done': bool(profile.location)},
+        {'label': 'Biography', 'done': bool(profile.about_self.strip())},
+        {'label': 'Fashion style', 'done': bool(profile.fashion_style)},
+        {'label': 'Age', 'done': bool(profile.age)},
+        {'label': 'Photo', 'done': bool(profile.profile_image)},
+    ]
+    completed_count = sum(1 for item in progress_items if item['done'])
+    completion_percent = int((completed_count / len(progress_items)) * 100)
+
+    return render(
+        request,
+        'profile.html',
+        {
+            'account_form': account_form,
+            'profile_form': profile_form,
+            'progress_items': progress_items,
+            'completion_percent': completion_percent,
+        },
+    )

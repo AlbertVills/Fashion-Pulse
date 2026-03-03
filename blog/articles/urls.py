@@ -6,6 +6,7 @@ from .views import (
     contact_page,
     full_article_page,
     insights_page,
+    profile_view,
     signup_view,
     trends_page,
 )
@@ -18,4 +19,5 @@ urlpatterns = [
     path('about/', about_page, name='about'),
     path('contact/', contact_page, name='contact'),
     path('signup/', signup_view, name='signup'),
+    path('profile/', profile_view, name='profile'),
 ]

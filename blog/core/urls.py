@@ -15,7 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from django.urls import reverse_lazy
 
 from articles.views import AdminAwareLoginView, logout_view
 
@@ -23,6 +27,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', AdminAwareLoginView.as_view(), name='login'),
     path('accounts/logout/', logout_view, name='logout'),
+    path(
+        'accounts/password-change/',
+        auth_views.PasswordChangeView.as_view(
+            template_name='registration/password_change_form.html',
+            success_url=reverse_lazy('profile'),
+        ),
+        name='user_password_change',
+    ),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('articles.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
