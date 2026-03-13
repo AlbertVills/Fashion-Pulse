@@ -6,7 +6,7 @@
 <section class="hero">
     <p class="eyebrow">Category Page</p>
     <h1>Trend Reports</h1>
-    <p>Editorial forecasts tracking how runway direction translates into real-world wardrobes and market movement.</p>
+    <p>Browse trend report articles from the community, or publish your own analysis.</p>
 </section>
 
 <section class="page-banner cardless">
@@ -20,47 +20,48 @@
 
 <section class="cards-grid two-col trend-overview">
     <article class="card">
-        <h3>Category Introduction</h3>
-        <p>This section curates long-form trend reports in chronological order, combining runway analysis, retail behavior, and cultural context to explain why each movement matters.</p>
+        <h3>Write Like an Editorial</h3>
+        <p>Each post is treated like a full article with a title, summary, publication date, and long-form content section.</p>
     </article>
     <article class="card">
-        <h3>2026 Snapshot</h3>
-        <ul class="clean-list">
-            <li>Dominant Direction: Minimalist tailoring and quiet utility.</li>
-            <li>Fastest-Rising Theme: Texture-led layering.</li>
-            <li>Most Referenced Style Lens: Street-luxury hybrids.</li>
-        </ul>
+        {% if user.is_authenticated %}
+        <h3>Publish a New Trend Report</h3>
+        <p>Share your latest fashion analysis and publish it instantly as an article in this section.</p>
+        <a class="btn-primary inline-btn" href="{% url 'trend-create' %}">Create Article</a>
+        {% else %}
+        <h3>Want to publish?</h3>
+        <p>Log in to create your own trend report article and have it listed on this page.</p>
+        <a href="{% url 'login' %}">Log in to create an article</a>
+        {% endif %}
     </article>
-</section>
-
-<section class="card filter-card">
-    <div class="tag-filters" id="tagFilters">
-        <button class="tag-btn active" type="button" data-filter="all">All</button>
-        <button class="tag-btn" type="button" data-filter="Spring/Summer 2026">Spring/Summer 2026</button>
-        <button class="tag-btn" type="button" data-filter="Autumn/Winter 2026">Autumn/Winter 2026</button>
-        <button class="tag-btn" type="button" data-filter="Minimalism">Minimalism</button>
-        <button class="tag-btn" type="button" data-filter="Texture">Texture</button>
-        <button class="tag-btn" type="button" data-filter="Streetwear">Streetwear</button>
-    </div>
 </section>
 
 <section>
     <div class="cards-grid" id="trendGrid">
         {% for report in trend_reports %}
-        <article class="card trend-item" data-season="{{ report.season }}" data-theme="{{ report.theme }}" data-style="{{ report.style }}">
-            <img class="card-thumb" src="{{ report.image }}" alt="{{ report.title }}">
-            <p class="meta">{{ report.date }}</p>
+        <article class="card trend-item">
+            {% if report.author_profile_image_url %}
+            <div class="trend-cover" style="height:260px;border-radius:12px;margin-bottom:0.9rem;background-image:url('{{ report.author_profile_image_url }}');background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+            {% else %}
+            <div class="trend-cover" style="height:260px;border-radius:12px;margin-bottom:0.9rem;background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80');background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+            {% endif %}
+            <p class="eyebrow">Trend Report</p>
             <h3>{{ report.title }}</h3>
             <p>{{ report.excerpt }}</p>
-            <p class="meta">Season: {{ report.season }} · Theme: {{ report.theme }} · Style: {{ report.style }}</p>
+            <p class="meta">By {{ report.author }} · {{ report.published_at|date:'F j, Y' }}</p>
+            <a href="{% url 'trend-article-detail' report.slug %}">Read full article</a>
+        </article>
+        {% empty %}
+        <article class="card">
+            <h3>No trend report articles yet</h3>
+            <p>Be the first to publish an article and start the conversation.</p>
+            {% if user.is_authenticated %}
+            <a class="btn-primary inline-btn" href="{% url 'trend-create' %}">Create first article</a>
+            {% else %}
+            <a href="{% url 'login' %}">Log in to create one</a>
+            {% endif %}
         </article>
         {% endfor %}
     </div>
-</section>
-
-<section class="card trend-notes">
-    <h3>Editorial Notes</h3>
-    <p>All reports prioritize cultural relevance, clear commercial implications, and practical translation from runway to daily wardrobes.</p>
-    <p>Use the tag filters above to navigate by season, theme, or styling direction.</p>
 </section>
 {% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Gallery Picture | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Community Gallery</p>
+    <h1>Post Your Picture</h1>
+    <p>Upload your style photo and choose its category.</p>
+</section>
+
+<section class="card contact-form-card">
+    <form method="post" enctype="multipart/form-data" class="contact-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="form-row">
+            <label for="id_title">Caption</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+
+        <div class="form-row">
+            <label for="id_category">Category</label>
+            {{ form.category }}
+            {{ form.category.errors }}
+        </div>
+
+        <div class="form-row">
+            <label for="id_image">Picture</label>
+            <div class="custom-file-picker">
+                <input
+                    type="file"
+                    name="image"
+                    id="id_image"
+                    accept="image/*"
+                    class="custom-file-input custom-file-input--hidden"
+                    required
+                >
+                <label for="id_image" class="custom-file-btn">Choose File</label>
+            </div>
+            {{ form.image.errors }}
+        </div>
+
+        <button class="btn-primary" type="submit">Post to gallery</button>
+    </form>
+</section>
+{% endblock %}

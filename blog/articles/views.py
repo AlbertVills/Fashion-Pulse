@@ -2,11 +2,22 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.text import slugify
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
 
-from .forms import ContactForm, SignUpForm, UserAccountForm, UserProfileForm
-from .models import Article, ContactMessage, UserProfile
+from .forms import ArticleCreateForm, ContactForm, GalleryPostForm, SignUpForm, UserAccountForm, UserProfileForm
+from .models import (
+    ArticleComment,
+    Article,
+    ContactMessage,
+    GalleryPost,
+    GalleryPostComment,
+    GalleryPostLike,
+    UserNotification,
+    UserProfile,
+)
 
 
 class AdminAwareLoginView(LoginView):
@@ -79,40 +90,213 @@ def article_list(request):
         },
     ]
 
-    gallery_items = [
-        {'image': 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80', 'title': 'Monochrome Street Layering'},
-        {'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80', 'title': 'Relaxed Suiting in Motion'},
-        {'image': 'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=900&q=80', 'title': 'Soft Utility Styling'},
-        {'image': 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80', 'title': 'Off-Duty Editorial Looks'},
-        {'image': 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80', 'title': 'Textured Neutral Pairings'},
-        {'image': 'https://images.unsplash.com/photo-1551163943-3f6a855d1153?auto=format&fit=crop&w=900&q=80', 'title': 'Urban Tailoring and Sneakers'},
-    ]
+    gallery_posts = (
+        GalleryPost.objects.filter(is_visible=True)
+        .select_related('submitted_by')
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+    )
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=gallery_posts)
+            .values_list('post_id', flat=True)
+        )
 
     return render(
         request,
         'index.html',
         {
             'trending_stories': trending_stories,
-            'gallery_items': gallery_items,
+            'gallery_posts': gallery_posts,
+            'liked_post_ids': liked_post_ids,
         },
     )
 
 
+@login_required
+def create_gallery_post(request):
+    if request.method == 'POST':
+        form = GalleryPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            gallery_post = form.save(commit=False)
+            gallery_post.submitted_by = request.user
+            gallery_post.save()
+            messages.success(request, 'Your photo was posted to the gallery.')
+            return redirect('home')
+    else:
+        form = GalleryPostForm()
+
+    return render(request, 'gallery_post_form.html', {'form': form})
+
+
+@login_required
+def toggle_gallery_heart(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id, is_visible=True)
+    like, created = GalleryPostLike.objects.get_or_create(post=post, user=request.user)
+
+    if created:
+        if post.submitted_by_id != request.user.id:
+            UserNotification.objects.create(
+                recipient=post.submitted_by,
+                actor=request.user,
+                notification_type=UserNotification.NotificationType.GALLERY_LIKE,
+                gallery_post=post,
+            )
+    else:
+        like.delete()
+
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def add_gallery_comment(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id, is_visible=True)
+    text = request.POST.get('comment', '').strip()
+    if text:
+        comment = GalleryPostComment.objects.create(post=post, user=request.user, text=text[:300])
+        if post.submitted_by_id != request.user.id:
+            UserNotification.objects.create(
+                recipient=post.submitted_by,
+                actor=request.user,
+                notification_type=UserNotification.NotificationType.GALLERY_COMMENT,
+                gallery_post=post,
+                comment=comment,
+            )
+
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def delete_gallery_comment(request, comment_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    comment = get_object_or_404(GalleryPostComment.objects.select_related('post'), id=comment_id)
+    post = comment.post
+    can_delete = request.user.id == comment.user_id or request.user.id == post.submitted_by_id
+
+    if not can_delete:
+        messages.error(request, 'You are not allowed to delete this comment.')
+        return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+    comment.delete()
+    messages.success(request, 'Comment deleted.')
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def delete_gallery_post(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id)
+    if post.submitted_by_id != request.user.id:
+        messages.error(request, 'You can only delete your own photo.')
+        return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+    post.delete()
+    messages.success(request, 'Your photo was deleted.')
+    return redirect('home')
+
+
 def trends_page(request):
-    trend_reports = [
-        {'title': 'Spring / Summer 2026 Trend Forecast', 'season': 'Spring/Summer 2026', 'theme': 'Minimalism', 'style': 'Tailored', 'date': '2026-03-01', 'excerpt': 'Seasonal direction focused on clean proportions and practical elegance.', 'image': '/static/images/spring summer.png'},
-        {'title': 'Autumn Layers and Texture Forecast', 'season': 'Autumn/Winter 2026', 'theme': 'Texture', 'style': 'Layered', 'date': '2026-02-20', 'excerpt': 'Material contrast drives storytelling through knitwear and outerwear.', 'image': '/static/images/autumn.jpg'},
-        {'title': 'Resort 2026 Urban Ease Report', 'season': 'Resort 2026', 'theme': 'Mobility', 'style': 'Streetwear', 'date': '2026-02-12', 'excerpt': 'Designers prioritize movement with lightweight utility silhouettes.', 'image': '/static/images/resort.jpg'},
-        {'title': 'Power Basics in Retail Edit', 'season': 'Spring/Summer 2026', 'theme': 'Commercial', 'style': 'Minimal', 'date': '2026-02-05', 'excerpt': 'High-conviction essentials dominate both luxury and premium markets.', 'image': '/static/images/retail.jpg'},
-        {'title': 'Color Rhythm: 2026 Mid-Year Outlook', 'season': 'Mid-Year 2026', 'theme': 'Color', 'style': 'Contemporary', 'date': '2026-01-30', 'excerpt': 'Warm muted tones continue to outperform saturated brights globally.', 'image': '/static/images/color rhythm.png'},
-        {'title': 'Street Heritage and Luxury Blends', 'season': 'Autumn/Winter 2026', 'theme': 'Heritage', 'style': 'Hybrid', 'date': '2026-01-22', 'excerpt': 'Legacy tailoring codes merge with street-led styling language.', 'image': '/static/images/street heritage.jpg'},
-    ]
-    trend_reports = sorted(trend_reports, key=lambda item: item['date'], reverse=True)
+    trend_reports = Article.objects.filter(
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    ).select_related('submitted_by__profile')
     return render(request, 'trends.html', {'trend_reports': trend_reports})
 
 
 def full_article_page(request):
     return render(request, 'article_detail.html')
+
+
+@login_required
+def create_trend_article(request):
+    if request.method == 'POST':
+        form = ArticleCreateForm(request.POST)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.is_trending = False
+            article.moderation_status = Article.ModerationStatus.PENDING
+            article.author = request.user.get_full_name() or request.user.username
+            article.submitted_by = request.user
+
+            base_slug = slugify(article.title)[:210] or 'trend-report'
+            slug = base_slug
+            suffix = 2
+            while Article.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{suffix}"
+                suffix += 1
+            article.slug = slug
+
+            article.save()
+            messages.success(request, 'Your article was submitted to admin for review. It will appear in Trend Reports after approval.')
+            return redirect('trends')
+    else:
+        form = ArticleCreateForm()
+
+    return render(request, 'trend_article_form.html', {'form': form})
+
+
+def trend_article_detail(request, slug):
+    article = get_object_or_404(
+        Article.objects.select_related('submitted_by__profile'),
+        slug=slug,
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    )
+    article_comments = article.comments.select_related('user')[:20]
+    return render(
+        request,
+        'trend_article_detail.html',
+        {
+            'article': article,
+            'article_comments': article_comments,
+        },
+    )
+
+
+@login_required
+def add_article_comment(request, slug):
+    if request.method != 'POST':
+        return redirect('trends')
+
+    article = get_object_or_404(
+        Article,
+        slug=slug,
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    )
+    text = request.POST.get('comment', '').strip()
+    if text:
+        ArticleComment.objects.create(article=article, user=request.user, text=text[:500])
+    return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
+
+
+@login_required
+def delete_article_comment(request, comment_id):
+    if request.method != 'POST':
+        return redirect('trends')
+
+    comment = get_object_or_404(ArticleComment.objects.select_related('article'), id=comment_id)
+    article = comment.article
+    can_delete = request.user.id == comment.user_id or request.user.id == article.submitted_by_id
+    if not can_delete:
+        messages.error(request, 'You are not allowed to delete this comment.')
+        return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
+
+    comment.delete()
+    messages.success(request, 'Comment deleted.')
+    return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
 
 
 def insights_page(request):
@@ -228,6 +412,7 @@ def profile_view(request):
     ]
     completed_count = sum(1 for item in progress_items if item['done'])
     completion_percent = int((completed_count / len(progress_items)) * 100)
+    notifications = UserNotification.objects.filter(recipient=request.user).select_related('actor', 'gallery_post')[:20]
 
     return render(
         request,
@@ -237,5 +422,6 @@ def profile_view(request):
             'profile_form': profile_form,
             'progress_items': progress_items,
             'completion_percent': completion_percent,
+            'notifications': notifications,
         },
     )

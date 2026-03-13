@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import UserProfile
+from .models import Article, GalleryPost, UserProfile
 
 
 class SignUpForm(UserCreationForm):
@@ -53,3 +53,22 @@ class UserAccountForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
+
+
+class ArticleCreateForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ('title', 'excerpt', 'content', 'published_at')
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 10}),
+            'published_at': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class GalleryPostForm(forms.ModelForm):
+    class Meta:
+        model = GalleryPost
+        fields = ('title', 'category', 'image')
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={'accept': 'image/*', 'class': 'custom-file-input'}),
+        }

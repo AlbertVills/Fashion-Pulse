@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} | FashionPulse{% endblock %}
+
+{% block content %}
+<article class="article-layout">
+    <header class="article-header">
+        <p class="eyebrow">Trend Report Article</p>
+        <h1>{{ article.title }}</h1>
+        <p class="article-subheading">{{ article.excerpt }}</p>
+        <div class="article-meta-row">
+            {% if article.author_profile_image_url %}
+            <img class="author-avatar" src="{{ article.author_profile_image_url }}" width="34" height="34" alt="{{ article.author }} profile picture" loading="lazy">
+            {% else %}
+            <span class="author-avatar author-avatar--fallback">{{ article.author|first|upper }}</span>
+            {% endif %}
+            <span><strong>Author:</strong> {{ article.author }}</span>
+            <span><strong>Date:</strong> {{ article.published_at|date:'F j, Y' }}</span>
+        </div>
+    </header>
+
+    <section class="card">
+        {{ article.content|linebreaks }}
+    </section>
+
+    <section class="card" id="article-comments">
+        <h3>Comments ({{ article_comments|length }})</h3>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'article-comment-add' article.slug %}" class="gallery-comment-form">
+            {% csrf_token %}
+            <input type="text" name="comment" maxlength="500" placeholder="Write a comment..." required>
+            <button type="submit">Post</button>
+        </form>
+        {% else %}
+        <p><a href="{% url 'login' %}">Login to comment</a></p>
+        {% endif %}
+
+        <ul class="gallery-comment-list">
+            {% for comment in article_comments %}
+            <li>
+                <div class="gallery-comment-head">
+                    <strong>{{ comment.user.username }}</strong>
+                    {% if user.is_authenticated %}
+                    {% if user.id == comment.user_id or user.id == article.submitted_by_id %}
+                    <form method="post" action="{% url 'article-comment-delete' comment.id %}" class="gallery-comment-delete-form" onsubmit="return confirm('Delete this comment?');">
+                        {% csrf_token %}
+                        <button type="submit" class="gallery-comment-delete-btn">Delete</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                <span>{{ comment.text }}</span>
+            </li>
+            {% empty %}
+            <li class="meta">No comments yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="related-articles card">
+        <h3>More Actions</h3>
+        <p><a href="{% url 'trends' %}">Back to all trend report articles</a></p>
+        {% if user.is_authenticated %}
+        <p><a href="{% url 'trend-create' %}">Write another article</a></p>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}
