@@ -1,56 +1,133 @@
 {% extends 'base.html' %}
 
-{% block title %}Insights | FashionPulse{% endblock %}
+{% block title %}Outfit | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Blog / Insights</p>
-    <h1>Editorial Insights</h1>
-    <p>Opinion-led analysis on fashion psychology, cultural shifts, industry commentary, and sustainability.</p>
-</section>
+<section class="outfit-page">
+    <section class="outfit-head">
+        <div>
+            <h1>Collection</h1>
+            <p class="meta">Curated outfit pieces inspired by modern minimal fashion. Select styles and discover your next look.</p>
 
-<section class="page-banner cardless">
-    <img
-        src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80"
-        data-slider-images="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80"
-        data-slider-interval="4200"
-        alt="Editorial insights moodboard"
-    >
-</section>
+            <div class="outfit-time-filter" aria-label="Filter latest collection by post date">
+                <form method="get" action="{% url 'insights' %}" class="outfit-time-filter-form">
+                    <label class="outfit-time-filter-label" for="outfit-period-select">Posted</label>
+                    <select id="outfit-period-select" name="outfit_period" class="outfit-period-select" onchange="this.form.submit()">
+                        <option value="all" {% if selected_outfit_period == 'all' %}selected{% endif %}>All posted dates</option>
+                        <option value="today" {% if selected_outfit_period == 'today' %}selected{% endif %}>Today</option>
+                        <option value="this_week" {% if selected_outfit_period == 'this_week' %}selected{% endif %}>This week</option>
+                        <option value="yesterday" {% if selected_outfit_period == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+    </section>
 
-<section class="card featured-insight">
-    <img class="wide-media" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1400&q=80" alt="Fashion editorial feature">
-    <p class="story-category">Featured Essay</p>
-    <h3>Why Consumers Are Choosing Fewer, Better Pieces</h3>
-    <p>Editorial teams are observing a clear shift toward intentional purchasing behavior. Readers are prioritizing adaptable essentials, stronger material quality, and long-term wearability over novelty-heavy cycles.</p>
-    <p>This shift is influencing both luxury and contemporary markets, where brands are now designing with durability, emotional value, and wardrobe integration in mind.</p>
-</section>
+    <section class="outfit-carousel" aria-label="Outfit image carousel">
+        <div class="outfit-grid outfit-grid--carousel" id="outfitCarouselTrack">
+            {% for outfit in outfit_cards %}
+            {% if outfit.owner_username %}
+            <a href="{% url 'user-gallery' outfit.owner_username %}" class="outfit-card-link" aria-label="View {{ outfit.owner_username }}'s gallery">
+            {% endif %}
+            <article class="outfit-card" data-category="{{ outfit.category }}" data-name="{{ outfit.name|lower }}" data-description="{{ outfit.description|lower }}">
+                <img src="{{ outfit.image }}" alt="{{ outfit.name }}">
+                <div class="outfit-pill">
+                    <span>{{ outfit.name }}</span>
+                </div>
+                <button
+                    type="button"
+                    class="outfit-quick-btn"
+                    data-name="{{ outfit.name }}"
+                    data-category="{{ outfit.category|title }}"
+                    data-description="{{ outfit.description }}"
+                    data-image="{{ outfit.image }}"
+                    onclick="event.preventDefault(); event.stopPropagation();"
+                >Quick View</button>
+            </article>
+            {% if outfit.owner_username %}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
 
-<section class="cards-grid">
-    {% for post in insight_posts %}
-    <article class="card">
-        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}">
-        <p class="story-category">{{ post.category }}</p>
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.excerpt }}</p>
-    </article>
-    {% endfor %}
-</section>
+    <p id="outfitEmptyState" class="outfit-empty{% if outfit_cards %} is-hidden{% endif %}">
+        {% if selected_outfit_period == 'today' %}
+        No outfit photos were posted today.
+        {% elif selected_outfit_period == 'yesterday' %}
+        No outfit photos were posted yesterday.
+        {% elif selected_outfit_period == 'this_week' %}
+        No outfit photos were posted this week.
+        {% else %}
+        No outfit matched your filter/search.
+        {% endif %}
+    </p>
 
-<section class="cards-grid two-col insight-bottom">
-    <article class="card">
-        <h3>Topics We Cover Weekly</h3>
-        <ul class="clean-list">
-            <li>Fashion psychology and identity signaling</li>
-            <li>Cultural analysis behind global trend adoption</li>
-            <li>Industry strategy and retail behavior</li>
-            <li>Sustainability, durability, and circular systems</li>
-        </ul>
-    </article>
-    <article class="card">
-        <h3>Editorial Format</h3>
-        <p>Each insight article includes context, evidence-backed perspective, and a practical implication for readers, creators, and brands.</p>
-        <p>Our goal is to make complex fashion shifts clear, actionable, and intellectually grounded.</p>
-    </article>
+    <section class="outfit-cta-wrap">
+        <a class="outfit-cta" href="{% url 'home' %}#style-gallery">Explore Collection</a>
+    </section>
+
+    <section class="catalogue-head">
+        <h2>Catalogue</h2>
+        <p class="meta">Visual tags from tops, pants, skirts, and wardrobe colors to keep your outfit choices clean and stylish.</p>
+    </section>
+
+    <section class="catalogue-grid" aria-label="Outfit catalogue tags">
+        {% for item in catalogue_items %}
+        <article class="catalogue-pill" role="listitem" data-filter-label="{{ item.label|lower }}">
+            <img class="catalogue-pill__img catalogue-pill__img--base" src="{{ item.image }}" alt="{{ item.label }} outfit category">
+            <img class="catalogue-pill__img catalogue-pill__img--hover" src="{{ item.hover_image }}" alt="{{ item.label }} alternate outfit category">
+            <span>{{ item.label }}</span>
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="popular-outfit-2026" aria-label="Popular Outfit in 2026">
+        <div class="section-head section-head--with-action">
+            <div>
+                <h2>Popular Outfit in 2026</h2>
+                <p class="meta">Article-style fashion picks featuring the season's most viewed looks and wardrobe essentials.</p>
+            </div>
+            <span class="popular-kicker">Fashion Article</span>
+        </div>
+
+        <div class="popular-layout">
+            <article class="popular-feature-card">
+                <img src="{{ popular_feature.image }}" alt="{{ popular_feature.title }}">
+                <div class="popular-feature-copy">
+                    <h3>{{ popular_feature.title }}</h3>
+                    <p>{{ popular_feature.excerpt }}</p>
+                    <a href="{% url 'trends' %}">Read fashion story</a>
+                </div>
+            </article>
+
+            <div class="popular-grid">
+                {% for item in popular_outfits %}
+                <article class="popular-item-card">
+                    <img src="{{ item.image }}" alt="{{ item.title }}">
+                    <div class="popular-item-copy">
+                        <p class="story-category">{{ item.tag }}</p>
+                        <h4>{{ item.title }}</h4>
+                        <a href="{% url 'trends' %}">Read</a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="outfitQuickView" class="outfit-modal is-hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Outfit quick view">
+        <div class="outfit-modal__backdrop" data-modal-close="true"></div>
+        <article class="outfit-modal__panel" role="document">
+            <button type="button" class="outfit-modal__close" data-modal-close="true" aria-label="Close quick view">x</button>
+            <img id="outfitModalImage" src="" alt="Outfit preview">
+            <div class="outfit-modal__copy">
+                <p id="outfitModalCategory" class="story-category"></p>
+                <h3 id="outfitModalTitle"></h3>
+                <p id="outfitModalDescription"></p>
+                <a class="outfit-cta" href="{% url 'gallery-create' %}">Try this style</a>
+            </div>
+        </article>
+    </section>
 </section>
 {% endblock %}

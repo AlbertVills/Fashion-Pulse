@@ -7,9 +7,11 @@
     <aside class="profile-sidebar card">
         <p class="profile-brand">FashionPulse</p>
         <nav class="profile-menu">
-            <a class="is-active" href="{% url 'profile' %}">Edit Profile</a>
+            <a class="is-active" href="{% url 'profile' %}" data-tab="tab-edit">Edit Profile</a>
+            <a href="{% url 'user-gallery' user.username %}">My Gallery</a>
             <a href="{% url 'user_password_change' %}">Password</a>
-            <a href="#logout-settings">Log out</a>
+            <a href="#" data-tab="tab-appearance">Appearance</a>
+            <a href="#" data-tab="tab-notifications">Notifications</a>
         </nav>
     </aside>
 
@@ -80,13 +82,7 @@
                     </div>
                 </section>
 
-                <section class="profile-card-section" id="logout-settings">
-                    <div class="section-title-row">
-                        <h3>Log out</h3>
-                    </div>
-                    <p class="meta">Use this to end your current session safely.</p>
-                    <a href="{% url 'logout' %}" class="btn-primary inline-btn">Log out this session</a>
-                </section>
+
 
                 <div class="profile-actions">
                     <button type="submit" class="btn-primary">Save Changes</button>
@@ -105,22 +101,86 @@
                         </li>
                     {% endfor %}
                 </ul>
-
-                <section class="profile-notifications" id="notifications">
-                    <h3>Notifications</h3>
-                    <ul class="notification-list">
-                        {% for notification in notifications %}
-                        <li class="notification-item{% if not notification.is_read %} is-unread{% endif %}">
-                            <p>{{ notification.message }}</p>
-                            <small class="meta">{{ notification.created_at|date:'M j, Y g:i A' }}</small>
-                        </li>
-                        {% empty %}
-                        <li class="meta">No notifications yet.</li>
-                        {% endfor %}
-                    </ul>
-                </section>
             </aside>
         </div>
     </div>
+
+    <!-- Appearance panel -->
+    <div class="profile-tab-panel" id="tab-appearance" style="display:none;">
+        <h1>Appearance</h1>
+        <div class="card profile-form-wrap">
+            <section class="profile-card-section">
+                <div class="section-title-row"><h3>Theme</h3></div>
+                <p class="meta">Choose how the website looks while you browse.</p>
+                <div class="theme-switch" role="group" aria-label="Theme selection">
+                    <button type="button" class="theme-btn" data-theme-choice="light">Light Mode</button>
+                    <button type="button" class="theme-btn" data-theme-choice="dark">Dark Mode</button>
+                </div>
+            </section>
+            <section class="profile-card-section">
+                <div class="section-title-row"><h3>Log out</h3></div>
+                <p class="meta">Use this to end your current session safely.</p>
+                <a href="{% url 'logout' %}" class="btn-primary inline-btn">Log out this session</a>
+            </section>
+        </div>
+    </div>
+
+    <!-- Notifications panel -->
+    <div class="profile-tab-panel" id="tab-notifications" style="display:none;">
+        <h1>Notifications</h1>
+        <div class="card profile-form-wrap">
+            <section class="profile-card-section">
+                <ul class="notification-list">
+                    {% for notification in notifications %}
+                    <li class="notification-item{% if not notification.is_read %} is-unread{% endif %}">
+                        <p>{{ notification.message }}</p>
+                        <small class="meta">{{ notification.created_at|date:'M j, Y g:i A' }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="meta" style="padding:0.5rem 0;">No notifications yet.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </div>
 </section>
+
+<script>
+(function () {
+    const mainContent = document.querySelector('.profile-main');
+    const panels = document.querySelectorAll('.profile-tab-panel');
+    const navLinks = document.querySelectorAll('.profile-menu [data-tab]');
+
+    function showTab(tabId) {
+        const isMain = tabId === 'tab-edit';
+        mainContent.style.display = isMain ? '' : 'none';
+        panels.forEach(function (p) {
+            p.style.display = p.id === tabId ? '' : 'none';
+        });
+        navLinks.forEach(function (a) {
+            a.classList.toggle('is-active', a.getAttribute('data-tab') === tabId);
+        });
+        if (!isMain) {
+            history.replaceState(null, '', '#' + tabId);
+        } else {
+            history.replaceState(null, '', location.pathname);
+        }
+    }
+
+    navLinks.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            const tabId = a.getAttribute('data-tab');
+            if (!tabId) return;
+            e.preventDefault();
+            showTab(tabId);
+        });
+    });
+
+    // Restore tab from hash on load
+    const hash = location.hash.replace('#', '');
+    if (hash === 'tab-appearance' || hash === 'tab-notifications') {
+        showTab(hash);
+    }
+}());
+</script>
 {% endblock %}

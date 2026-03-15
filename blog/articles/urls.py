@@ -12,17 +12,21 @@ from .views import (
     delete_article_comment,
     delete_gallery_post,
     full_article_page,
+    gallery_page,
     insights_page,
     profile_view,
     signup_view,
     toggle_gallery_heart,
     trend_article_detail,
     trends_page,
+    user_gallery_page,
 )
 
 urlpatterns = [
     path('', article_list, name='home'),
+    path('gallery/', gallery_page, name='gallery'),
     path('gallery/new/', create_gallery_post, name='gallery-create'),
+    path('gallery/user/<str:username>/', user_gallery_page, name='user-gallery'),
     path('gallery/<int:post_id>/heart/', toggle_gallery_heart, name='gallery-heart'),
     path('gallery/<int:post_id>/comment/', add_gallery_comment, name='gallery-comment'),
     path('gallery/comment/<int:comment_id>/delete/', delete_gallery_comment, name='gallery-comment-delete'),

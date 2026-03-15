@@ -2,8 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from datetime import timedelta
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse_lazy
 
@@ -72,26 +74,25 @@ def article_list(request):
             'author': 'Maya Lin',
             'date': 'February 27, 2026',
         },
-        {
-            'image': 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
-            'category': 'Street Style',
-            'title': 'Vintage Accessories Power the Season’s Signature Looks',
-            'excerpt': 'Structured handbags and statement eyewear create high-impact finishings.',
-            'author': 'Noah Ellis',
-            'date': 'February 26, 2026',
-        },
-        {
-            'image': 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80',
-            'category': 'Editorial',
-            'title': 'Minimalist Power Dressing Becomes a Daily Uniform',
-            'excerpt': 'Confident tailoring and disciplined palettes are defining modern authority.',
-            'author': 'Imani Hart',
-            'date': 'February 25, 2026',
-        },
     ]
 
+    raw_gallery_category = request.GET.get('gallery_category', '').strip()
+    selected_gallery_category = raw_gallery_category
+    normalized_gallery_category = ''
+
+    if raw_gallery_category:
+        lowered_query = raw_gallery_category.lower()
+        for value, label in GalleryPost.Category.choices:
+            if lowered_query in {value.lower(), label.lower()}:
+                normalized_gallery_category = value
+                break
+
+    gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    if normalized_gallery_category:
+        gallery_posts = gallery_posts.filter(category=normalized_gallery_category)
+
     gallery_posts = (
-        GalleryPost.objects.filter(is_visible=True)
+        gallery_posts
         .select_related('submitted_by')
         .prefetch_related('comments__user')
         .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
@@ -111,6 +112,9 @@ def article_list(request):
             'trending_stories': trending_stories,
             'gallery_posts': gallery_posts,
             'liked_post_ids': liked_post_ids,
+            'selected_gallery_category': selected_gallery_category,
+            'gallery_category_choices': GalleryPost.Category.choices,
+            'gallery_filter_active': bool(raw_gallery_category),
         },
     )
 
@@ -300,33 +304,168 @@ def delete_article_comment(request, comment_id):
 
 
 def insights_page(request):
-    insight_posts = [
+    default_outfit_cards = [
         {
-            'category': 'Fashion Psychology',
-            'title': 'Why Structured Clothing Signals Confidence',
-            'excerpt': 'How visual discipline in outfits influences self-perception and social response.',
-            'image': '/static/images/pyschology.jpg',
+            'name': 'Neutral Layer Set',
+            'category': 'modern',
+            'description': 'Balanced tones and clean layers for daily polished looks.',
+            'image': 'https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=900&q=80',
         },
         {
-            'category': 'Cultural Analysis',
-            'title': 'Minimalism as a Post-Excess Cultural Reset',
-            'excerpt': 'A wider cultural pivot toward utility, longevity, and quieter status symbols.',
-            'image': '/static/images/minimalism.jpg',
+            'name': 'Oversized Street Fit',
+            'category': 'street',
+            'description': 'Relaxed shape with strong attitude for city styling.',
+            'image': 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=900&q=80',
         },
         {
-            'category': 'Industry Commentary',
-            'title': 'What Buyers Want from 2026 Collections',
-            'excerpt': 'Retail buyers prioritize adaptable pieces with strong cross-season relevance.',
-            'image': '/static/images/buyers1.jpg',
+            'name': 'Minimal Linen Combo',
+            'category': 'minimal',
+            'description': 'Lightweight fabric and soft structure for warm weather edits.',
+            'image': 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=80',
         },
         {
-            'category': 'Sustainability',
-            'title': 'Durability Is the New Luxury Metric',
-            'excerpt': 'Longevity and repairability now shape premium product value and brand trust.',
-            'image': '/static/images/sustainability.jpg',
+            'name': 'Soft Casual Essentials',
+            'category': 'casual',
+            'description': 'Comfort-first staples that still look refined and fresh.',
+            'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
         },
     ]
-    return render(request, 'insights.html', {'insight_posts': insight_posts})
+
+    gallery_to_outfit_category = {
+        GalleryPost.Category.MODERN: 'modern',
+        GalleryPost.Category.STREET: 'street',
+        GalleryPost.Category.MINIMAL: 'minimal',
+        GalleryPost.Category.VINTAGE: 'casual',
+        GalleryPost.Category.OTHER: 'casual',
+    }
+
+    raw_outfit_period = request.GET.get('outfit_period', '').strip().lower()
+    selected_outfit_period = raw_outfit_period if raw_outfit_period in {'all', 'today', 'this_week', 'yesterday'} else 'all'
+
+    gallery_outfit_cards = []
+    latest_gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    today = timezone.localdate()
+    if selected_outfit_period == 'today':
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date=today)
+    elif selected_outfit_period == 'yesterday':
+        yesterday = today - timedelta(days=1)
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date=yesterday)
+    elif selected_outfit_period == 'this_week':
+        week_start = today - timedelta(days=today.weekday())
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date__gte=week_start, created_at__date__lte=today)
+
+    latest_gallery_posts = latest_gallery_posts.select_related('submitted_by')[:8]
+
+    for post in latest_gallery_posts:
+        if not post.image:
+            continue
+
+        submitter_name = post.submitted_by.get_full_name() or post.submitted_by.username
+        gallery_outfit_cards.append(
+            {
+                'name': post.title,
+                'category': gallery_to_outfit_category.get(post.category, 'casual'),
+                'description': f"{post.get_category_display()} by {submitter_name} from the Home gallery.",
+                'image': post.image.url,
+                'owner_username': post.submitted_by.username,
+            }
+        )
+
+    # Prioritize real gallery uploads in Latest Collection, then backfill with curated defaults.
+    outfit_cards = gallery_outfit_cards[:8]
+    if selected_outfit_period == 'all' and len(outfit_cards) < 4:
+        outfit_cards.extend(default_outfit_cards[: 4 - len(outfit_cards)])
+    catalogue_items = [
+        {
+            'label': 'Blue',
+            'image': 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'White',
+            'image': 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Black',
+            'image': 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Beige',
+            'image': 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Shirt',
+            'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Pants',
+            'image': 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Skirt',
+            'image': 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1554412933-514a83d2f3c8?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            'label': 'Style',
+            'image': 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
+            'hover_image': 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+        },
+    ]
+    popular_feature = {
+        'title': 'Discover A/W Product Picks',
+        'excerpt': 'Fashion desk picks with strong shape, cleaner silhouettes, and practical layering for daily wear.',
+        'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80',
+    }
+    popular_outfits = [
+        {
+            'title': 'Patterned Knit Jacket',
+            'tag': 'Article Pick',
+            'image': 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Pastel Office Sweat',
+            'tag': 'Street Edit',
+            'image': 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Urban Black Shoulder Bag',
+            'tag': 'Accessory',
+            'image': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Neutral Cotton Set',
+            'tag': 'Minimal',
+            'image': 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Relaxed Beige Blazer',
+            'tag': 'Runway Note',
+            'image': 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Urban Soft Tee Dress',
+            'tag': 'Fresh Drop',
+            'image': 'https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=700&q=80',
+        },
+    ]
+    return render(
+        request,
+        'insights.html',
+        {
+            'outfit_cards': outfit_cards,
+            'selected_outfit_period': selected_outfit_period,
+            'outfit_period_filter_active': selected_outfit_period != 'all',
+            'catalogue_items': catalogue_items,
+            'popular_feature': popular_feature,
+            'popular_outfits': popular_outfits,
+        },
+    )
 
 
 def about_page(request):
@@ -423,5 +562,85 @@ def profile_view(request):
             'progress_items': progress_items,
             'completion_percent': completion_percent,
             'notifications': notifications,
+        },
+    )
+
+
+def gallery_page(request):
+    raw_gallery_category = request.GET.get('gallery_category', '').strip()
+    selected_gallery_category = raw_gallery_category
+    normalized_gallery_category = ''
+
+    if raw_gallery_category:
+        lowered_query = raw_gallery_category.lower()
+        for value, label in GalleryPost.Category.choices:
+            if lowered_query in {value.lower(), label.lower()}:
+                normalized_gallery_category = value
+                break
+
+    gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    if normalized_gallery_category:
+        gallery_posts = gallery_posts.filter(category=normalized_gallery_category)
+
+    gallery_posts = (
+        gallery_posts
+        .select_related('submitted_by', 'submitted_by__profile')
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+    )
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=gallery_posts)
+            .values_list('post_id', flat=True)
+        )
+
+    return render(
+        request,
+        'gallery.html',
+        {
+            'gallery_posts': gallery_posts,
+            'liked_post_ids': liked_post_ids,
+            'selected_gallery_category': selected_gallery_category,
+            'gallery_category_choices': GalleryPost.Category.choices,
+            'gallery_filter_active': bool(raw_gallery_category),
+        },
+    )
+
+
+def user_gallery_page(request, username):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    owner = get_object_or_404(User, username=username)
+    try:
+        owner_profile = owner.profile
+    except UserProfile.DoesNotExist:
+        owner_profile = None
+
+    posts = (
+        GalleryPost.objects.filter(submitted_by=owner, is_visible=True)
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+    )
+
+    trend_articles = Article.objects.filter(submitted_by=owner)
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=posts)
+            .values_list('post_id', flat=True)
+        )
+
+    return render(
+        request,
+        'user_gallery.html',
+        {
+            'owner': owner,
+            'owner_profile': owner_profile,
+            'posts': posts,
+            'liked_post_ids': liked_post_ids,
+            'trend_articles': trend_articles,
         },
     )

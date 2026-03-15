@@ -1,76 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Home | FashionPulse{% endblock %}
+{% block title %}Style Gallery | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero-feature">
-    <img
-        src="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80"
-        data-slider-images="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80"
-        data-slider-interval="4500"
-        alt="Runway editorial"
-    >
-    <div class="hero-feature__content">
-        <p class="eyebrow">Hero Feature</p>
-        <h1>The Defining Trends of 2026</h1>
-        <p>From precision tailoring to heritage textures, fashion is balancing authority and wearability like never before.</p>
-        <a class="btn-primary inline-btn" href="{% url 'article-detail' %}">Read Article</a>
-    </div>
-</section>
-
-<section class="trend-editorial">
-    <div class="section-head section-head--with-action">
-        <div>
-            <h2>Trending Stories</h2>
-            <p class="meta">Portrait-led stories with this season's most followed voices in style.</p>
-        </div>
-    </div>
-    <div class="trend-editorial-grid">
-        {% for story in trending_stories %}
-        <article class="card trend-story-card {% cycle 'trend-card--base' 'trend-card--down' 'trend-card--up' %}">
-            <img class="trend-story-avatar" src="{{ story.image }}" alt="{{ story.title }}">
-            <div class="trend-story-copy">
-                <p class="trend-story-quote-mark" aria-hidden="true">"</p>
-                <h3 class="trend-story-name">{{ story.title }}</h3>
-                <p class="trend-story-role">{{ story.category }}</p>
-                <p class="trend-story-quote">{{ story.excerpt }}</p>
-                <p class="meta trend-story-meta"><span class="verified-badge" aria-hidden="true"></span>By {{ story.author }} · {{ story.date }}</p>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-</section>
-
-<section class="split-section home-spotlight">
-    <article class="card">
-        <p class="eyebrow">Seasonal Highlight</p>
-        <h3>Spring/Summer 2026 Trend Forecast</h3>
-        <p>A clear shift toward lightweight tailoring, muted earthy tones, and refined utility details defines this season’s most commercial direction.</p>
-        <a href="{% url 'trends' %}">Read full report</a>
-    </article>
-
-    <article class="card spotlight-card">
-        <p class="eyebrow">Designer Spotlight</p>
-        <h3>Amara Voss</h3>
-        <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80" alt="Designer portrait">
-        <p>Amara Voss has become one of the defining voices in contemporary tailoring, known for architectural cuts softened by fluid movement.</p>
-        <p>Her latest collection reframes minimalist power dressing through softened shoulders, low-contrast palettes, and precision construction that moves with the body.</p>
-        <p>Editors and buyers are watching her approach closely as it bridges runway clarity with everyday utility.</p>
-    </article>
-</section>
-
-<section>
+<section class="gallery-page">
     <div class="section-head gallery-section-head">
         <div class="section-head--with-action">
-            <h2 id="style-gallery"> Style Gallery</h2>
+            <h1 id="style-gallery">Style Gallery</h1>
             {% if user.is_authenticated %}
             <a class="btn-primary inline-btn" href="{% url 'gallery-create' %}">Post Your Picture</a>
             {% else %}
             <a href="{% url 'login' %}">Login to post</a>
             {% endif %}
         </div>
-        <form method="get" action="{% url 'home' %}#style-gallery" class="gallery-search-form" role="search">
-           
+        <form method="get" action="{% url 'gallery' %}#style-gallery" class="gallery-search-form" role="search">
             <div class="gallery-search-controls">
                 <input
                     id="gallery-category-search"
@@ -88,17 +31,20 @@
                 </datalist>
                 <button type="submit" class="btn-primary gallery-search-btn">Search</button>
                 {% if gallery_filter_active %}
-                <a class="gallery-clear-link" href="{% url 'home' %}#style-gallery">Clear</a>
+                <a class="gallery-clear-link" href="{% url 'gallery' %}#style-gallery">Clear</a>
                 {% endif %}
             </div>
         </form>
     </div>
+
     <div class="masonry-grid">
         {% for post in gallery_posts %}
         <article class="gallery-item" id="gallery-post-{{ post.id }}">
-            <img src="{{ post.image.url }}" alt="{{ post.title }}">
-            <span>{{ post.title }}</span>
-            <small class="gallery-meta">{{ post.get_category_display }} · {{ post.submitted_by.get_full_name|default:post.submitted_by.username }}</small>
+            <a href="{% url 'user-gallery' post.submitted_by.username %}" class="gallery-owner-link" aria-label="View {{ post.submitted_by.username }}'s gallery">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                <span>{{ post.title }}</span>
+            </a>
+            <small class="gallery-meta">{{ post.get_category_display }} · <a href="{% url 'user-gallery' post.submitted_by.username %}" class="gallery-owner-link">{{ post.submitted_by.get_full_name|default:post.submitted_by.username }}</a></small>
 
             {% if user.is_authenticated and user.id == post.submitted_by_id %}
             <form method="post" action="{% url 'gallery-delete' post.id %}" class="gallery-delete-form" onsubmit="return confirm('Delete this photo?');">
@@ -129,11 +75,6 @@
                             <path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-4 4V6a2 2 0 012-2zm0 2v11.17L7.17 14H20V6H4z"></path>
                         </svg>
                     </a>
-                    <button type="button" class="gallery-icon-btn" aria-label="Send">
-                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" style="display:block;">
-                            <path d="M2 21l20-9L2 3v7l14 2-14 2z"></path>
-                        </svg>
-                    </button>
                     {% else %}
                     <a href="{% url 'login' %}">Login to heart and comment</a>
                     {% endif %}
