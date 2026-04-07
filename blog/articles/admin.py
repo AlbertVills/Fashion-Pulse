@@ -19,6 +19,48 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ('title', 'excerpt', 'content', 'author', 'submitted_by__username')
     prepopulated_fields = {'slug': ('title',)}
     actions = ('approve_articles', 'reject_articles')
+    readonly_fields = ('created_at', 'read_time_minutes')
+
+    def save_model(self, request, obj, form, change):
+        # Auto-sync is_trending with moderation_status when saving individually
+        if obj.moderation_status == Article.ModerationStatus.APPROVED:
+            obj.is_trending = True
+        elif obj.moderation_status == Article.ModerationStatus.REJECTED:
+            obj.is_trending = False
+        super().save_model(request, obj, form, change)
+    fieldsets = (
+        ('Trend Report Content', {
+            'fields': (
+                'title',
+                'author_name',
+                'featured_image',
+                'content',
+                'video_embed_url',
+                'attachment',
+            ),
+        }),
+        ('Publishing', {
+            'fields': (
+                'publish_status',
+                'scheduled_publish_at',
+                'published_at',
+                'last_updated_manual',
+                'allow_comments',
+                'visibility',
+            ),
+        }),
+        ('Admin Controls', {
+            'fields': (
+                'slug',
+                'author',
+                'submitted_by',
+                'moderation_status',
+                'is_trending',
+                'created_at',
+                'read_time_minutes',
+            ),
+        }),
+    )
 
     @admin.action(description='Approve selected articles and publish to Trend Reports')
     def approve_articles(self, request, queryset):

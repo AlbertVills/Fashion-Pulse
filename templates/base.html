@@ -16,26 +16,52 @@
             }
         })();
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
 </head>
-<body>
+<body class="page-is-loading">
+    <div class="scroll-progress" aria-hidden="true">
+        <span class="scroll-progress__bar" id="scrollProgressBar"></span>
+    </div>
     <header class="site-header">
         <div class="container nav-wrap">
             <a class="brand" href="{% url 'home' %}">FashionPulse</a>
             <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
             <nav class="site-nav" id="siteNav">
-                <a href="{% url 'home' %}">Home</a>
-                <a href="{% url 'insights' %}">Outfit</a>
-                <a href="{% url 'trends' %}">Trend Reports</a>
-                <a href="{% url 'about' %}">About</a>
-                <a href="{% url 'contact' %}">Contact</a>
+                <a href="{% url 'home' %}" {% if request.path == '/' %}class="active"{% endif %}>Home</a>
+                <a href="{% url 'insights' %}" {% if '/insights' in request.path %}class="active"{% endif %}>Collection</a>
+                <a href="{% url 'trends' %}" {% if '/trends' in request.path %}class="active"{% endif %}>Trend Reports</a>
+                <a href="{% url 'about' %}" {% if '/about' in request.path %}class="active"{% endif %}>About</a>
+                <a href="{% url 'contact' %}" {% if '/contact' in request.path %}class="active"{% endif %}>Contact</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'profile' %}" class="nav-user">{{ user.username }}</a>
+                    <div class="nav-user-wrap">
+                        <button type="button" class="nav-user {% if '/profile' in request.path or '/gallery/user/' in request.path %}active{% endif %}" id="navUserToggle" data-gallery-url="{% url 'user-gallery' user.username %}">{{ user.username }} <svg class="nav-user__arrow" viewBox="0 0 12 8" width="10" height="7" fill="currentColor"><path d="M1.41.59 6 5.17 10.59.59 12 2 6 8 0 2z"/></svg></button>
+                        <div class="nav-user-dropdown" id="navUserDropdown">
+                            <a href="{% url 'profile' %}" class="nav-user-dropdown__item">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Edit Profile
+                            </a>
+                            <button type="button" class="nav-user-dropdown__item" id="navNotifBtn">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                Notifications
+                            </button>
+                            <hr class="nav-user-dropdown__sep">
+                            <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-user-dropdown__item nav-user-dropdown__item--logout">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                    Log Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     {% if user.is_staff or user.is_superuser %}
                         <a href="/admin/">Admin</a>
                     {% endif %}
                 {% else %}
-                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'login' %}" {% if '/login' in request.path %}class="active"{% endif %}>Login</a>
                 {% endif %}
             </nav>
         </div>
@@ -49,9 +75,216 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">© 2026 FashionPulse</div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="footer-logo" href="{% url 'home' %}">FashionPulse</a>
+                    <p class="footer-tagline">Style, culture, and everything in between.</p>
+                </div>
+                <nav class="footer-nav" aria-label="Footer navigation">
+                    <h4 class="footer-nav-heading">Explore</h4>
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'insights' %}">Outfit</a>
+                    <a href="{% url 'trends' %}">Trend Reports</a>
+                    <a href="{% url 'gallery' %}">Gallery</a>
+                </nav>
+                <nav class="footer-nav" aria-label="Company navigation">
+                    <h4 class="footer-nav-heading">Company</h4>
+                    <a href="{% url 'about' %}">About</a>
+                    <a href="{% url 'contact' %}">Contact</a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                    {% endif %}
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 FashionPulse. All rights reserved.</span>
+            </div>
+        </div>
     </footer>
 
     <script src="{% static 'js/site.js' %}"></script>
+
+    <!-- ═══════════  CUSTOM CONFIRM MODAL  ═══════════ -->
+    <div class="cf-modal is-hidden" id="cfModal">
+        <div class="cf-modal__backdrop" id="cfModalBackdrop"></div>
+        <div class="cf-modal__panel">
+            <div class="cf-modal__icon">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3 class="cf-modal__title" id="cfModalTitle">Are you sure?</h3>
+            <p class="cf-modal__msg" id="cfModalMsg">This action cannot be undone.</p>
+            <div class="cf-modal__actions">
+                <button type="button" class="cf-modal__btn cf-modal__btn--cancel" id="cfModalCancel">Cancel</button>
+                <button type="button" class="cf-modal__btn cf-modal__btn--confirm" id="cfModalConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function () {
+        var modal   = document.getElementById('cfModal');
+        var title   = document.getElementById('cfModalTitle');
+        var msg     = document.getElementById('cfModalMsg');
+        var btnOk   = document.getElementById('cfModalConfirm');
+        var btnNo   = document.getElementById('cfModalCancel');
+        var back    = document.getElementById('cfModalBackdrop');
+        var pending = null;
+
+        function open(t, m) {
+            title.textContent = t || 'Are you sure?';
+            msg.textContent   = m || 'This action cannot be undone.';
+            modal.classList.remove('is-hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function close(result) {
+            modal.classList.add('is-hidden');
+            document.body.style.overflow = '';
+            if (pending) { pending(result); pending = null; }
+        }
+
+        btnOk.addEventListener('click', function () { close(true); });
+        btnNo.addEventListener('click', function () { close(false); });
+        back.addEventListener('click', function () { close(false); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) close(false);
+        });
+
+        window.confirmModal = function (titleText, msgText) {
+            return new Promise(function (resolve) {
+                pending = resolve;
+                open(titleText, msgText);
+            });
+        };
+
+        document.addEventListener('submit', function (e) {
+            var form = e.target;
+            if (!form.hasAttribute('data-confirm')) return;
+            if (form._confirmed) { form._confirmed = false; return; }
+            e.preventDefault();
+            var txt = form.getAttribute('data-confirm') || 'Are you sure?';
+            confirmModal(txt, 'This action cannot be undone.').then(function (ok) {
+                if (ok) { form._confirmed = true; form.submit(); }
+            });
+        });
+    })();
+    </script>
+
+    <!-- ── Notifications Modal ── -->
+    {% if user.is_authenticated %}
+    <div class="notif-modal-backdrop" id="notifModalBackdrop" style="display:none;">
+        <div class="notif-modal">
+            <div class="notif-modal__header">
+                <h2 class="notif-modal__title">Notifications</h2>
+                <button type="button" class="notif-modal__close" id="notifModalClose">&times;</button>
+            </div>
+            <div class="notif-modal__body" id="notifModalBody">
+                <p class="notif-modal__loading">Loading...</p>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var backdrop = document.getElementById('notifModalBackdrop');
+        var body = document.getElementById('notifModalBody');
+        var closeBtn = document.getElementById('notifModalClose');
+        var openBtn = document.getElementById('navNotifBtn');
+        if (!backdrop || !openBtn) return;
+
+        function getCookie(name) {
+            var m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return m ? decodeURIComponent(m[2]) : null;
+        }
+
+        function openModal() {
+            backdrop.style.display = '';
+            document.body.style.overflow = 'hidden';
+            loadNotifications();
+        }
+        function closeModal() {
+            backdrop.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', function() {
+            document.getElementById('navUserDropdown').classList.remove('open');
+            openModal();
+        });
+        closeBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', function(e) {
+            if (e.target === backdrop) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && backdrop.style.display !== 'none') closeModal();
+        });
+
+        function loadNotifications() {
+            body.innerHTML = '<p class="notif-modal__loading">Loading...</p>';
+            fetch('{% url "notification-list" %}', {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.ok || !data.notifications.length) {
+                        body.innerHTML = '<p class="notif-modal__empty">No notifications yet.</p>';
+                        return;
+                    }
+                    var html = '<ul class="notif-modal__list">';
+                    data.notifications.forEach(function(n) {
+                        html += '<li class="notif-modal__item' + (n.is_read ? '' : ' is-unread') + '" data-id="' + n.id + '">';
+                        html += '<span class="notif-modal__dot"></span>';
+                        html += '<div class="notif-modal__content">';
+                        html += '<p class="notif-modal__msg">' + n.message + '</p>';
+                        html += '<time class="notif-modal__time">' + n.created_at + '</time>';
+                        html += '</div>';
+                        html += '<button type="button" class="notif-modal__delete" data-delete-url="' + n.delete_url + '" title="Delete">&times;</button>';
+                        html += '</li>';
+                    });
+                    html += '</ul>';
+                    body.innerHTML = html;
+                })
+                .catch(function() {
+                    body.innerHTML = '<p class="notif-modal__empty">Failed to load notifications.</p>';
+                });
+        }
+
+        body.addEventListener('click', function(e) {
+            var delBtn = e.target.closest('.notif-modal__delete');
+            if (!delBtn) return;
+            var item = delBtn.closest('.notif-modal__item');
+            var url = delBtn.getAttribute('data-delete-url');
+            if (!url) return;
+            fetch(url, {
+                method: 'POST',
+                headers: {'X-CSRFToken': getCookie('csrftoken') || '', 'X-Requested-With': 'XMLHttpRequest'},
+                credentials: 'same-origin'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.ok) {
+                    item.remove();
+                    if (!body.querySelector('.notif-modal__item')) {
+                        body.innerHTML = '<p class="notif-modal__empty">No notifications yet.</p>';
+                    }
+                }
+            });
+        });
+
+        body.addEventListener('click', function(e) {
+            var item = e.target.closest('.notif-modal__item.is-unread');
+            if (!item || e.target.closest('.notif-modal__delete')) return;
+            var id = item.getAttribute('data-id');
+            fetch('/notifications/' + id + '/read/', {
+                method: 'POST',
+                headers: {'X-CSRFToken': getCookie('csrftoken') || '', 'X-Requested-With': 'XMLHttpRequest'},
+                credentials: 'same-origin'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.ok) item.classList.remove('is-unread');
+            });
+        });
+    })();
+    </script>
+    {% endif %}
 </body>
 </html>

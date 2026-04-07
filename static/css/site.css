@@ -1,16 +1,53 @@
 ﻿/* Aggregated stylesheet: keep import order stable for cascade predictability. */
+
+/* ── Core & Utilities ────────────────────────────────────────────── */
+@import url("./site.utilities.css");
 @import url("./site.base.css");
+
+/* ── Dark Mode Theme Enhancement ────────────────────────────────────── */
+@import url("./site.dark-mode.css");
+
+/* ── Layout Components ──────────────────────────────────────────── */
+@import url("./site.navigation.css");
+@import url("./site.cards.css");
+
+/* ── Typography ────────────────────────────────────────────────── */
+@import url("./site.typography.css");
+
+/* ── Components ────────────────────────────────────────────────── */
+@import url("./site.components.css");
+
+/* ── Forms & Inputs ────────────────────────────────────────────── */
+@import url("./site.forms.css");
+
+/* ── Content Sections ──────────────────────────────────────────── */
+@import url("./site.articles.css");
+@import url("./site.trends.css");
+@import url("./site.outfit.css");
+
+/* ── Gallery & Profile ─────────────────────────────────────────── */
 @import url("./site.gallery.css");
-@import url("./site.content.css");
 @import url("./site.profile.css");
 
+/* ── Legacy Content Styles ────────────────────────────────────────── */
+@import url("./site.content.css");
+
+/* ── Responsive Design ─────────────────────────────────────────── */
+@import url("./site.media.css");
+
+/* ── Style Lens ────────────────────────────────────────────────── */
+@import url("./site.style-lens.css");
+
+/* ── Layout Improvements & Background Enhancement ────────────────────── */
+@import url("./site.layout-improvements.css");
+
 html[data-theme="dark"] body {
-	color: #e8efff;
+	color: #f2f2f2;
 }
 
 html[data-theme="dark"] .site-header {
-	background: rgba(20, 31, 57, 0.92) !important;
-	border-bottom-color: #2a3f68 !important;
+	background: rgba(20, 20, 20, 0.95) !important;
+	border-bottom-color: #4d4d4d !important;
 	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
 }
 
@@ -24,9 +61,9 @@ html[data-theme="dark"] .notification-item,
 html[data-theme="dark"] .outfit-card,
 html[data-theme="dark"] .trend-story-card,
 html[data-theme="dark"] .latest-collection-showcase {
-	background: linear-gradient(180deg, #15233f 0%, #111b31 100%) !important;
-	border-color: #2b416b !important;
-	color: #e8efff !important;
+	background: #1a1a1a !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
 }
 
 html[data-theme="dark"] .meta,
@@ -39,17 +76,16 @@ html[data-theme="dark"] .outfit-empty,
 html[data-theme="dark"] .outfit-suggestion-card p,
 html[data-theme="dark"] .notification-item p,
 html[data-theme="dark"] .clean-list {
-	color: #a8badf !important;
+	color: #bfbfbf !important;
 }
 
 html[data-theme="dark"] .site-nav a:hover,
 html[data-theme="dark"] .site-nav a.active {
 	color: #ffffff !important;
-	background: #20345d !important;
+	background: #333333 !important;
 }
 
 html[data-theme="dark"] .outfit-pill,
-html[data-theme="dark"] .gallery-comment-list li,
 html[data-theme="dark"] .gallery-comment-form input,
 html[data-theme="dark"] .gallery-search-btn,
 html[data-theme="dark"] .outfit-filter-btn,
@@ -59,9 +95,15 @@ html[data-theme="dark"] .outfit-search,
 html[data-theme="dark"] input,
 html[data-theme="dark"] textarea,
 html[data-theme="dark"] select {
-	background: #1a2b4d !important;
+	background: #2a2a2a !important;
+	color: #f2f2f2 !important;
+	border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .gallery-comment-list li {
+	background: #1a1a1a !important;
 	color: #e8efff !important;
-	border-color: #35538a !important;
+	border-color: #4d4d4d !important;
 }
 
 html[data-theme="dark"] .btn-primary,
@@ -94,8 +136,17 @@ html[data-theme="dark"] .profile-card-section {
 }
 
 html[data-theme="dark"] .profile-menu a,
-html[data-theme="dark"] .profile-menu span {
-	color: #8aaad8 !important;
+html[data-theme="dark"] .profile-menu span,
+html[data-theme="dark"] .profile-menu-logout-btn {
+	color: #e2eaff !important;
+}
+
+html[data-theme="dark"] .profile-menu-logout-btn:hover {
+	color: #ffffff !important;
+}
+
+html[data-theme="dark"] .profile-menu-logout-form {
+	border-top-color: #253b62 !important;
 }
 
 html[data-theme="dark"] .profile-menu .is-active {
@@ -195,12 +246,22 @@ html[data-theme="dark"] .user-gallery-stat-pill {
 	color: #8aaad8 !important;
 }
 
+html[data-theme="dark"] .user-gallery-engagement-pill {
+	background: linear-gradient(180deg, #13203b 0%, #0f192e 100%) !important;
+	border-color: #253b62 !important;
+	color: #8aaad8 !important;
+}
+
 html[data-theme="dark"] .user-gallery-stat-pill strong {
 	color: #e2eaff !important;
 }
 
+html[data-theme="dark"] .user-gallery-engagement-pill strong {
+	color: #e2eaff !important;
+}
+
 html[data-theme="dark"] .user-gallery-stat-btn.is-active {
-	background: linear-gradient(180deg, #2b4f9b 0%, #1f3f85 100%) !important;
+	background: linear-gradient(180deg, #3a3a3a 0%, #1f1f1f 100%) !important;
 	color: #fff !important;
 }
 
@@ -209,19 +270,840 @@ html[data-theme="dark"] .user-gallery-stat-btn.is-active strong {
 }
 
 html[data-theme="dark"] .user-post-modal-dialog {
-	background: #0f192e !important;
+	background: #111111 !important;
 }
 
 html[data-theme="dark"] .user-post-modal-content {
-	background: #0f192e !important;
-	color: #e2eaff !important;
+	background: #111111 !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .user-post-modal-media {
+	background: #050505 !important;
 }
 
 html[data-theme="dark"] .user-post-modal-title {
-	color: #c8d9ff !important;
+	color: #f2f2f2 !important;
 }
 
 html[data-theme="dark"] .user-post-modal-close {
-	background: rgba(19, 32, 59, 0.95) !important;
-	color: #c8d9ff !important;
+	background: rgba(36, 36, 36, 0.95) !important;
+	color: #f2f2f2 !important;
+}
+
+/* Final dark theme palette override (grayscale) */
+html[data-theme="dark"] {
+	--bg: #000000;
+	--surface: #1a1a1a;
+	--surface-soft: #333333;
+	--border: #4d4d4d;
+	--accent: #666666;
+	--accent-strong: #666666;
+}
+
+html[data-theme="dark"] body {
+	background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%) !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .outfit-card,
+html[data-theme="dark"] .popular-item-card,
+html[data-theme="dark"] .latest-collection-showcase,
+html[data-theme="dark"] .trend-story-card,
+html[data-theme="dark"] .profile-sidebar,
+html[data-theme="dark"] .notification-item,
+html[data-theme="dark"] .outfit-pill,
+html[data-theme="dark"] .theme-btn,
+html[data-theme="dark"] .tag-btn,
+html[data-theme="dark"] .alert {
+	background: #1a1a1a !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .outfit-search,
+html[data-theme="dark"] .gallery-search-controls input,
+html[data-theme="dark"] #gallery-category-search,
+html[data-theme="dark"] .gallery-comment-form input {
+	background: #000000 !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .gallery-comment-form button,
+html[data-theme="dark"] .outfit-cta,
+html[data-theme="dark"] .gallery-search-btn,
+html[data-theme="dark"] .outfit-filter-btn,
+html[data-theme="dark"] .theme-btn.is-active,
+html[data-theme="dark"] .tag-btn.active,
+html[data-theme="dark"] .site-nav a:hover,
+html[data-theme="dark"] .site-nav a.active {
+	background: #333333 !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] b {
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] p,
+html[data-theme="dark"] .meta,
+html[data-theme="dark"] .site-nav a,
+html[data-theme="dark"] .nav-user,
+html[data-theme="dark"] .clean-list,
+html[data-theme="dark"] .gallery-meta,
+html[data-theme="dark"] .gallery-like-summary,
+html[data-theme="dark"] .gallery-comments-title {
+	color: #d9d9d9 !important;
+}
+
+html[data-theme="dark"] a,
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .story-category {
+	color: #bfbfbf !important;
+}
+
+html[data-theme="dark"] a:hover {
+	color: #f2f2f2 !important;
+}
+
+/* Global hover theme standardization */
+:root {
+	--hover-bg: #e6e6e6;
+	--hover-border: #b3b3b3;
+	--hover-text: #1a1a1a;
+	--hover-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme="dark"] {
+	--hover-bg: #4d4d4d;
+	--hover-border: #666666;
+	--hover-text: #f2f2f2;
+	--hover-shadow: none;
+}
+
+:where(
+	a,
+	button,
+	.btn-primary,
+	.theme-btn,
+	.tag-btn,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.site-nav a,
+	.nav-user
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	color: var(--hover-text) !important;
+	border-color: var(--hover-border) !important;
+	box-shadow: var(--hover-shadow) !important;
+}
+
+:where(
+	button,
+	.btn-primary,
+	.theme-btn,
+	.tag-btn,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.site-nav a,
+	.nav-user
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	background: var(--hover-bg) !important;
+}
+
+/* Final no-blue cleanup for dark theme */
+html[data-theme="dark"] .nav-user,
+html[data-theme="dark"] .menu-toggle,
+html[data-theme="dark"] .file-upload-btn,
+html[data-theme="dark"] .gallery-delete-btn,
+html[data-theme="dark"] .user-gallery-tag,
+html[data-theme="dark"] .user-gallery-stat-pill,
+html[data-theme="dark"] .user-gallery-engagement-pill,
+html[data-theme="dark"] .user-gallery-stat-btn.is-active,
+html[data-theme="dark"] .notification-item.is-unread,
+html[data-theme="dark"] .profile-menu .is-active,
+html[data-theme="dark"] .theme-btn.is-active,
+html[data-theme="dark"] .tag-btn.active,
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .gallery-comment-form button,
+html[data-theme="dark"] .outfit-cta,
+html[data-theme="dark"] .gallery-search-btn,
+html[data-theme="dark"] .outfit-filter-btn {
+	background: #333333 !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .gallery-comment-form button:hover,
+html[data-theme="dark"] .outfit-cta:hover,
+html[data-theme="dark"] .gallery-search-btn:hover,
+html[data-theme="dark"] .outfit-filter-btn:hover,
+html[data-theme="dark"] .theme-btn.is-active:hover,
+html[data-theme="dark"] .tag-btn.active:hover {
+	background: #4d4d4d !important;
+	border-color: #666666 !important;
+}
+
+html[data-theme="dark"] .progress-ring {
+	background: conic-gradient(#666666 calc(var(--progress, 0) * 1%), #333333 0) !important;
+}
+
+html[data-theme="dark"] .avatar-circle {
+	background: #4d4d4d !important;
+	color: #f2f2f2 !important;
+}
+
+/* Trend form custom checkbox alignment and design. */
+.trend-form .form-row--checkbox,
+.taf-form .form-row--checkbox {
+	gap: 0.4rem;
+}
+
+.trend-form .checkbox-field,
+.taf-form .checkbox-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	font-weight: 600;
+	color: var(--text);
+	cursor: pointer;
+	user-select: none;
+}
+
+.trend-form .checkbox-field input[type="checkbox"],
+.taf-form .checkbox-field input[type="checkbox"] {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 1.08rem;
+	height: 1.08rem;
+	margin: 0;
+	border: 2px solid #666666;
+	border-radius: 4px;
+	background: #ffffff;
+	display: inline-grid;
+	place-content: center;
+	cursor: pointer;
+	transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+}
+
+.trend-form .checkbox-field input[type="checkbox"]::after,
+.taf-form .checkbox-field input[type="checkbox"]::after {
+	content: "";
+	width: 0.28rem;
+	height: 0.52rem;
+	border-right: 2px solid #000000;
+	border-bottom: 2px solid #000000;
+	transform: rotate(45deg) scale(0);
+	transition: transform .14s ease;
+}
+
+.trend-form .checkbox-field input[type="checkbox"]:checked,
+.taf-form .checkbox-field input[type="checkbox"]:checked {
+	background: #f2f2f2 !important;
+	border-color: #f2f2f2 !important;
+}
+
+.trend-form .checkbox-field input[type="checkbox"]:checked::after,
+.taf-form .checkbox-field input[type="checkbox"]:checked::after {
+	transform: rotate(45deg) scale(1);
+}
+
+.trend-form .checkbox-field input[type="checkbox"]:focus-visible,
+.taf-form .checkbox-field input[type="checkbox"]:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.35);
+}
+
+html[data-theme="dark"] .trend-form .checkbox-field,
+html[data-theme="dark"] .trend-form .checkbox-field__label,
+html[data-theme="dark"] .taf-form .checkbox-field,
+html[data-theme="dark"] .taf-form .checkbox-field__label {
+	color: #d9d9d9 !important;
+}
+
+html[data-theme="dark"] .trend-form .checkbox-field input[type="checkbox"],
+html[data-theme="dark"] .taf-form .checkbox-field input[type="checkbox"] {
+	background: #000000 !important;
+	border-color: #666666 !important;
+}
+
+html[data-theme="dark"] .trend-form .checkbox-field input[type="checkbox"]:checked,
+html[data-theme="dark"] .taf-form .checkbox-field input[type="checkbox"]:checked {
+	background: #f2f2f2 !important;
+	border-color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .trend-form .checkbox-field input[type="checkbox"]:checked::after,
+html[data-theme="dark"] .taf-form .checkbox-field input[type="checkbox"]:checked::after {
+	border-right-color: #000000 !important;
+	border-bottom-color: #000000 !important;
+}
+
+/* Final dark input color enforcement: remove blue tint from fields. */
+html[data-theme="dark"] input:not([type="checkbox"]),
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .form-row input:not([type="checkbox"]),
+html[data-theme="dark"] .form-row textarea,
+html[data-theme="dark"] .form-row select,
+html[data-theme="dark"] .gallery-search-controls input,
+html[data-theme="dark"] #gallery-category-search,
+html[data-theme="dark"] .gallery-comment-form input {
+	background: #000000 !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] input:not([type="checkbox"]):focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] .form-row input:not([type="checkbox"]):focus,
+html[data-theme="dark"] .form-row textarea:focus,
+html[data-theme="dark"] .form-row select:focus,
+html[data-theme="dark"] .gallery-search-controls input:focus,
+html[data-theme="dark"] #gallery-category-search:focus,
+html[data-theme="dark"] .gallery-comment-form input:focus {
+	background: #000000 !important;
+	border-color: #666666 !important;
+	box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.35) !important;
+}
+
+/* About page cards: fully transparent and no hover behavior. */
+.about-grid {
+	border-radius: 14px;
+	background: transparent !important;
+	transition: none !important;
+}
+
+.about-grid:hover {
+	background: transparent !important;
+}
+
+.about-grid .card,
+.about-grid .card:hover,
+.about-grid .card:focus-within {
+	background: transparent !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	transform: none !important;
+	border-color: var(--border) !important;
+	transition: none !important;
+}
+
+.about-grid .card-thumb,
+.about-grid .card:hover .card-thumb,
+.about-grid .card:focus-within .card-thumb {
+	transform: none !important;
+	filter: none !important;
+	transition: none !important;
+}
+
+/* Absolute final dark neutralization for content cards (including About page cards). */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .about-intro.card,
+html[data-theme="dark"] .about-extra .card,
+html[data-theme="dark"] .cards-grid.two-col .card {
+	background-color: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+	color: #d9d9d9 !important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .about-intro.card:hover,
+html[data-theme="dark"] .about-extra .card:hover,
+html[data-theme="dark"] .cards-grid.two-col .card:hover {
+	background-color: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .card h1,
+html[data-theme="dark"] .card h2,
+html[data-theme="dark"] .card h3,
+html[data-theme="dark"] .card h4,
+html[data-theme="dark"] .card p,
+html[data-theme="dark"] .card li {
+	color: #f2f2f2 !important;
+}
+
+/* Explicit trend overview enforcement to prevent legacy blue cascade. */
+html[data-theme="dark"] .trend-overview .card {
+	background: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .trend-overview .card:hover {
+	background: #1a1a1a !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .trend-overview .card .btn-primary,
+html[data-theme="dark"] .trend-overview .card .btn-primary:hover,
+html[data-theme="dark"] .trend-overview .card .btn-primary:focus-visible {
+	background: #4d4d4d !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .story-category,
+html[data-theme="dark"] .latest-collection-badge,
+html[data-theme="dark"] a {
+	color: #bfbfbf !important;
+}
+
+html[data-theme="dark"] a:hover {
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .scroll-progress__bar {
+	background: linear-gradient(90deg, #4d4d4d 0%, #666666 100%) !important;
+	box-shadow: none !important;
+}
+
+/* High-specificity no-blue enforcement.
+   Avoid :where() here because it lowers specificity and loses against older !important rules. */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .outfit-card,
+html[data-theme="dark"] .popular-item-card,
+html[data-theme="dark"] .popular-outfit-2026,
+html[data-theme="dark"] .latest-collection-showcase,
+html[data-theme="dark"] .trend-story-card,
+html[data-theme="dark"] .profile-sidebar,
+html[data-theme="dark"] .notification-item,
+html[data-theme="dark"] .alert,
+html[data-theme="dark"] .user-gallery-profile,
+html[data-theme="dark"] .user-gallery-stat-pill,
+html[data-theme="dark"] .user-gallery-engagement-pill,
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .hero-feature,
+html[data-theme="dark"] .page-banner,
+html[data-theme="dark"] .profile-form-wrap,
+html[data-theme="dark"] .profile-progress,
+html[data-theme="dark"] .outfit-pill,
+html[data-theme="dark"] .theme-btn,
+html[data-theme="dark"] .tag-btn,
+html[data-theme="dark"] .trend-banner-gallery,
+html[data-theme="dark"] .trend-banner-card {
+	background: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .gallery-item:hover,
+html[data-theme="dark"] .outfit-card:hover,
+html[data-theme="dark"] .popular-item-card:hover,
+html[data-theme="dark"] .trend-story-card:hover,
+html[data-theme="dark"] .theme-btn:hover,
+html[data-theme="dark"] .tag-btn:hover {
+	background: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] .site-nav a:hover,
+html[data-theme="dark"] .site-nav a.active,
+html[data-theme="dark"] .nav-user:hover,
+html[data-theme="dark"] .menu-toggle:hover,
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .gallery-comment-form button,
+html[data-theme="dark"] .gallery-comment-form button:hover,
+html[data-theme="dark"] .outfit-cta,
+html[data-theme="dark"] .outfit-cta:hover,
+html[data-theme="dark"] .gallery-search-btn,
+html[data-theme="dark"] .gallery-search-btn:hover,
+html[data-theme="dark"] .outfit-filter-btn,
+html[data-theme="dark"] .outfit-filter-btn:hover,
+html[data-theme="dark"] .theme-btn.is-active,
+html[data-theme="dark"] .theme-btn.is-active:hover,
+html[data-theme="dark"] .tag-btn.active,
+html[data-theme="dark"] .tag-btn.active:hover,
+html[data-theme="dark"] .profile-menu .is-active,
+html[data-theme="dark"] .user-gallery-stat-btn.is-active,
+html[data-theme="dark"] .notification-item.is-unread,
+html[data-theme="dark"] .file-upload-btn,
+html[data-theme="dark"] .file-upload-btn:hover,
+html[data-theme="dark"] .gallery-delete-btn,
+html[data-theme="dark"] .gallery-delete-btn:hover {
+	background: #4d4d4d !important;
+	background-image: none !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .outfit-search,
+html[data-theme="dark"] #gallery-category-search,
+html[data-theme="dark"] .gallery-search-controls input,
+html[data-theme="dark"] .gallery-comment-form input {
+	background: #000000 !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] .outfit-search:focus,
+html[data-theme="dark"] #gallery-category-search:focus,
+html[data-theme="dark"] .gallery-search-controls input:focus,
+html[data-theme="dark"] .gallery-comment-form input:focus {
+	border-color: #666666 !important;
+	box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.35) !important;
+}
+
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .story-category,
+html[data-theme="dark"] .latest-collection-badge,
+html[data-theme="dark"] a {
+	color: #bfbfbf !important;
+}
+
+html[data-theme="dark"] a:hover {
+	color: #f2f2f2 !important;
+}
+
+/* Ultimate dark theme no-blue enforcement */
+html[data-theme="dark"] :where(
+	.site-header,
+	.site-footer,
+	.page-banner,
+	.hero-feature,
+	.profile-form-wrap,
+	.profile-progress,
+	.profile-sidebar,
+	.notification-item,
+	.alert,
+	.user-gallery-profile,
+	.user-post-modal-dialog,
+	.user-post-modal-content,
+	.user-post-modal-close,
+	.trend-banner-gallery,
+	.trend-banner-card,
+	.outfit-pill,
+	.theme-btn,
+	.tag-btn,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.btn-primary,
+	.gallery-comment-form button,
+	.card,
+	.gallery-item,
+	.outfit-card,
+	.popular-item-card,
+	.latest-collection-showcase,
+	.trend-story-card,
+	[class*="card"]
+) {
+	background: #1a1a1a !important;
+	background-image: none !important;
+	border-color: #4d4d4d !important;
+	box-shadow: none !important;
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] :where(
+	.site-nav a,
+	.nav-user,
+	button,
+	.btn-primary,
+	.theme-btn,
+	.tag-btn,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	[class*="btn"]
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	background: #4d4d4d !important;
+	background-image: none !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] :where(
+	.card,
+	.gallery-item,
+	.outfit-card,
+	.popular-item-card,
+	.latest-collection-showcase,
+	.trend-story-card,
+	[class*="card"]
+):hover {
+	background: inherit !important;
+	border-color: inherit !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] :where(input:not([type="checkbox"]), textarea, select, .outfit-search, #gallery-category-search) {
+	background: #000000 !important;
+	border-color: #4d4d4d !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] :where(input:not([type="checkbox"]), textarea, select, .outfit-search, #gallery-category-search):focus {
+	border-color: #666666 !important;
+	box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.35) !important;
+}
+
+html[data-theme="dark"] :where(h1, h2, h3, h4, h5, h6, strong, b) {
+	color: #f2f2f2 !important;
+	text-shadow: none !important;
+}
+
+html[data-theme="dark"] :where(p, .meta, .clean-list, .site-nav a, .gallery-meta, .gallery-like-summary, .gallery-comments-title) {
+	color: #d9d9d9 !important;
+}
+
+html[data-theme="dark"] :where(a, .eyebrow, .story-category, .latest-collection-badge) {
+	color: #bfbfbf !important;
+}
+
+html[data-theme="dark"] a:hover {
+	color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .progress-ring {
+	background: conic-gradient(#666666 calc(var(--progress, 0) * 1%), #333333 0) !important;
+}
+
+html[data-theme="dark"] .avatar-circle {
+	background: #4d4d4d !important;
+	color: #f2f2f2 !important;
+}
+
+/* Permanent about grid transparency in dark mode. */
+html[data-theme="dark"] .about-grid,
+html[data-theme="dark"] .about-grid:hover,
+html[data-theme="dark"] .about-grid:focus-within {
+	background: transparent !important;
+	background-image: none !important;
+}
+
+html[data-theme="dark"] .about-grid .card,
+html[data-theme="dark"] .about-grid .card:hover,
+html[data-theme="dark"] .about-grid .card:focus-within {
+	background: transparent !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	transform: none !important;
+	border-color: #4d4d4d !important;
+	transition: none !important;
+}
+
+html[data-theme="dark"] .about-grid .card-thumb,
+html[data-theme="dark"] .about-grid .card:hover .card-thumb,
+html[data-theme="dark"] .about-grid .card:focus-within .card-thumb {
+	transform: none !important;
+	filter: none !important;
+	transition: none !important;
+}
+
+/* Final checkbox theme enforcement (after all dark input rules). */
+html[data-theme="dark"] .trend-form input[type="checkbox"] {
+	appearance: auto !important;
+	-webkit-appearance: checkbox !important;
+	accent-color: #f2f2f2 !important;
+	background: transparent !important;
+	border: none !important;
+	border-radius: 0 !important;
+	width: 1.08rem !important;
+	height: 1.08rem !important;
+	display: inline-block !important;
+	cursor: pointer !important;
+}
+
+html[data-theme="dark"] .trend-form input[type="checkbox"]:checked {
+	accent-color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .trend-form input[type="checkbox"]:checked::after {
+	content: none !important;
+}
+
+/* Buttons/utilities: use opacity hover + smooth transition. */
+:where(
+	button,
+	.btn-primary,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.outfit-cta,
+	.theme-btn,
+	.tag-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.custom-file-btn,
+	.site-nav a,
+	.nav-user
+) {
+	transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+
+:where(
+	button,
+	.btn-primary,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.outfit-cta,
+	.theme-btn,
+	.tag-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.custom-file-btn,
+	.site-nav a,
+	.nav-user
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	opacity: 0.86 !important;
+}
+
+/* Contact info alignment spacing. */
+.contact-card {
+	display: grid;
+	gap: 0.85rem;
+	align-content: start;
+}
+
+.contact-card p {
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* Keep profile logout action blue on hover in light mode. */
+.profile-menu-logout-btn.btn-primary,
+.profile-menu-logout-btn.btn-primary:hover {
+	background: #2f62d8 !important;
+	border-color: #2f62d8 !important;
+	color: #ffffff !important;
+}
+
+/* Keep all buttons blue when hovered/focused. */
+:where(
+	button,
+	.btn-primary,
+	.gallery-comment-form button,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.theme-btn,
+	.tag-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.custom-file-btn,
+	.profile-menu-logout-btn
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	background: #2f62d8 !important;
+	background-image: none !important;
+	border-color: #2f62d8 !important;
+	color: #ffffff !important;
+}
+
+/* In dark mode, buttons use the neutral gray style. */
+html[data-theme="dark"] :where(
+	button,
+	.btn-primary,
+	.gallery-comment-form button,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.theme-btn,
+	.tag-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.custom-file-btn,
+	.profile-menu-logout-btn
+):not([disabled]):not(.disabled),
+html[data-theme="dark"] :where(
+	button,
+	.btn-primary,
+	.gallery-comment-form button,
+	.outfit-cta,
+	.gallery-search-btn,
+	.outfit-filter-btn,
+	.theme-btn,
+	.tag-btn,
+	.file-upload-btn,
+	.gallery-delete-btn,
+	.gallery-comment-delete-btn,
+	.custom-file-btn,
+	.profile-menu-logout-btn
+):where(:hover, :focus-visible):not([disabled]):not(.disabled) {
+	background: #4d4d4d !important;
+	background-image: none !important;
+	border-color: #666666 !important;
+	color: #f2f2f2 !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] button.nav-user-dropdown__item,
+html[data-theme="dark"] button.nav-user-dropdown__item:focus,
+html[data-theme="dark"] button.nav-user-dropdown__item:active,
+html[data-theme="dark"] button.nav-user-dropdown__item--logout,
+html[data-theme="dark"] button.nav-user-dropdown__item--logout:focus {
+	background: transparent !important;
+	background-image: none !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+html[data-theme="dark"] button.nav-user-dropdown__item:hover,
+html[data-theme="dark"] button.nav-user-dropdown__item--logout:hover {
+	background: rgba(255,255,255,.1) !important;
+	background-image: none !important;
+	border: none !important;
+	box-shadow: none !important;
 }

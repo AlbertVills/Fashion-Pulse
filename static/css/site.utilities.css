@@ -1,0 +1,194 @@
+/* Utilities – CSS variables, layout utilities, and helper classes */
+
+:root {
+    --bg: #f3f6ff;
+    --surface: #ffffff;
+    --surface-soft: #eef3ff;
+    --text: #1a2747;
+    --muted: #5f7099;
+    --accent: #2f62d8;
+    --accent-strong: #224bb2;
+    --border: #d9e3f7;
+}
+
+html[data-theme="dark"] {
+    --bg: #0a0f1f;
+    --surface: #131d35;
+    --surface-soft: #1a2a48;
+    --text: #f0f4ff;
+    --muted: #a0aed5;
+    --accent: #7eb3ff;
+    --accent-strong: #9bc8ff;
+    --border: #293456;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 8% 2%, rgba(86, 134, 255, 0.2) 0%, rgba(86, 134, 255, 0) 32%),
+        radial-gradient(circle at 92% 10%, rgba(56, 182, 255, 0.13) 0%, rgba(56, 182, 255, 0) 35%),
+        linear-gradient(180deg, #f8faff 0%, var(--bg) 55%, #edf2ff 100%);
+    line-height: 1.7;
+    min-height: 100vh;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+html[data-theme="dark"] body {
+    background:
+        radial-gradient(circle at 8% 2%, rgba(111, 161, 255, 0.15) 0%, rgba(111, 161, 255, 0) 32%),
+        radial-gradient(circle at 92% 10%, rgba(90, 220, 255, 0.1) 0%, rgba(90, 220, 255, 0) 35%),
+        linear-gradient(180deg, #0f182d 0%, var(--bg) 55%, #0d1526 100%);
+}
+
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    color: var(--accent-strong);
+}
+
+.container {
+    width: min(1150px, 92%);
+    margin: 0 auto;
+}
+
+.page-content {
+    padding: 2.5rem 0 3rem;
+    background: transparent;
+}
+
+html[data-theme="dark"] .page-content {
+    background: transparent !important;
+}
+
+.hero {
+    margin-bottom: 1.25rem;
+}
+
+.hero h1 {
+    margin: 0.1rem 0 0.45rem;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.split-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.3rem 0;
+}
+
+.home-spotlight {
+    margin-top: 2rem;
+    gap: 1.4rem;
+}
+
+.home-spotlight .card {
+    padding: 1.2rem;
+}
+
+.masonry-grid {
+    column-count: 3;
+    column-gap: 1rem;
+}
+
+.site-footer {
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    padding: 3rem 0 1.5rem;
+    margin-top: 3rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer-logo {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--text);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.footer-tagline {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-nav-heading {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    margin: 0 0 0.4rem;
+}
+
+.footer-nav a {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.footer-nav a:hover {
+    color: var(--text);
+}
+
+.footer-bottom {
+    padding-top: 1.2rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+
+
+.is-hidden {
+    display: none !important;
+}
+
+img.is-fading {
+    opacity: .35;
+}
+
+.slider-draggable {
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.slider-draggable.is-grabbing {
+    cursor: grabbing;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+body.is-modal-open {
+    overflow: hidden;
+}

@@ -1,0 +1,124 @@
+/* Cards – Card containers, card layout, and variants */
+
+.cardless {
+    background: transparent;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.two-col {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.card {
+    background: linear-gradient(180deg, var(--surface) 0%, #f8fbff 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    box-shadow: 0 14px 30px rgba(26, 52, 110, 0.08);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.card:hover:not(.contact-form-card):not(.trend-story-card) {
+    transform: none;
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card-thumb {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.7rem;
+    transition: transform .25s ease, filter .25s ease;
+}
+
+.card:hover:not(.contact-form-card) .card-thumb {
+    transform: none;
+    filter: none;
+}
+
+.story-card img,
+.spotlight-card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.65rem;
+}
+
+.page-banner {
+    margin: 1rem 0 1.1rem;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+}
+
+.page-banner img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+    transition: opacity .35s ease;
+}
+
+.wide-media {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+}
+
+.hero-feature {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    min-height: 420px;
+}
+
+.hero-feature img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity .35s ease;
+}
+
+.hero-feature::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(95deg, rgba(10, 19, 44, 0.76) 15%, rgba(10, 19, 44, 0.18) 72%);
+    pointer-events: none;
+}
+
+.hero-feature__content {
+    position: relative;
+    z-index: 1;
+    max-width: 620px;
+    padding: 2rem;
+    color: #f5f8ff;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.hero-feature__content h1 {
+    margin: 0.4rem 0 0.7rem;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+html[data-theme="dark"] .hero-feature::after {
+    background: linear-gradient(95deg, rgba(5, 10, 24, 0.82) 15%, rgba(5, 10, 24, 0.32) 72%);
+}

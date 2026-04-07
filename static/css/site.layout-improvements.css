@@ -1,0 +1,152 @@
+/* Layout Improvements & Background Enhancement – Remove white backgrounds and improve spacing */
+
+/* ── Remove White Backgrounds & Use Theme Colors ────────────────────── */
+.latest-collection-showcase {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%) !important;
+    padding: 1.5rem !important;
+}
+
+html[data-theme="dark"] .latest-collection-showcase {
+    background: linear-gradient(135deg, rgba(26, 42, 72, 0.3) 0%, rgba(19, 29, 53, 0.5) 100%) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.tag-btn.active {
+    background: var(--surface-soft) !important;
+}
+
+/* ── Improved Page Layout ──────────────────────────────────────────── */
+.page-content {
+    background: transparent !important;
+    padding: 2.5rem 0 3rem !important;
+}
+
+/* ── Better Card Spacing & Layout ──────────────────────────────────── */
+.cards-grid {
+    gap: 1.25rem !important;
+}
+
+.card {
+    padding: 1.25rem !important;
+}
+
+/* ── Enhanced Container Layouts ────────────────────────────────────── */
+.split-section {
+    gap: 1.5rem !important;
+}
+
+.home-spotlight {
+    gap: 1.5rem !important;
+}
+
+/* ── Trend Editorial Better Background ─────────────────────────────── */
+html[data-theme="dark"] .trend-editorial {
+    background: linear-gradient(135deg, rgba(26, 42, 72, 0.2) 0%, rgba(19, 29, 53, 0.4) 100%) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ── Remove White on Light Backgrounds ──────────────────────────────── */
+html:not([data-theme="dark"]) .latest-collection-showcase {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+}
+
+html:not([data-theme="dark"]) .card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+}
+
+/* ── Outfit Grid & Collection Improvements ──────────────────────────── */
+.outfit-grid {
+    gap: 1rem !important;
+}
+
+.latest-collection-grid {
+    gap: 1.1rem !important;
+}
+
+.outfit-card {
+    transition: all 0.3s ease !important;
+}
+
+html[data-theme="dark"] .outfit-card:hover {
+    background: linear-gradient(135deg, rgba(26, 42, 72, 0.5) 0%, rgba(19, 29, 53, 0.7) 100%) !important;
+    box-shadow: 0 12px 40px rgba(126, 179, 255, 0.15) !important;
+}
+
+/* ── Page Banner Improvements ──────────────────────────────────────── */
+.page-banner {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 24px rgba(26, 52, 110, 0.12) !important;
+}
+
+html[data-theme="dark"] .page-banner {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Section Head Spacing Improvements ──────────────────────────────── */
+.section-head {
+    margin: 2rem 0 1rem !important;
+}
+
+.section-head--with-action {
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* ── Hero Section Better Layout ────────────────────────────────────── */
+.hero {
+    margin-bottom: 1.5rem !important;
+}
+
+html[data-theme="dark"] .hero-feature {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Masonry Grid Spacing ──────────────────────────────────────────── */
+.masonry-grid {
+    column-gap: 1.25rem !important;
+}
+
+/* ── Form Elements Better Integration ───────────────────────────────── */
+.contact-form {
+    gap: 1.1rem !important;
+}
+
+.form-row {
+    gap: 0.45rem !important;
+}
+
+html[data-theme="dark"] .form-row input,
+html[data-theme="dark"] .form-row textarea,
+html[data-theme="dark"] .form-row select {
+    background: rgba(10, 15, 31, 0.5) !important;
+    border: 1px solid rgba(41, 52, 86, 0.7) !important;
+}
+
+/* ── Article Layout Improvements ───────────────────────────────────── */
+.article-layout {
+    padding: 0 1rem !important;
+}
+
+html[data-theme="dark"] .article-quote {
+    background: rgba(126, 179, 255, 0.08) !important;
+    border-left: 3px solid rgba(126, 179, 255, 0.3) !important;
+}
+
+/* ── Gallery Layout Enhancements ───────────────────────────────────── */
+.gallery-search-form {
+    gap: 0.5rem !important;
+}
+
+html[data-theme="dark"] .gallery-search-form {
+    background: rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+}
+
+/* ── Remove Harsh Whites on Light Mode ──────────────────────────────── */
+html:not([data-theme="dark"]) body {
+    background: linear-gradient(180deg, #f8faff 0%, #f3f6ff 55%, #edf2ff 100%) !important;
+}

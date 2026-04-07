@@ -3,58 +3,71 @@
 {% block title %}{{ owner.username }}'s Gallery | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="user-gallery-page">
-    <div class="user-gallery-profile">
-        <div class="user-gallery-avatar">
+<section class="ig-profile">
+
+    <!-- ── Header: avatar + info side-by-side ── -->
+    <header class="ig-header">
+        <div class="ig-avatar">
             {% if owner_profile and owner_profile.profile_image %}
-            <img class="user-gallery-avatar-img" src="{{ owner_profile.profile_image.url }}" alt="{{ owner.username }}">
+            <img class="ig-avatar__img" src="{{ owner_profile.profile_image.url }}" alt="{{ owner.username }}">
             {% else %}
-            <div class="avatar-circle user-gallery-avatar-circle">{{ owner.username|first|upper }}</div>
+            <div class="ig-avatar__fallback">{{ owner.username|first|upper }}</div>
             {% endif %}
         </div>
-        <div class="user-gallery-info">
-            <h1 class="user-gallery-username">{{ owner.get_full_name|default:owner.username }}</h1>
-            <p class="user-gallery-handle meta">@{{ owner.username }}</p>
+
+        <div class="ig-header__info">
+            <div class="ig-header__top">
+                <h1 class="ig-username">{{ owner.get_full_name|default:owner.username }}</h1>
+            </div>
+            <p class="ig-handle">@{{ owner.username }}</p>
+
+            <!-- Stats row -->
+            <ul class="ig-stats">
+                <li class="ig-stats__item"><strong>{{ posts.count }}</strong> post{{ posts.count|pluralize }}</li>
+                <li class="ig-stats__item"><strong>{{ total_photo_likes }}</strong> like{{ total_photo_likes|pluralize }}</li>
+            </ul>
+
             {% if owner_profile %}
-            <div class="user-gallery-meta-row">
+            <div class="ig-bio">
+                {% if owner_profile.fashion_style %}
+                <span class="ig-bio__style">{{ owner_profile.fashion_style }}</span>
+                {% endif %}
                 {% if owner_profile.location %}
-                <span class="user-gallery-tag">
-                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:2px;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                <span class="ig-bio__location">
+                    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
                     {{ owner_profile.location }}
                 </span>
                 {% endif %}
-                {% if owner_profile.fashion_style %}
-                <span class="user-gallery-tag">{{ owner_profile.fashion_style }}</span>
-                {% endif %}
                 {% if owner_profile.age %}
-                <span class="user-gallery-tag">{{ owner_profile.age }} yrs</span>
+                <span class="ig-bio__age">{{ owner_profile.age }} yrs</span>
+                {% endif %}
+                {% if owner_profile.about_self %}
+                <p class="ig-bio__text">{{ owner_profile.about_self }}</p>
                 {% endif %}
             </div>
-            {% if owner_profile.about_self %}
-            <p class="user-gallery-bio">{{ owner_profile.about_self }}</p>
-            {% endif %}
             {% endif %}
         </div>
-    </div>
+    </header>
 
-    <div class="user-gallery-stats">
-        <div class="user-gallery-stat-pill" aria-label="Total posts">
-            <strong>{{ posts.count }}</strong>
-            <span>post{{ posts.count|pluralize }}</span>
-        </div>
-        <button
-            type="button"
-            class="user-gallery-stat-pill user-gallery-stat-btn"
-            id="toggleTrendBtn"
-            onclick="toggleTrendArticles()"
-            aria-controls="trendArticlesSection"
-            aria-expanded="false"
-        >
-            <strong>{{ trend_articles.count }}</strong>
-            <span>trend report{{ trend_articles.count|pluralize }}</span>
+    <!-- ── Mobile-only stats (visible < 600px) ── -->
+    <ul class="ig-stats ig-stats--mobile">
+        <li class="ig-stats__item"><strong>{{ posts.count }}</strong><span>posts</span></li>
+        <li class="ig-stats__item"><strong>{{ total_photo_likes }}</strong><span>likes</span></li>
+    </ul>
+
+    <!-- ── Tab bar ── -->
+    <nav class="ig-tabs">
+        <button type="button" class="ig-tabs__btn is-active" id="showPostsBtn" onclick="showGalleryPosts()" aria-controls="profileGalleryGrid trendArticlesSection" aria-pressed="true">
+            <svg viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Posts
         </button>
-    </div>
+        <button type="button" class="ig-tabs__btn" id="toggleTrendBtn" onclick="showTrendArticles()" aria-controls="profileGalleryGrid trendArticlesSection" aria-pressed="false">
+            <svg viewBox="0 0 24 24" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="17 6 23 6 23 12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            Trend Reports
+        </button>
+    </nav>
 
+    <!-- ── Trend articles (hidden by default) ── -->
     <div class="user-trend-articles cards-grid" id="trendArticlesSection" style="display:none;" aria-label="{{ owner.username }} trend reports">
         {% for article in trend_articles %}
         <article class="card trend-item user-trend-card">
@@ -83,7 +96,6 @@
             <img src="{{ post.image.url }}" alt="{{ post.title }}">
             <span class="user-gallery-tile-overlay">
                 <strong>{{ post.like_count }}</strong> hearts
-                <strong>{{ post.comment_count }}</strong> comments
             </span>
         </button>
 
@@ -101,7 +113,7 @@
                     <small class="gallery-meta">{{ post.get_category_display }}</small>
 
                     {% if user.is_authenticated and user.id == post.submitted_by_id %}
-                    <form method="post" action="{% url 'gallery-delete' post.id %}" class="gallery-delete-form" onsubmit="return confirm('Delete this photo?');">
+                    <form method="post" action="{% url 'gallery-delete' post.id %}" class="gallery-delete-form" data-confirm="Delete this photo?">
                         {% csrf_token %}
                         <button type="submit" class="gallery-delete-btn">Delete Post</button>
                     </form>
@@ -124,11 +136,17 @@
                                     {% endif %}
                                 </button>
                             </form>
-                            <a class="gallery-icon-btn" href="#comment-input-{{ post.id }}" aria-label="Jump to comments">
+                            <button
+                                type="button"
+                                class="gallery-icon-btn gallery-comments-toggle"
+                                aria-label="Toggle comments"
+                                aria-expanded="false"
+                                aria-controls="gallery-comments-{{ post.id }}"
+                            >
                                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" style="display:block;">
                                     <path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-4 4V6a2 2 0 012-2zm0 2v11.17L7.17 14H20V6H4z"></path>
                                 </svg>
-                            </a>
+                            </button>
                             {% else %}
                             <a href="{% url 'login' %}">Login to heart and comment</a>
                             {% endif %}
@@ -136,7 +154,7 @@
                         <p class="gallery-like-summary">{{ post.like_count }} hearts</p>
                     </div>
 
-                    <div class="gallery-comments">
+                    <div class="gallery-comments" id="gallery-comments-{{ post.id }}">
                         <p class="gallery-comments-title">Comments ({{ post.comment_count }})</p>
                         {% if user.is_authenticated %}
                         <form method="post" action="{% url 'gallery-comment' post.id %}" class="gallery-comment-form">
@@ -155,7 +173,7 @@
                                     <strong>{{ comment.user.username }}</strong>
                                     {% if user.is_authenticated %}
                                     {% if user.id == comment.user_id or user.id == post.submitted_by_id %}
-                                    <form method="post" action="{% url 'gallery-comment-delete' comment.id %}" class="gallery-comment-delete-form" onsubmit="return confirm('Delete this comment?');">
+                                    <form method="post" action="{% url 'gallery-comment-delete' comment.id %}" class="gallery-comment-delete-form" data-confirm="Delete this comment?">
                                         {% csrf_token %}
                                         <button type="submit" class="gallery-comment-delete-btn">Delete</button>
                                     </form>
@@ -172,29 +190,38 @@
                 </div>
             </div>
         </div>
-        {% empty %}
-        <article class="card">
-            <h3>No posts yet</h3>
-            <p>{{ owner.username }} hasn't posted any photos yet.</p>
-        </article>
-        {% endfor %}
+    {% endfor %}
     </div>
 </section>
 
 <script>
-function toggleTrendArticles() {
+function setProfileGalleryView(view) {
     const section = document.getElementById('trendArticlesSection');
-    const btn = document.getElementById('toggleTrendBtn');
     const galleryGrid = document.getElementById('profileGalleryGrid');
-    const isHidden = section.style.display === 'none';
+    const postsBtn = document.getElementById('showPostsBtn');
+    const trendBtn = document.getElementById('toggleTrendBtn');
 
-    section.style.display = isHidden ? 'grid' : 'none';
-    if (galleryGrid) {
-        galleryGrid.style.display = isHidden ? 'none' : 'grid';
+    if (!section || !galleryGrid || !postsBtn || !trendBtn) {
+        return;
     }
 
-    btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-    btn.classList.toggle('is-active', isHidden);
+    const showingTrends = view === 'trends';
+
+    section.style.display = showingTrends ? 'grid' : 'none';
+    galleryGrid.style.display = showingTrends ? 'none' : 'grid';
+
+    postsBtn.setAttribute('aria-pressed', showingTrends ? 'false' : 'true');
+    trendBtn.setAttribute('aria-pressed', showingTrends ? 'true' : 'false');
+    postsBtn.classList.toggle('is-active', !showingTrends);
+    trendBtn.classList.toggle('is-active', showingTrends);
+}
+
+function showGalleryPosts() {
+    setProfileGalleryView('posts');
+}
+
+function showTrendArticles() {
+    setProfileGalleryView('trends');
 }
 
 function openPostModal(modalId) {
@@ -240,5 +267,11 @@ document.addEventListener('keydown', function (event) {
         closePostModal(openModal);
     });
 });
+
+// Load profile color from the profile owner's DB record
+var ownerColor = "{{ owner_profile.profile_color|default:'#6d28d9' }}";
+if (ownerColor) {
+    document.querySelector('.ig-profile').style.setProperty('--prf-color', ownerColor);
+}
 </script>
 {% endblock %}

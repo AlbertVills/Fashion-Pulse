@@ -35,13 +35,43 @@ img.is-fading {
 }
 
 .profile-menu a,
-.profile-menu span {
+.profile-menu span,
+.profile-menu-logout-btn {
     padding: 0.5rem 0.65rem;
     border-radius: 8px;
     color: var(--muted);
     text-decoration: none;
     border: 1px solid transparent;
     font-size: 0.92rem;
+}
+
+.profile-menu-logout-form {
+    margin: 0;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--border);
+}
+
+.profile-menu-logout-btn {
+    display: block;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    margin-top: 0.35rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    transition: transform 0.18s ease, box-shadow 0.22s ease;
+}
+
+.profile-menu-logout-btn:hover {
+    transform: translateY(-1px);
+}
+
+.profile-menu-logout-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 132, 244, 0.2);
 }
 
 .profile-menu .is-active {
@@ -303,19 +333,678 @@ img.is-fading {
 }
 
 html[data-theme="dark"] .theme-btn {
-    background: #1a2b4d;
+    background: #333333;
 }
 
-@media (max-width: 1020px) {
-    .profile-dashboard {
-        grid-template-columns: 1fr;
-    }
 
-    .profile-sidebar {
-        position: static;
-    }
 
-    .profile-content-grid {
-        grid-template-columns: 1fr;
-    }
+/* ---------------------------------------------------------------
+   PROFILE PAGE � FULL REDESIGN (prf-*)
+--------------------------------------------------------------- */
+
+/* -- Outer page grid ---------------------------------------- */
+.prf-page {
+    display: grid;
+    grid-template-columns: 276px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+/* -- Sidebar shell ------------------------------------------ */
+.prf-sidebar {
+    border-radius: 18px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+    position: sticky;
+    top: 92px;
+    height: fit-content;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+}
+
+/* -- Cover banner ------------------------------------------- */
+.prf-cover {
+    height: 120px;
+    background: linear-gradient(135deg, var(--prf-color, #6d28d9), color-mix(in srgb, var(--prf-color, #6d28d9) 60%, #1d4ed8));
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s ease;
+}
+
+.prf-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 40%, rgba(255,255,255,.15) 0%, transparent 60%);
+}
+
+/* Color picker inside cover */
+.prf-cover__picker-label {
+    position: absolute;
+    bottom: 0.6rem;
+    right: 0.6rem;
+    z-index: 3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.18s, background 0.18s;
+}
+
+.prf-cover__picker-label:hover {
+    transform: scale(1.1);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.prf-cover__picker-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.prf-cover__picker-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -- Avatar ------------------------------------------------- */
+.prf-avatar-ring-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: -38px;
+    position: relative;
+    z-index: 2;
+}
+
+.prf-avatar-ring {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, var(--prf-color, #6d28d9), color-mix(in srgb, var(--prf-color, #6d28d9) 60%, #1d4ed8));
+    box-shadow: 0 3px 14px rgba(0,0,0,.2);
+    transition: background 0.4s ease;
+}
+
+.prf-avatar-img,
+.prf-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--surface);
+    object-fit: cover;
+    display: block;
+}
+
+.prf-avatar-fallback {
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+/* -- Identity block ----------------------------------------- */
+.prf-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.8rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.prf-identity__name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.prf-identity__handle {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.prf-tag {
+    display: inline-block;
+    background: rgba(47,98,216,.1);
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    margin-top: 0.2rem;
+    border: 1px solid rgba(47,98,216,.18);
+}
+
+/* -- Stats grid --------------------------------------------- */
+.prf-stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+}
+
+.prf-stats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.7rem 0.3rem;
+    border-right: 1px solid var(--border);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+}
+
+.prf-stats__item:last-child { border-right: none; }
+
+.prf-stats__item strong {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    font-family: var(--heading-font, serif);
+    line-height: 1;
+    letter-spacing: -0.3px;
+}
+
+/* -- Progress bar ------------------------------------------- */
+.prf-progress {
+    height: 3px;
+    background: var(--border);
+}
+
+.prf-progress__bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1d4ed8, #6d28d9);
+    transition: width .5s ease;
+}
+
+/* -- Nav ---------------------------------------------------- */
+.prf-nav {
+    padding: 0.55rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.prf-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.58rem 0.75rem;
+    border-radius: 11px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: background .14s, color .14s;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
+    line-height: 1;
+}
+
+.prf-nav__link:hover {
+    background: rgba(47,98,216,.07);
+    color: var(--text);
+}
+
+.prf-nav__link.is-active {
+    background: rgba(47,98,216,.1);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.prf-nav__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.65;
+    stroke: currentColor;
+}
+
+.prf-nav__link:hover .prf-nav__icon,
+.prf-nav__link.is-active .prf-nav__icon {
+    opacity: 1;
+}
+
+.prf-nav__badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #fff !important;
+    font-size: 0.67rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    line-height: 1.6;
+}
+
+.prf-nav__sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0.3rem 0.4rem;
+}
+
+.prf-nav__link--logout {
+    color: #dc2626;
+}
+
+.prf-nav__link--logout:hover {
+    background: rgba(220,38,38,.07);
+    color: #dc2626;
+}
+
+/* -- Main panels -------------------------------------------- */
+.prf-main {
+    min-width: 0;
+}
+
+/* -- Panel header ------------------------------------------- */
+.prf-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.prf-overline {
+    font-size: 0.73rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--accent);
+    margin: 0 0 0.2rem;
+}
+
+.prf-panel-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+/* -- Completion ring (small, in header) --------------------- */
+.prf-cring {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--p, 0) * 1%), var(--border) 0);
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.prf-cring::before {
+    content: "";
+    position: absolute;
+    width: 39px;
+    height: 39px;
+    border-radius: 50%;
+    background: var(--bg);
+}
+
+.prf-cring__val {
+    position: relative;
+    z-index: 1;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Large ring (completion card) */
+.prf-cring--lg {
+    width: 120px;
+    height: 120px;
+    margin: 0.6rem auto 1.1rem;
+}
+
+.prf-cring--lg::before {
+    width: 85px;
+    height: 85px;
+}
+
+.prf-cring--lg .prf-cring__val {
+    font-size: 1rem;
+}
+
+/* -- Edit grid ---------------------------------------------- */
+.prf-edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 230px;
+    gap: 1rem;
+    align-items: start;
+}
+
+/* -- Cards -------------------------------------------------- */
+.prf-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+
+.prf-card-section {
+    padding: 1.3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.prf-card-section:last-child { border-bottom: none; }
+
+.prf-card-section--accent {
+    background: linear-gradient(135deg, rgba(29,78,216,.05) 0%, rgba(109,40,217,.03) 100%);
+}
+
+.prf-card-footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(0,0,0,.015);
+    border-top: 1px solid var(--border);
+}
+
+/* -- Section label ------------------------------------------ */
+.prf-sect-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin: 0 0 1.1rem;
+}
+
+.prf-sect-label svg {
+    width: 13px;
+    height: 13px;
+    color: var(--accent);
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+
+/* -- Avatar row inside form --------------------------------- */
+.prf-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.prf-form-avatar {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.prf-form-avatar__img,
+.prf-form-avatar__fallback {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+}
+
+.prf-form-avatar__fallback {
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.prf-form-avatar__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    font-size: 0.87rem;
+}
+
+.prf-form-avatar__meta strong { font-size: 1rem; font-weight: 700; }
+
+.prf-muted { color: var(--muted); }
+
+.prf-upload {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.5rem;
+    align-items: center;
+}
+
+/* -- Field grids -------------------------------------------- */
+.prf-fgrid {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.prf-fgrid--1 { grid-template-columns: 1fr; }
+.prf-fgrid--2 { grid-template-columns: repeat(2, 1fr); }
+.prf-fgrid--3 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+/* -- Completion sidebar card -------------------------------- */
+.prf-completion-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.prf-checklist {
+    list-style: none;
+    padding: 1rem 1.3rem 1.3rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.prf-checklist__item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.3;
+}
+
+.prf-checklist__item.is-done { color: var(--text); }
+
+.prf-checklist__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.15);
+    flex-shrink: 0;
+    border: 1.5px solid rgba(0,0,0,.08);
+}
+
+.prf-checklist__item.is-done .prf-checklist__dot {
+    background: #22c55e;
+    border-color: #16a34a;
+}
+
+/* -- Status pills ------------------------------------------- */
+.prf-pill {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    border-radius: 999px;
+    padding: 0.18rem 0.65rem;
+    margin-bottom: 0.65rem;
+}
+
+.prf-pill--green { background: rgba(34,197,94,.12);  color: #15803d; }
+.prf-pill--amber { background: rgba(245,158,11,.12); color: #92400e; }
+.prf-pill--red   { background: rgba(239,68,68,.12);  color: #b91c1c; }
+
+/* -- Article card ------------------------------------------- */
+.prf-article-card {
+    position: relative;
+}
+
+.prf-article-card__title {
+    margin: 0 0 0.4rem;
+    font-size: 0.97rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.prf-article-card__excerpt {
+    font-size: 0.87rem;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* -- Empty state -------------------------------------------- */
+.prf-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 2.8rem 1rem;
+    text-align: center;
+    color: var(--muted);
+}
+
+.prf-empty h3 { margin: 0; font-size: 1rem; color: var(--text); }
+.prf-empty p  { margin: 0; font-size: 0.9rem; }
+
+/* -- Theme selector ----------------------------------------- */
+.prf-theme-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+}
+
+.prf-theme-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 0.85rem;
+    background: var(--surface);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.88rem;
+    color: var(--text);
+    transition: border-color .18s, transform .15s;
+    width: 130px;
+}
+
+.prf-theme-opt:hover { border-color: rgba(47,98,216,.5); transform: translateY(-2px); }
+.prf-theme-opt.is-active { border-color: var(--accent); }
+
+.prf-theme-opt__swatch {
+    width: 90px;
+    height: 54px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+}
+
+.prf-theme-opt__swatch--light { background: linear-gradient(140deg, #eef2ff 40%, #fff 100%); }
+.prf-theme-opt__swatch--dark  { background: linear-gradient(140deg, #0f172a 40%, #1e1b4b 100%); }
+
+/* -- Notifications ------------------------------------------ */
+.prf-notif-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.prf-notif {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    transition: border-color .15s;
+}
+
+.prf-notif.is-unread {
+    border-color: rgba(47,98,216,.4);
+    background: rgba(47,98,216,.04);
+}
+
+.prf-notif__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.prf-notif.is-unread .prf-notif__dot { background: var(--accent); }
+
+.prf-notif__body { flex: 1; min-width: 0; }
+.prf-notif__msg  { margin: 0 0 0.2rem; font-size: 0.9rem; line-height: 1.4; }
+
+.prf-notif__open {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.prf-notif__open:hover .prf-notif__msg {
+    text-decoration: underline;
+}
+
+.prf-notif__delete {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+}
+
+.prf-notif__delete:hover {
+    border-color: rgba(220, 53, 69, 0.5);
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.06);
 }

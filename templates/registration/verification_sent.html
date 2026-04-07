@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Your Email | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="card auth-card">
+        <h1>Check Your Email</h1>
+        <p class="meta">We've sent a 6-digit verification code to <strong>{{ email }}</strong>. Enter it below to activate your account.</p>
+        {% if verify_error %}
+        <p class="form-error">{{ verify_error }}</p>
+        {% endif %}
+        <form method="post" class="auth-form" action="{% url 'verify-email' %}">
+            {% csrf_token %}
+            <p>
+                <label for="verify-email">Email</label>
+                <input id="verify-email" name="email" type="email" value="{{ email }}" required>
+            </p>
+            <p>
+                <label for="verify-code">Verification code</label>
+                <input id="verify-code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Enter 6-digit code" required>
+            </p>
+            <button type="submit" class="btn-primary">Verify Account</button>
+        </form>
+        <p class="meta">Didn't receive it? Check your spam folder or sign up again.</p>
+        <p><a href="{% url 'login' %}">Back to Login</a></p>
+    </div>
+</section>
+{% endblock %}

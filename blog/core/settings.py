@@ -10,10 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load simple KEY=VALUE pairs from .env next to manage.py.
+ENV_FILE = BASE_DIR.parent / '.env'
+if ENV_FILE.exists():
+    for raw_line in ENV_FILE.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +36,10 @@ SECRET_KEY = 'django-insecure-6$gpfohnea7^%cqj96s=qgy-i)#!j832e#vdzupreh&o7+$k$q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '').strip()
+ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(',') if host.strip()]
+if not ALLOWED_HOSTS and DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -116,3 +130,17 @@ MEDIA_ROOT = BASE_DIR.parent / 'media'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# Hugging Face Inference API
+# Get your free token at https://huggingface.co/settings/tokens
+HUGGINGFACE_API_TOKEN = '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'
+
+# ── Email (Gmail SMTP) ───────────────────────────────────────────────────────
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '').strip()
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '').strip()
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'no-reply@fashionpulse.local'
+APP_BASE_URL = os.getenv('APP_BASE_URL', '').strip().rstrip('/')

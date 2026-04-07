@@ -11,6 +11,7 @@
             <form method="post" class="auth-form">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <p class="forgot-link"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
                 <button type="submit" class="btn-primary">Login</button>
             </form>
             <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>

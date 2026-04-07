@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Style Lens — FashionPulse{% endblock %}
+
+{% block content %}
+<section class="sl-hero">
+    <h1 class="sl-hero__title">Style Lens</h1>
+    <p class="sl-hero__subtitle">Upload any outfit photo and our AI will identify every fashion item in it.</p>
+</section>
+
+<div class="sl-workspace">
+    <!-- Upload area -->
+    <div class="sl-upload" id="slUploadArea">
+        <input type="file" id="slFileInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+        <div class="sl-upload__placeholder" id="slPlaceholder">
+            <span class="sl-upload__icon">&#128247;</span>
+            <p class="sl-upload__text">Drag & drop an outfit photo here</p>
+            <p class="sl-upload__hint">or click to browse &middot; JPEG, PNG, WEBP &middot; Max 10 MB</p>
+        </div>
+        <img class="sl-upload__preview" id="slPreview" alt="Uploaded outfit" hidden>
+    </div>
+
+    <!-- Action bar -->
+    <div class="sl-actions">
+        <button class="sl-btn sl-btn--primary" id="slAnalyzeBtn" disabled>
+            <span class="sl-btn__label">Analyze Outfit</span>
+            <span class="sl-btn__spinner" hidden></span>
+        </button>
+        <button class="sl-btn sl-btn--secondary" id="slClearBtn" hidden>Clear</button>
+    </div>
+
+    <!-- Results -->
+    <div class="sl-results" id="slResults" hidden>
+        <h2 class="sl-results__heading">Detected Fashion Items</h2>
+        <ul class="sl-results__list" id="slResultsList"></ul>
+    </div>
+
+    <!-- Error -->
+    <div class="sl-error" id="slError" hidden></div>
+
+    <!-- Loading message -->
+    <div class="sl-loading" id="slLoading" hidden>
+        <span class="sl-loading__spinner"></span>
+        <p class="sl-loading__text">Analyzing your outfit&hellip; This may take a moment if the model is warming up.</p>
+    </div>
+</div>
+
+<script>
+(function () {
+    const uploadArea  = document.getElementById('slUploadArea');
+    const fileInput   = document.getElementById('slFileInput');
+    const placeholder = document.getElementById('slPlaceholder');
+    const preview     = document.getElementById('slPreview');
+    const analyzeBtn  = document.getElementById('slAnalyzeBtn');
+    const clearBtn    = document.getElementById('slClearBtn');
+    const results     = document.getElementById('slResults');
+    const resultsList = document.getElementById('slResultsList');
+    const errorEl     = document.getElementById('slError');
+    const loadingEl   = document.getElementById('slLoading');
+
+    let selectedFile = null;
+
+    /* -- Upload handlers -- */
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('sl-upload--dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('sl-upload--dragover'));
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('sl-upload--dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) handleFile(fileInput.files[0]);
+    });
+
+    function handleFile(file) {
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowed.includes(file.type)) { showError('Unsupported format. Use JPEG, PNG, WEBP, or GIF.'); return; }
+        if (file.size > 10 * 1024 * 1024) { showError('File is too large. Max 10 MB.'); return; }
+
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.hidden = false;
+            placeholder.style.display = 'none';
+            analyzeBtn.disabled = false;
+            clearBtn.hidden = false;
+            hideError();
+            hideResults();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /* -- Clear -- */
+    clearBtn.addEventListener('click', () => {
+        selectedFile = null;
+        fileInput.value = '';
+        preview.hidden = true;
+        preview.src = '';
+        placeholder.style.display = '';
+        analyzeBtn.disabled = true;
+        clearBtn.hidden = true;
+        hideResults();
+        hideError();
+    });
+
+    /* -- Analyze -- */
+    analyzeBtn.addEventListener('click', () => {
+        if (!selectedFile) return;
+
+        analyzeBtn.disabled = true;
+        analyzeBtn.querySelector('.sl-btn__label').textContent = 'Analyzing…';
+        analyzeBtn.querySelector('.sl-btn__spinner').hidden = false;
+        hideResults();
+        hideError();
+        loadingEl.hidden = false;
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+
+        const csrfToken = getCookie('csrftoken');
+
+        fetch('{% url "style-lens-analyze" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData,
+        })
+        .then(r => r.json().then(data => ({ status: r.status, data })))
+        .then(({ status, data}) => {
+            loadingEl.hidden = true;
+            analyzeBtn.querySelector('.sl-btn__label').textContent = 'Analyze Outfit';
+            analyzeBtn.querySelector('.sl-btn__spinner').hidden = true;
+            analyzeBtn.disabled = false;
+
+            if (!data.ok) {
+                showError(data.error || 'Something went wrong.');
+                return;
+            }
+
+            if (!data.items || data.items.length === 0) {
+                showError('No fashion items detected. Try a clearer outfit photo.');
+                return;
+            }
+
+            showResults(data.items);
+        })
+        .catch(() => {
+            loadingEl.hidden = true;
+            analyzeBtn.querySelector('.sl-btn__label').textContent = 'Analyze Outfit';
+            analyzeBtn.querySelector('.sl-btn__spinner').hidden = true;
+            analyzeBtn.disabled = false;
+            showError('Network error. Please check your connection and try again.');
+        });
+    });
+
+    function showResults(items) {
+        resultsList.innerHTML = '';
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'sl-results__item';
+            li.innerHTML =
+                '<span class="sl-results__label">' + escapeHtml(item.label) + '</span>' +
+                '<span class="sl-results__confidence">' + item.confidence + '%</span>' +
+                '<div class="sl-results__bar"><div class="sl-results__bar-fill" style="width:' + item.confidence + '%"></div></div>';
+            resultsList.appendChild(li);
+        });
+        results.hidden = false;
+    }
+
+    function hideResults() { results.hidden = true; resultsList.innerHTML = ''; }
+    function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
+    function hideError() { errorEl.hidden = true; errorEl.textContent = ''; }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    function getCookie(name) {
+        let val = null;
+        document.cookie.split(';').forEach(c => {
+            c = c.trim();
+            if (c.startsWith(name + '=')) val = decodeURIComponent(c.substring(name.length + 1));
+        });
+        return val;
+    }
+
+    /* -- Auto-load image from Collection page -- */
+    (function autoLoadFromCollection() {
+        const url = sessionStorage.getItem('styleLensImageUrl');
+        if (!url) return;
+        sessionStorage.removeItem('styleLensImageUrl');
+
+        // Show preview immediately
+        preview.src = url;
+        preview.hidden = false;
+        placeholder.style.display = 'none';
+        clearBtn.hidden = false;
+        hideError();
+
+        // Fetch the image as a blob so we can send it to the analyze endpoint
+        fetch(url)
+            .then(r => r.blob())
+            .then(blob => {
+                const ext = url.split('.').pop().split('?')[0] || 'jpg';
+                const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+                const mime = mimeMap[ext.toLowerCase()] || 'image/jpeg';
+                selectedFile = new File([blob], 'outfit.' + ext, { type: mime });
+                analyzeBtn.disabled = false;
+                // Auto-start analysis
+                analyzeBtn.click();
+            })
+            .catch(() => {
+                analyzeBtn.disabled = true;
+                showError('Could not load the image. Try uploading manually.');
+            });
+    })();
+})();
+</script>
+{% endblock %}

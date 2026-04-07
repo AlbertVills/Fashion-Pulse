@@ -1,0 +1,403 @@
+/* Outfits – Outfit cards, collections, catalogues, and fashion items */
+
+/* ── Outfit Page Hero ─────────────────────────────────────────────── */
+.outfit-page-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.outfit-page-hero__text h1 {
+    margin: 0.2rem 0 0.4rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.outfit-page-hero__sub {
+    color: var(--muted);
+    margin: 0;
+    font-size: 1rem;
+    max-width: 480px;
+}
+
+.outfit-page-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.outfit-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.outfit-post-cta {
+    white-space: nowrap;
+}
+
+/* ── Editorial Grid ───────────────────────────────────────────────── */
+.outfit-editorial-grid {
+    columns: 4;
+    column-gap: 0.75rem;
+    margin-bottom: 2.5rem;
+}
+
+.outfit-tile {
+    position: relative;
+    break-inside: avoid;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    background: #0e0e0e;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(10, 20, 50, 0.1);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.outfit-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(10, 20, 50, 0.18);
+}
+
+.outfit-tile img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.outfit-tile__overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 2rem 0.85rem 0.85rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+
+.outfit-tile:hover .outfit-tile__overlay {
+    opacity: 1;
+}
+
+.outfit-tile__name {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.outfit-tile__category {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+
+.outfit-tile__lens-badge {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    background: rgba(47, 98, 216, 0.88);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+.outfit-tile:hover .outfit-tile__lens-badge {
+    opacity: 1;
+}
+
+.outfit-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
+}
+
+.outfit-card-link .outfit-tile {
+    margin-bottom: 0;
+}
+
+.outfit-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem 0;
+    font-size: 1rem;
+}
+
+.outfit-page {
+    display: grid;
+    gap: 1.1rem;
+}
+
+.latest-collection-showcase {
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1rem;
+}
+
+.outfit-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.9rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.outfit-head h1 {
+    margin: 0;
+}
+
+.latest-collection-head {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.latest-collection-badge {
+    display: inline-block;
+    padding: 0.32rem 0.7rem;
+    background: rgba(47, 98, 216, 0.1);
+    border: 1px solid #89adff;
+    color: #224bb2;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.latest-collection-body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
+    align-items: start;
+}
+
+.outfit-time-filter {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.outfit-time-filter-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.outfit-time-filter-form {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.outfit-period-select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid #3c6fd5;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #f8fbff 0%, #edf3ff 100%);
+    color: #243a78;
+    padding: 0.48rem 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.outfit-period-select:focus {
+    outline: none;
+    border-color: #2848c3;
+    box-shadow: 0 0 0 3px rgba(60, 111, 213, 0.15);
+}
+
+.outfit-badge {
+    display: inline-block;
+    padding: 0.24rem 0.52rem;
+    background: #e8eef8;
+    color: #2a426f;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.outfit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.8rem;
+}
+
+.outfit-carousel {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.outfit-grid--carousel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.8rem;
+    animation: scroll 40s linear infinite;
+}
+
+.outfit-grid--carousel.is-autoscrolling {
+    animation: scroll 40s linear infinite;
+}
+
+.outfit-grid--carousel.is-autoscrolling:hover {
+    animation-play-state: paused;
+}
+
+.outfit-grid--carousel .outfit-card {
+    transition: transform 0.2s ease;
+}
+
+.outfit-grid--carousel .outfit-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.outfit-grid--carousel .outfit-card-link .outfit-card {
+    box-shadow: 0 8px 28px rgba(26, 52, 110, 0.18);
+    transform: translateY(-2px);
+}
+
+.outfit-carousel-btn {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.outfit-carousel-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
+.latest-collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.9rem;
+}
+
+.outfit-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(26, 52, 110, 0.08);
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 310px;
+}
+
+.latest-collection-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    height: 360px;
+}
+
+.latest-collection-card:nth-child(1) {
+    transform: translateY(-8px);
+}
+
+.latest-collection-card:nth-child(2) {
+    transform: translateY(12px);
+}
+
+.latest-collection-card:nth-child(3) {
+    transform: translateY(-6px);
+}
+
+.latest-collection-card:nth-child(4) {
+    transform: translateY(10px);
+}
+
+.outfit-card:hover {
+    box-shadow: 0 16px 40px rgba(26, 52, 110, 0.16);
+}
+
+.outfit-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.outfit-pill {
+    display: inline-block;
+    padding: 0.32rem 0.65rem;
+    background: #f3f6ff;
+    color: var(--muted);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ── Outfit card link (carousel click-to-owner) ─────────────────── */
+.outfit-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.outfit-card-link:hover .outfit-card {
+    box-shadow: 0 8px 28px rgba(26, 52, 110, 0.18);
+    transform: translateY(-2px);
+}
+
+/* -- Outfit live search --------------------------------------------------- */
+.outfit-search-wrap {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.outfit-search-input {
+    padding: 0.55rem 1rem;
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: 999px;
+    background: var(--surface, #fff);
+    color: var(--text, #111);
+    font-size: 0.9rem;
+    width: 220px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.outfit-search-input:focus {
+    border-color: var(--accent, #2f62d8);
+    box-shadow: 0 0 0 3px rgba(47,98,216,.15);
+}
