@@ -635,8 +635,8 @@ html[data-theme="dark"] .ig-settings-dropdown__sep {
 .user-gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-    margin-top: 0.25rem;
+    gap: 1rem;
+    margin-top: 0.5rem;
 }
 
 /* Responsive */
@@ -737,36 +737,44 @@ html[data-theme="dark"] .ig-settings-dropdown__sep {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    border: none;
+    border: 1px solid var(--border);
     background: #dce5fa;
     padding: 0;
     overflow: hidden;
     cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .user-gallery-tile img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
+}
+
+.user-gallery-tile:hover {
+    border-color: #2f62d8;
+    box-shadow: 0 4px 16px rgba(47, 98, 216, 0.15);
+    transform: translateY(-2px);
 }
 
 .user-gallery-tile-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    background: rgba(10, 20, 50, 0.52);
+    color: #fff;
     font-size: 0.9rem;
     opacity: 0;
     transition: opacity 0.2s ease;
-}
-
-.user-gallery-tile-overlay strong {
-    margin-right: 0.25rem;
+    z-index: 1;
 }
 
 .user-gallery-tile:hover .user-gallery-tile-overlay,
@@ -791,13 +799,13 @@ body.is-modal-open .profile-form-wrap {
     inset: 0;
     z-index: 1200;
     display: none;
+    padding: 1rem;
     backdrop-filter: blur(0px);
 }
 
 .user-post-modal.is-open {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     pointer-events: auto;
 }
 
@@ -805,40 +813,48 @@ body.is-modal-open .profile-form-wrap {
     position: fixed;
     inset: 0;
     background: rgba(8, 17, 35, 0.75);
-    z-index: 0;
+    z-index: 1199;
     pointer-events: auto;
 }
 
 .user-post-modal-dialog {
     position: relative;
-    z-index: 2;
-    width: min(980px, calc(100vw - 2rem));
+    z-index: 1200;
+    width: min(1000px, calc(100vw - 2rem));
     max-height: calc(100vh - 2rem);
     background: #fff;
     border-radius: 14px;
     overflow: hidden;
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    grid-template-columns: 1fr 340px;
+    gap: 0;
     box-shadow: 0 24px 60px rgba(6, 16, 35, 0.35);
     pointer-events: auto;
 }
 
 .user-post-modal-media {
     background: #0e172d;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    min-height: 400px;
 }
 
 .user-post-modal-media img {
     width: 100%;
-    height: min(86vh, 760px);
-    object-fit: cover;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
 }
 
 .user-post-modal-content {
-    padding: 1rem;
+    padding: 1.25rem;
     overflow-y: auto;
-    max-height: calc(100vh - 2rem);
+    max-height: 90vh;
+    background: #fff;
+    border-left: 1px solid #e8eef5;
 }
 
 .user-post-modal-title {
@@ -851,18 +867,29 @@ body.is-modal-open .profile-form-wrap {
 
 .user-post-modal-close {
     position: absolute;
-    top: 0.65rem;
-    right: 0.65rem;
-    width: 34px;
-    height: 34px;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    color: #1c2f5f;
-    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0e172d;
+    font-size: 1.75rem;
     line-height: 1;
     cursor: pointer;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-post-modal-close:hover {
+    background: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 body.is-modal-open {
@@ -883,6 +910,36 @@ body.is-modal-open {
 .user-post-modal-content button:hover {
     opacity: 1 !important;
     transform: none !important;
+}
+
+/* ── Responsive modal layout for mobile ──────────────────────────────────── */
+@media (max-width: 768px) {
+    .user-post-modal.is-open {
+        place-items: stretch;
+        padding: 0.5rem;
+    }
+
+    .user-post-modal-dialog {
+        width: 100%;
+        max-height: calc(100vh - 1rem);
+        grid-template-columns: 1fr;
+        border-radius: 12px;
+    }
+
+    .user-post-modal-media {
+        min-height: 280px;
+        padding: 1rem;
+    }
+
+    .user-post-modal-media img {
+        max-height: 60vh;
+    }
+
+    .user-post-modal-content {
+        max-height: calc(100vh - 380px);
+        border-left: none;
+        border-top: 1px solid #e8eef5;
+    }
 }
 
 /* ── Standalone Gallery Page ──────────────────────────────────────── */

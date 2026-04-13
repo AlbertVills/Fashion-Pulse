@@ -1107,3 +1107,29 @@ html[data-theme="dark"] button.nav-user-dropdown__item--logout:hover {
 	border: none !important;
 	box-shadow: none !important;
 }
+
+/* Keep account dropdown rows aligned and visually consistent for links and buttons. */
+.nav-user-dropdown form {
+	display: block;
+	margin: 0;
+}
+
+.nav-user-dropdown .nav-user-dropdown__item {
+	justify-content: flex-start;
+	text-align: left;
+	box-sizing: border-box;
+}
+
+.nav-user-dropdown button.nav-user-dropdown__item,
+.nav-user-dropdown button.nav-user-dropdown__item:focus,
+.nav-user-dropdown button.nav-user-dropdown__item:active,
+.nav-user-dropdown button.nav-user-dropdown__item:hover,
+.nav-user-dropdown button.nav-user-dropdown__item--logout,
+.nav-user-dropdown button.nav-user-dropdown__item--logout:focus,
+.nav-user-dropdown button.nav-user-dropdown__item--logout:active,
+.nav-user-dropdown button.nav-user-dropdown__item--logout:hover {
+	background: transparent !important;
+	background-image: none !important;
+	border: none !important;
+	box-shadow: none !important;
+}

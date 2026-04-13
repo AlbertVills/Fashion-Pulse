@@ -368,6 +368,17 @@
     if (initTab) showTab(initTab);
 
     // Gallery modals
+    var lockedScrollY = 0;
+
+    function lockBodyScroll() {
+        // Disabled fixed position hack that caused modal jumping
+        // CSS class .is-modal-open handles overflow: hidden
+    }
+
+    function unlockBodyScroll() {
+        // Disabled fixed position hack
+    }
+
     function openModal(id) {
         var m = document.getElementById(id);
         if (!m) return;
@@ -378,7 +389,9 @@
     function closeModal(m) {
         if (!m) return;
         m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true');
-        if (!document.querySelector('.user-post-modal.is-open')) document.body.classList.remove('is-modal-open');
+        if (!document.querySelector('.user-post-modal.is-open')) {
+            document.body.classList.remove('is-modal-open');
+        }
     }
     document.addEventListener('click', function (e) {
         var tile = e.target.closest('.user-gallery-tile');

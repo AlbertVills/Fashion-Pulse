@@ -229,6 +229,10 @@ function openPostModal(modalId) {
     if (!modal) {
         return;
     }
+    // Move modal to body so position:fixed centers relative to the viewport
+    if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+    }
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-modal-open');
