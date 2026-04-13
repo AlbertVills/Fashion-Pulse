@@ -1,0 +1,951 @@
+/* Match password eye toggle to black input in dark mode */
+html[data-theme="dark"] .pw-toggle-btn {
+    background: #181a1b !important;
+    border: 1px solid #444 !important;
+    color: #f0f4ff !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: none !important;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+html[data-theme="dark"] .pw-toggle-btn:hover {
+    background: #23272e !important;
+    color: #7eb3ff !important;
+    border-color: #7eb3ff !important;
+}
+/* Dark Mode Theme Enhancement – Improved colors, contrasts, and visual effects */
+
+/* ── Enhanced Dark Mode Variables & Backgrounds ────────────────────── */
+html[data-theme="dark"] body {
+    background:
+    radial-gradient(circle at 8% 2%, rgba(77, 77, 77, 0.12) 0%, rgba(77, 77, 77, 0) 32%),
+    radial-gradient(circle at 92% 10%, rgba(51, 51, 51, 0.08) 0%, rgba(51, 51, 51, 0) 35%),
+    linear-gradient(180deg, #000000 0%, var(--bg) 50%, #1a1a1a 100%);
+}
+
+/* ── Header & Navigation Enhancement ────────────────────────────────── */
+html[data-theme="dark"] .site-header {
+    background: linear-gradient(180deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.92) 100%) !important;
+    border-bottom: 1px solid rgba(77, 77, 77, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(102, 102, 102, 0.05) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+html[data-theme="dark"] .nav-user {
+    background: rgba(51, 51, 51, 0.25) !important;
+    border-color: rgba(102, 102, 102, 0.5) !important;
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .site-nav a:hover,
+html[data-theme="dark"] .site-nav a.active {
+    background: #333333 !important;
+    color: #f2f2f2 !important;
+    border-color: #666666 !important;
+}
+
+html[data-theme="dark"] .menu-toggle {
+    border-color: rgba(102, 102, 102, 0.5) !important;
+    background: rgba(26, 26, 26, 0.7) !important;
+}
+
+html[data-theme="dark"] .menu-toggle:hover {
+    background: #333333 !important;
+    border-color: #666666 !important;
+}
+
+/* ── Card & Surface Enhancement ────────────────────────────────────── */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .outfit-card,
+html[data-theme="dark"] .popular-item-card,
+html[data-theme="dark"] .latest-collection-showcase,
+html[data-theme="dark"] .trend-story-card,
+html[data-theme="dark"] .profile-sidebar,
+html[data-theme="dark"] .notification-item {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+    border: 1px solid #4d4d4d !important;
+    border-left: 1px solid #4d4d4d !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .trend-story-card {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 16px 0 26px rgba(0, 0, 0, 0.28) !important;
+}
+
+html[data-theme="dark"] .card:hover:not(.contact-form-card),
+html[data-theme="dark"] .outfit-card:hover {
+    border-color: #4d4d4d !important;
+    background: #1a1a1a !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .page-banner img {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .hero-feature {
+    border-color: rgba(41, 52, 86, 0.8) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .hero-feature::after {
+    background: linear-gradient(95deg, rgba(10, 15, 31, 0.85) 15%, rgba(10, 15, 31, 0.4) 72%) !important;
+}
+
+/* ── Form & Input Enhancement ─────────────────────────────────────── */
+html[data-theme="dark"] input,
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input[type="password"],
+html[data-theme="dark"] input[type="email"],
+html[data-theme="dark"] input[type="number"],
+html[data-theme="dark"] input[type="search"],
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background: #181a1b !important;
+    color: #f0f4ff !important;
+    border: 1px solid #444 !important;
+    box-shadow: none !important;
+    caret-color: #f0f4ff !important;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus {
+    border-color: #7eb3ff !important;
+    background: #23272e !important;
+    box-shadow: 0 0 0 2px rgba(126, 179, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .gallery-search-btn,
+html[data-theme="dark"] .outfit-filter-btn {
+    background: linear-gradient(135deg, rgba(126, 179, 255, 0.2) 0%, rgba(123, 203, 255, 0.1) 100%) !important;
+    border: 1px solid rgba(126, 179, 255, 0.2) !important;
+    color: #7eb3ff !important;
+}
+
+html[data-theme="dark"] .gallery-search-btn:hover,
+html[data-theme="dark"] .outfit-filter-btn:hover {
+    background: linear-gradient(135deg, rgba(126, 179, 255, 0.3) 0%, rgba(123, 203, 255, 0.2) 100%) !important;
+    border-color: rgba(126, 179, 255, 0.4) !important;
+}
+
+/* ── Button Enhancement ────────────────────────────────────────────── */
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .gallery-comment-form button {
+    background: linear-gradient(135deg, #6ba3f5 0%, #5a93e8 100%) !important;
+    border: 1px solid rgba(126, 179, 255, 0.3) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(107, 163, 245, 0.25) !important;
+}
+
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .gallery-comment-form button:hover {
+    background: linear-gradient(135deg, #7eb3ff 0%, #6ba3f5 100%) !important;
+    box-shadow: 0 6px 24px rgba(126, 179, 255, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+html[data-theme="dark"] .theme-btn {
+    background: rgba(19, 29, 53, 0.4) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+    color: #a0aed5 !important;
+}
+
+html[data-theme="dark"] .theme-btn:hover {
+    background: rgba(26, 42, 72, 0.6) !important;
+    border-color: rgba(126, 179, 255, 0.2) !important;
+}
+
+html[data-theme="dark"] .theme-btn.is-active {
+    background: linear-gradient(135deg, rgba(126, 179, 255, 0.2) 0%, rgba(107, 163, 245, 0.15) 100%) !important;
+    border-color: rgba(126, 179, 255, 0.4) !important;
+    color: #7eb3ff !important;
+}
+
+/* ── Pill & Badge Enhancement ──────────────────────────────────────── */
+html[data-theme="dark"] .outfit-pill,
+html[data-theme="dark"] .gallery-comment-list li,
+html[data-theme="dark"] .gallery-comment-form input,
+html[data-theme="dark"] .outfit-cta {
+    background: rgba(26, 42, 72, 0.5) !important;
+    border: 1px solid rgba(41, 52, 86, 0.8) !important;
+    color: #a0aed5 !important;
+}
+
+html[data-theme="dark"] .tag-btn {
+    background: rgba(26, 42, 72, 0.4) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+    color: #a0aed5 !important;
+}
+
+html[data-theme="dark"] .tag-btn:hover {
+    background: rgba(26, 42, 72, 0.6) !important;
+    border-color: rgba(126, 179, 255, 0.2) !important;
+}
+
+html[data-theme="dark"] .tag-btn.active {
+    background: rgba(126, 179, 255, 0.15) !important;
+    border-color: rgba(126, 179, 255, 0.4) !important;
+    color: #7eb3ff !important;
+}
+
+/* ── Text & Muted Enhancement ──────────────────────────────────────── */
+html[data-theme="dark"] .meta,
+html[data-theme="dark"] .site-nav a,
+html[data-theme="dark"] .gallery-meta,
+html[data-theme="dark"] .gallery-like-summary,
+html[data-theme="dark"] .gallery-comments-title,
+html[data-theme="dark"] .clean-list {
+    color: #b8c9e8 !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px !important;
+}
+
+html[data-theme="dark"] h1 {
+    font-size: clamp(1.8rem, 3vw, 2.8rem) !important;
+    line-height: 1.2 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] h2 {
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem) !important;
+    line-height: 1.3 !important;
+}
+
+html[data-theme="dark"] h3 {
+    font-size: clamp(1.2rem, 2vw, 1.8rem) !important;
+    line-height: 1.4 !important;
+}
+
+html[data-theme="dark"] p {
+    line-height: 1.7 !important;
+    letter-spacing: 0.2px !important;
+    color: #e8f0ff !important;
+}
+
+html[data-theme="dark"] .eyebrow {
+    color: #7eb3ff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.15em !important;
+    text-shadow: 0 0 8px rgba(126, 179, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .story-category {
+    color: #7eb3ff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+}
+
+html[data-theme="dark"] .article-subheading,
+html[data-theme="dark"] .article-header p {
+    color: #c0cfe8 !important;
+    font-size: 1.15rem !important;
+    line-height: 1.7 !important;
+}
+
+html[data-theme="dark"] .article-quote {
+    background: rgba(126, 179, 255, 0.08) !important;
+    border-left: 3px solid rgba(126, 179, 255, 0.4) !important;
+    color: #f0f4ff !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .card h3,
+html[data-theme="dark"] .card h4 {
+    color: #f0f4ff !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+html[data-theme="dark"] .card p {
+    color: #d9d9d9 !important;
+    line-height: 1.7 !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .outfit-card h3,
+html[data-theme="dark"] .outfit-card h4,
+html[data-theme="dark"] .outfit-card p {
+    color: #f2f2f2 !important;
+    font-weight: 600 !important;
+}
+
+html[data-theme="dark"] .gallery-item h3,
+html[data-theme="dark"] .gallery-item p {
+    color: #f2f2f2 !important;
+    font-weight: 600 !important;
+}
+
+/* ── Trend & Article Text Enhancement ──────────────────────────────── */
+html[data-theme="dark"] .trend-overview,
+html[data-theme="dark"] .trend-notes,
+html[data-theme="dark"] .article-extra,
+html[data-theme="dark"] .featured-insight {
+    color: #e8f0ff !important;
+    line-height: 1.8 !important;
+}
+
+html[data-theme="dark"] .related-articles h3,
+html[data-theme="dark"] .filter-card h3 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* ── Badge & Tag Text Enhancement ──────────────────────────────────── */
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .story-category,
+html[data-theme="dark"] .outfit-badge,
+html[data-theme="dark"] .latest-collection-badge {
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+}
+
+html[data-theme="dark"] .latest-collection-badge {
+    color: #7eb3ff !important;
+}
+
+html[data-theme="dark"] strong,
+html[data-theme="dark"] b {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* ── Trend Story Text Enhancement ──────────────────────────────────── */
+html[data-theme="dark"] .trend-story-name {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.3px !important;
+    text-shadow: 0 6px 22px rgba(0, 0, 0, 0.32) !important;
+}
+
+html[data-theme="dark"] .trend-story-quote {
+    color: #e8f0ff !important;
+    line-height: 1.72 !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .trend-story-quote-mark {
+    color: rgba(126, 179, 255, 0.55) !important;
+}
+
+html[data-theme="dark"] .trend-story-role {
+    color: #7eb3ff !important;
+}
+
+html[data-theme="dark"] .trend-story-meta {
+    color: #b8c9e8 !important;
+    background: rgba(9, 16, 31, 0.42) !important;
+    border: 1px solid rgba(214, 227, 255, 0.12) !important;
+    padding: 0.42rem 0.78rem !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* ── Section Headings Enhancement ──────────────────────────────────── */
+html[data-theme="dark"] .section-head h2 {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Alert & Status Enhancement ────────────────────────────────────── */
+html[data-theme="dark"] .alert {
+    background: linear-gradient(135deg, rgba(11, 77, 50, 0.3) 0%, rgba(8, 60, 40, 0.4) 100%) !important;
+    border: 1px solid rgba(95, 237, 161, 0.2) !important;
+    color: #b8f3d1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme="dark"] .notification-item {
+    background: rgba(26, 42, 72, 0.4) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+}
+
+html[data-theme="dark"] .notification-item.is-unread {
+    background: rgba(126, 179, 255, 0.08) !important;
+    border: 1px solid rgba(126, 179, 255, 0.2) !important;
+    box-shadow: inset 0 0 0 1px rgba(126, 179, 255, 0.1) !important;
+}
+
+/* ── Profile Enhancement ───────────────────────────────────────────── */
+html[data-theme="dark"] .profile-form-wrap,
+html[data-theme="dark"] .profile-progress {
+    background: linear-gradient(135deg, rgba(19, 29, 53, 0.6) 0%, rgba(13, 20, 36, 0.8) 100%) !important;
+    border: 1px solid rgba(41, 52, 86, 0.8) !important;
+}
+
+html[data-theme="dark"] .profile-card-section {
+    border-bottom-color: rgba(41, 52, 86, 0.6) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme="dark"] .profile-menu .is-active {
+    background: linear-gradient(135deg, rgba(126, 179, 255, 0.15) 0%, rgba(107, 163, 245, 0.1) 100%) !important;
+    border-color: rgba(126, 179, 255, 0.3) !important;
+    color: #7eb3ff !important;
+}
+
+html[data-theme="dark"] .avatar-circle {
+    background: linear-gradient(135deg, #5a93e8 0%, #4682d9 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(107, 163, 245, 0.25) !important;
+}
+
+html[data-theme="dark"] .avatar-image {
+    border: 2px solid rgba(126, 179, 255, 0.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .progress-ring {
+    background: conic-gradient(#7eb3ff calc(var(--progress, 0) * 1%), rgba(41, 52, 86, 0.4) 0) !important;
+}
+
+/* ── Gallery Enhancement ───────────────────────────────────────────── */
+html[data-theme="dark"] .gallery-item {
+    border: 1px solid rgba(41, 52, 86, 0.8) !important;
+    background: linear-gradient(135deg, rgba(19, 29, 53, 0.5) 0%, rgba(13, 20, 36, 0.7) 100%) !important;
+}
+
+html[data-theme="dark"] .gallery-delete-btn {
+    background: rgba(179, 58, 80, 0.15) !important;
+    border: 1px solid rgba(179, 58, 80, 0.2) !important;
+    color: #f5a5b7 !important;
+}
+
+html[data-theme="dark"] .gallery-delete-btn:hover {
+    background: rgba(179, 58, 80, 0.25) !important;
+    border-color: rgba(179, 58, 80, 0.3) !important;
+}
+
+html[data-theme="dark"] .gallery-heart-btn.is-liked {
+    color: #ff6b8a !important;
+    text-shadow: 0 0 8px rgba(255, 107, 138, 0.3) !important;
+}
+
+/* ── Scrollbar Enhancement ─────────────────────────────────────────── */
+html[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: rgba(13, 20, 36, 0.5);
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: rgba(126, 179, 255, 0.3);
+    border-radius: 5px;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(126, 179, 255, 0.5);
+}
+
+/* ── Code & Monospace Enhancement ──────────────────────────────────── */
+html[data-theme="dark"] code,
+html[data-theme="dark"] pre {
+    background: rgba(10, 15, 31, 0.7) !important;
+    border: 1px solid rgba(41, 52, 86, 0.6) !important;
+    color: #7eb3ff !important;
+}
+
+/* ── Link Enhancements ─────────────────────────────────────────────── */
+html[data-theme="dark"] a {
+    color: #7eb3ff !important;
+    transition: color 0.2s ease !important;
+}
+
+html[data-theme="dark"] a:hover {
+    color: #9bc8ff !important;
+    text-shadow: 0 0 8px rgba(126, 179, 255, 0.2) !important;
+}
+
+/* ── Smooth Transitions ────────────────────────────────────────────── */
+html[data-theme="dark"] * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* ── Article Metadata Enhancement ──────────────────────────────────── */
+html[data-theme="dark"] .article-meta-row {
+    border-top: 1px solid rgba(41, 52, 86, 0.5) !important;
+    border-bottom: 1px solid rgba(41, 52, 86, 0.5) !important;
+    color: #a0aed5 !important;
+}
+
+html[data-theme="dark"] .author-meta {
+    color: #a0aed5 !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .site-footer {
+    border-top: 1px solid rgba(77, 77, 77, 0.45) !important;
+    color: #aaaaaa !important;
+}
+
+html[data-theme="dark"] .footer-grid {
+    border-bottom-color: rgba(77, 77, 77, 0.4) !important;
+}
+
+html[data-theme="dark"] .footer-logo {
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .footer-nav-heading {
+    color: #cccccc !important;
+}
+
+html[data-theme="dark"] .footer-nav a:hover {
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .contact-info-block,
+html[data-theme="dark"] .contact-tips {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .contact-info-icon {
+    background: #111111 !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .outfit-tile {
+    border-color: #4d4d4d !important;
+    background: #0a0a0a !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .outfit-page-hero {
+    border-bottom-color: #4d4d4d !important;
+}
+
+/* ── About Page Dark Mode ──────────────────────────────────────────── */
+html[data-theme="dark"] .about-hero,
+html[data-theme="dark"] .about-identity {
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .about-pillar-card,
+html[data-theme="dark"] .about-team-card,
+html[data-theme="dark"] .about-bottom-card {
+    background: #161616 !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .about-pillar-card:hover,
+html[data-theme="dark"] .about-team-card:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] .about-hero__image,
+html[data-theme="dark"] .about-identity__image img {
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .about-hero__stat-row {
+    background: #161616 !important;
+    border-top-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .about-stat {
+    border-right-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .about-stat__num {
+    color: #f2f2f2 !important;
+}
+
+/* ── Trend Slider Dark Mode ────────────────────────────────────────── */
+html[data-theme="dark"] .trend-page-header {
+    border-bottom-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .trend-slider-section {
+    background: #0d0d0d !important;
+}
+
+html[data-theme="dark"] .trend-slider-nav {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+    color: #e8eeff !important;
+}
+
+html[data-theme="dark"] .trend-slider-nav:hover {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] .trend-slider-dot {
+    background: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .trend-slider-dot.is-active {
+    background: var(--accent) !important;
+}
+
+/* ── Form Label Enhancement ────────────────────────────────────────── */
+html[data-theme="dark"] .form-row label {
+    color: #b8c9e8 !important;
+    font-weight: 600 !important;
+}
+
+html[data-theme="dark"] .gallery-search-label,
+html[data-theme="dark"] .outfit-time-filter-label {
+    color: #c0cfe8 !important;
+    font-weight: 700 !important;
+}
+
+/* ── Comment Text Enhancement ──────────────────────────────────────── */
+html[data-theme="dark"] .gallery-comment-list li {
+    color: #e8f0ff !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .gallery-comment-list li strong {
+    color: #ffffff !important;
+}
+
+/* ── Profile Text Enhancement ──────────────────────────────────────── */
+html[data-theme="dark"] .profile-menu a,
+html[data-theme="dark"] .profile-menu span {
+    color: #c0cfe8 !important;
+    font-weight: 500 !important;
+}
+
+html[data-theme="dark"] .user-gallery-username {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+html[data-theme="dark"] .user-gallery-bio {
+    color: #b8c9e8 !important;
+    line-height: 1.7 !important;
+}
+
+html[data-theme="dark"] .user-gallery-tag {
+    color: #7eb3ff !important;
+    background: rgba(126, 179, 255, 0.1) !important;
+}
+
+/* ── Monochrome Dark Palette Override ─────────────────────────────── */
+html[data-theme="dark"] {
+    --bg: #000000;
+    --surface: #1a1a1a;
+    --surface-soft: #333333;
+    --border: #4d4d4d;
+    --accent: #666666;
+    --accent-strong: #666666;
+}
+
+html[data-theme="dark"] body {
+    background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%) !important;
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .page-banner,
+html[data-theme="dark"] .hero-feature,
+html[data-theme="dark"] .profile-form-wrap,
+html[data-theme="dark"] .profile-progress,
+html[data-theme="dark"] .profile-sidebar,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .outfit-card,
+html[data-theme="dark"] .popular-item-card,
+html[data-theme="dark"] .latest-collection-showcase,
+html[data-theme="dark"] .trend-story-card,
+html[data-theme="dark"] .notification-item,
+html[data-theme="dark"] .alert,
+html[data-theme="dark"] .outfit-pill,
+html[data-theme="dark"] .tag-btn,
+html[data-theme="dark"] .theme-btn,
+html[data-theme="dark"] .gallery-comment-list li {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .outfit-card:hover,
+html[data-theme="dark"] .tag-btn:hover,
+html[data-theme="dark"] .theme-btn:hover {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .site-nav a,
+html[data-theme="dark"] .meta,
+html[data-theme="dark"] p,
+html[data-theme="dark"] .gallery-meta,
+html[data-theme="dark"] .gallery-like-summary,
+html[data-theme="dark"] .gallery-comments-title,
+html[data-theme="dark"] .clean-list,
+html[data-theme="dark"] .user-gallery-bio,
+html[data-theme="dark"] .profile-menu a,
+html[data-theme="dark"] .profile-menu span {
+    color: #d9d9d9 !important;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] b,
+html[data-theme="dark"] .site-nav a:hover,
+html[data-theme="dark"] .site-nav a.active,
+html[data-theme="dark"] .user-gallery-username {
+    color: #f2f2f2 !important;
+}
+
+/* Removed duplicate/overriding input rules at the end of file for clarity and consistency. */
+
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .gallery-comment-form button,
+html[data-theme="dark"] .outfit-cta,
+html[data-theme="dark"] .gallery-search-btn,
+html[data-theme="dark"] .outfit-filter-btn,
+html[data-theme="dark"] .theme-btn.is-active,
+html[data-theme="dark"] .tag-btn.active,
+html[data-theme="dark"] .user-gallery-tag {
+    background: #333333 !important;
+    border-color: #666666 !important;
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .gallery-comment-form button:hover,
+html[data-theme="dark"] .outfit-cta:hover,
+html[data-theme="dark"] .gallery-search-btn:hover,
+html[data-theme="dark"] .outfit-filter-btn:hover {
+    background: #4d4d4d !important;
+    border-color: #666666 !important;
+}
+
+html[data-theme="dark"] a,
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .story-category,
+html[data-theme="dark"] .latest-collection-badge {
+    color: #bfbfbf !important;
+}
+
+html[data-theme="dark"] a:hover {
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .scroll-progress__bar {
+    background: linear-gradient(90deg, #4d4d4d 0%, #666666 100%) !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #1a1a1a !important;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #4d4d4d !important;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #666666 !important;
+}
+
+/* Absolute final dark hover cleanup (no blue) */
+html[data-theme="dark"] .site-nav a:hover,
+html[data-theme="dark"] .site-nav a.active,
+html[data-theme="dark"] .menu-toggle:hover,
+html[data-theme="dark"] .theme-btn:hover,
+html[data-theme="dark"] .theme-btn.is-active,
+html[data-theme="dark"] .tag-btn:hover,
+html[data-theme="dark"] .tag-btn.active,
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .gallery-comment-form button:hover,
+html[data-theme="dark"] .outfit-cta:hover,
+html[data-theme="dark"] .gallery-search-btn:hover,
+html[data-theme="dark"] .outfit-filter-btn:hover,
+html[data-theme="dark"] .gallery-delete-btn:hover,
+html[data-theme="dark"] .profile-menu .is-active,
+html[data-theme="dark"] .notification-item.is-unread,
+html[data-theme="dark"] .user-gallery-stat-btn.is-active {
+    background: #4d4d4d !important;
+    border-color: #666666 !important;
+    color: #f2f2f2 !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .outfit-card:hover,
+html[data-theme="dark"] .gallery-item:hover {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+    box-shadow: none !important;
+}
+
+/* ── Trend Article Form Dark Mode ───────────────────────────── */
+html[data-theme="dark"] .taf-page-header {
+    border-bottom-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .taf-form-card,
+html[data-theme="dark"] .taf-sidebar-card {
+    background: #161616 !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .taf-form-card__title {
+    border-bottom-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .taf-sidebar-card--accent {
+    background: linear-gradient(135deg, rgba(47, 98, 216, 0.12), rgba(47, 98, 216, 0.04)) !important;
+    border-color: rgba(47, 98, 216, 0.35) !important;
+}
+
+
+/* -- Trend Article Detail dark mode --------------------------- */
+html[data-theme="dark"] .tad-hero__overlay {
+    background: linear-gradient(to top, rgba(0,0,0,.9) 40%, rgba(0,0,0,.25) 100%);
+}
+
+html[data-theme="dark"] .tad-sidebar-card,
+html[data-theme="dark"] .tad-attachment {
+    background: #161616 !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .tad-sidebar-card__title {
+    border-bottom-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .tad-attachment__label {
+    background: #111 !important;
+    border-bottom-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .tad-tag {
+    background: rgba(47,98,216,.2);
+}
+
+
+/* -- Home Page (hp-*) dark mode ----------------------------- */
+html[data-theme="dark"] .hp-spotlight-card {
+    background: #161616 !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .hp-story-card--featured,
+html[data-theme="dark"] .hp-story-card--side {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+}
+
+html[data-theme="dark"] .hp-story-card--featured:hover,
+html[data-theme="dark"] .hp-story-card--side:hover {
+    background: #1a1a1a !important;
+    border-color: #4d4d4d !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+html[data-theme="dark"] .hp-spotlight-card--accent {
+    background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%) !important;
+}
+
+html[data-theme="dark"] .hp-spotlight-card__tags span {
+    background: rgba(77,77,77,.35) !important;
+}
+
+html[data-theme="dark"] .hp-quicklinks a:hover {
+    background: rgba(77,77,77,.25) !important;
+    color: #f2f2f2 !important;
+}
+
+html[data-theme="dark"] .hp-quicklinks a:last-child {
+    background: #333333 !important;
+    color: #f2f2f2 !important;
+}
+
+
+
+
+/* -- Profile dark mode -------------------------------- */
+html[data-theme="dark"] .prf-sidebar {
+    background: #141414;
+    border-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .prf-cover {
+    background: linear-gradient(135deg, var(--prf-color, #4c1d95), color-mix(in srgb, var(--prf-color, #4c1d95) 60%, #1e3a8a));
+}
+
+html[data-theme="dark"] .prf-avatar-ring {
+    background: linear-gradient(135deg, var(--prf-color, #4c1d95), color-mix(in srgb, var(--prf-color, #4c1d95) 60%, #1e3a8a));
+}
+
+html[data-theme="dark"] .prf-card {
+    background: #181818;
+    border-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .prf-card-section {
+    border-bottom-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .prf-card-section--accent {
+    background: rgba(255,255,255,.025);
+}
+
+html[data-theme="dark"] .prf-card-footer {
+    background: rgba(255,255,255,.015);
+    border-top-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .prf-cring::before {
+    background: var(--bg);
+}
+
+html[data-theme="dark"] .prf-cring--lg::before {
+    background: var(--surface);
+}
+
+html[data-theme="dark"] .prf-nav__link:hover {
+    background: rgba(255,255,255,.06);
+}
+
+html[data-theme="dark"] .prf-nav__link.is-active {
+    background: rgba(99,102,241,.15);
+}
+
+html[data-theme="dark"] .prf-theme-opt {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+html[data-theme="dark"] .prf-theme-opt:hover,
+html[data-theme="dark"] .prf-theme-opt.is-active {
+    border-color: var(--accent);
+}
+
+html[data-theme="dark"] .prf-notif {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .prf-notif.is-unread {
+    background: rgba(99,102,241,.1);
+    border-color: rgba(99,102,241,.3);
+}

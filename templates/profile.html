@@ -1,112 +1,467 @@
 {% extends 'base.html' %}
-
 {% block title %}My Profile | FashionPulse{% endblock %}
-
 {% block content %}
-<section class="profile-dashboard">
-    <aside class="profile-sidebar card">
-        <p class="profile-brand">FashionPulse</p>
-        <nav class="profile-menu">
-            <a class="is-active" href="{% url 'profile' %}">Edit Profile</a>
-            <a href="{% url 'user_password_change' %}">Password</a>
-            <a href="#logout-settings">Log out</a>
-        </nav>
-    </aside>
 
-    <div class="profile-main">
-        <h1>Edit Profile</h1>
-        <div class="profile-content-grid">
-            <form method="post" enctype="multipart/form-data" class="card profile-form-wrap">
-                {% csrf_token %}
+<div class="prf-page" data-active-tab="{{ active_tab|default:'tab-edit' }}">
 
-                <section class="profile-card-section profile-headline">
-                    <img
-                        id="profileAvatarImage"
-                        class="avatar-image{% if not profile_form.instance.profile_image %} is-hidden{% endif %}"
-                        src="{% if profile_form.instance.profile_image %}{{ profile_form.instance.profile_image.url }}{% endif %}"
-                        alt="{{ user.username }} profile image"
-                    >
-                    <div id="profileAvatarFallback" class="avatar-circle{% if profile_form.instance.profile_image %} is-hidden{% endif %}">{{ user.username|first|upper }}</div>
-                    <div>
-                        <h3>{{ user.username }}</h3>
-                        <div class="profile-upload">
-                            <button type="button" id="profileImageTrigger" class="file-upload-btn">Choose File</button>
-                            {% if profile_form.instance.profile_image %}
-                                <button type="submit" name="remove_profile_image" value="1" class="file-remove-btn">Remove</button>
-                            {% endif %}
-                            <input type="file" name="profile_image" accept="image/*" id="id_profile_image" class="file-upload-input">
-                            {{ profile_form.profile_image.errors }}
-                        </div>
-                    </div>
-                </section>
+  <!-- ═══════════════  SIDEBAR  ═══════════════════════════════ -->
+  <aside class="prf-sidebar">
 
-                <section class="profile-card-section">
-                    <div class="section-title-row">
-                        <h3>Personal Info</h3>
-                    </div>
-                    <div class="profile-form-grid three-col">
-                        <div class="form-row">{{ account_form.first_name.label_tag }}{{ account_form.first_name }}{{ account_form.first_name.errors }}</div>
-                        <div class="form-row">{{ account_form.last_name.label_tag }}{{ account_form.last_name }}{{ account_form.last_name.errors }}</div>
-                        <div class="form-row">{{ account_form.email.label_tag }}{{ account_form.email }}{{ account_form.email.errors }}</div>
-                        <div class="form-row">{{ profile_form.phone_number.label_tag }}{{ profile_form.phone_number }}{{ profile_form.phone_number.errors }}</div>
-                        <div class="form-row">{{ profile_form.age.label_tag }}{{ profile_form.age }}{{ profile_form.age.errors }}</div>
-                    </div>
-                </section>
-
-                <section class="profile-card-section">
-                    <div class="section-title-row">
-                        <h3>Location</h3>
-                    </div>
-                    <div class="profile-form-grid">
-                        <div class="form-row">{{ profile_form.location.label_tag }}{{ profile_form.location }}{{ profile_form.location.errors }}</div>
-                    </div>
-                </section>
-
-                <section class="profile-card-section">
-                    <div class="section-title-row">
-                        <h3>Fashion Style</h3>
-                    </div>
-                    <div class="profile-form-grid">
-                        <div class="form-row">{{ profile_form.fashion_style.label_tag }}{{ profile_form.fashion_style }}{{ profile_form.fashion_style.errors }}</div>
-                    </div>
-                </section>
-
-                <section class="profile-card-section">
-                    <div class="section-title-row">
-                        <h3>Bio</h3>
-                    </div>
-                    <div class="profile-form-grid">
-                        <div class="form-row">{{ profile_form.about_self.label_tag }}{{ profile_form.about_self }}{{ profile_form.about_self.errors }}</div>
-                    </div>
-                </section>
-
-                <section class="profile-card-section" id="logout-settings">
-                    <div class="section-title-row">
-                        <h3>Log out</h3>
-                    </div>
-                    <p class="meta">Use this to end your current session safely.</p>
-                    <a href="{% url 'logout' %}" class="btn-primary inline-btn">Log out this session</a>
-                </section>
-
-                <div class="profile-actions">
-                    <button type="submit" class="btn-primary">Save Changes</button>
-                </div>
-            </form>
-
-            <aside class="card profile-progress">
-                <h3>Complete your profile</h3>
-                <div class="progress-ring" style="--progress: {{ completion_percent }};">
-                    <div class="progress-ring__value">{{ completion_percent }}%</div>
-                </div>
-                <ul class="progress-list">
-                    {% for item in progress_items %}
-                        <li class="{% if item.done %}is-done{% endif %}">
-                            <span>{{ item.label }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </aside>
-        </div>
+    <!-- Cover with color picker -->
+    <div class="prf-cover" id="prfCover">
+      <label class="prf-cover__picker-label" title="Pick a color">
+        <input type="color" id="prfColorPicker" class="prf-cover__picker-input" value="{{ profile_form.instance.profile_color|default:'#6d28d9' }}">
+        <span class="prf-cover__picker-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        </span>
+      </label>
     </div>
-</section>
+
+    <!-- Avatar -->
+    <div class="prf-avatar-ring-wrap">
+      <div class="prf-avatar-ring">
+        <img id="profileAvatarImage"
+             class="prf-avatar-img avatar-image{% if not profile_form.instance.profile_image %} is-hidden{% endif %}"
+             src="{% if profile_form.instance.profile_image %}{{ profile_form.instance.profile_image.url }}{% endif %}"
+             alt="{{ user.username }}">
+        <div id="profileAvatarFallback"
+             class="prf-avatar-fallback avatar-circle{% if profile_form.instance.profile_image %} is-hidden{% endif %}">
+          {{ user.username|first|upper }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Identity -->
+    <div class="prf-identity">
+      <strong class="prf-identity__name">{{ user.get_full_name|default:user.username }}</strong>
+      <span class="prf-identity__handle">@{{ user.username }}</span>
+      {% if profile_form.instance.fashion_style %}
+      <span class="prf-tag">{{ profile_form.instance.fashion_style }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Navigation -->
+    <nav class="profile-menu prf-nav">
+      <a class="prf-nav__link is-active" href="{% url 'profile' %}" data-tab="tab-edit">
+        <svg class="prf-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Edit Profile</span>
+      </a>
+      <a class="prf-nav__link" href="#" data-tab="tab-password">
+        <svg class="prf-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Password</span>
+      </a>
+      <a class="prf-nav__link" href="#" data-tab="tab-appearance">
+        <svg class="prf-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span>Appearance</span>
+      </a>
+    </nav>
+
+  </aside>
+
+  <!-- ═══════════════  EDIT PROFILE  ══════════════════════════ -->
+  <div class="profile-main prf-main">
+
+    <header class="prf-panel-head">
+      <div>
+        <p class="prf-overline">Account</p>
+        <h1 class="prf-panel-title">Edit Profile</h1>
+      </div>
+    </header>
+
+    <div class="prf-edit-grid">
+
+      <!-- Form card -->
+      <form method="post" enctype="multipart/form-data" class="prf-card">
+        {% csrf_token %}
+
+        <!-- Avatar row -->
+        <div class="prf-card-section prf-card-section--accent prf-avatar-row">
+          <div class="prf-form-avatar">
+            <img id="profileAvatarImage"
+                 class="prf-form-avatar__img avatar-image{% if not profile_form.instance.profile_image %} is-hidden{% endif %}"
+                 src="{% if profile_form.instance.profile_image %}{{ profile_form.instance.profile_image.url }}{% endif %}"
+                 alt="{{ user.username }}">
+            <div id="profileAvatarFallback"
+                 class="prf-form-avatar__fallback avatar-circle{% if profile_form.instance.profile_image %} is-hidden{% endif %}">
+              {{ user.username|first|upper }}
+            </div>
+          </div>
+          <div class="prf-form-avatar__meta">
+            <strong>{{ user.get_full_name|default:user.username }}</strong>
+            <span class="prf-muted">{{ user.email }}</span>
+            <div class="prf-upload profile-upload">
+              <button type="button" id="profileImageTrigger" class="file-upload-btn">Change Photo</button>
+              {% if profile_form.instance.profile_image %}
+              <button type="submit" name="remove_profile_image" value="1" class="file-remove-btn">Remove</button>
+              {% endif %}
+              <input type="file" name="profile_image" accept="image/*" id="id_profile_image" class="file-upload-input">
+              {{ profile_form.profile_image.errors }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="prf-card-section">
+          <p class="prf-sect-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Personal Info
+          </p>
+          <div class="prf-fgrid prf-fgrid--3">
+            <div class="form-row">{{ account_form.first_name.label_tag }}{{ account_form.first_name }}{{ account_form.first_name.errors }}</div>
+            <div class="form-row">{{ account_form.last_name.label_tag }}{{ account_form.last_name }}{{ account_form.last_name.errors }}</div>
+            <div class="form-row">{{ account_form.email.label_tag }}{{ account_form.email }}{{ account_form.email.errors }}</div>
+            <div class="form-row">{{ profile_form.phone_number.label_tag }}{{ profile_form.phone_number }}{{ profile_form.phone_number.errors }}</div>
+            <div class="form-row">{{ profile_form.age.label_tag }}{{ profile_form.age }}{{ profile_form.age.errors }}</div>
+          </div>
+        </div>
+
+        <!-- Location & Style -->
+        <div class="prf-card-section">
+          <p class="prf-sect-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Location &amp; Style
+          </p>
+          <div class="prf-fgrid prf-fgrid--2">
+            <div class="form-row">{{ profile_form.location.label_tag }}{{ profile_form.location }}{{ profile_form.location.errors }}</div>
+            <div class="form-row">{{ profile_form.fashion_style.label_tag }}{{ profile_form.fashion_style }}{{ profile_form.fashion_style.errors }}</div>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="prf-card-section">
+          <p class="prf-sect-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            About You
+          </p>
+          <div class="form-row">{{ profile_form.about_self.label_tag }}{{ profile_form.about_self }}{{ profile_form.about_self.errors }}</div>
+        </div>
+
+        <div class="prf-card-footer">
+          <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+      </form>
+
+      <!-- Completion sidebar -->
+      <aside class="prf-card prf-completion-card profile-progress">
+        <p class="prf-sect-label" style="justify-content:center;padding:1.2rem 1.2rem 0;">Profile Completion</p>
+        <div class="prf-cring prf-cring--lg progress-ring" style="--p:{{ completion_percent }}; --progress:{{ completion_percent }};">
+          <span class="prf-cring__val progress-ring__value">{{ completion_percent }}%</span>
+        </div>
+        <ul class="prf-checklist progress-list">
+          {% for item in progress_items %}
+          <li class="prf-checklist__item{% if item.done %} is-done{% endif %}">
+            <span class="prf-checklist__dot"></span>
+            <span>{{ item.label }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════  GALLERY PANEL  ═════════════════════════ -->
+  <div class="profile-tab-panel prf-main" id="tab-gallery" style="display:none;">
+    <header class="prf-panel-head">
+      <div>
+        <p class="prf-overline">My Content</p>
+        <h1 class="prf-panel-title">My Gallery</h1>
+      </div>
+      <a class="btn-primary inline-btn" href="{% url 'gallery-create' %}">+ Post Photo</a>
+    </header>
+
+    <div class="prf-card" style="margin-bottom:1.2rem;">
+      <div class="prf-card-section">
+        <p class="prf-sect-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Gallery Posts
+        </p>
+        <div class="user-gallery-grid" id="profileGalleryGrid">
+          {% for post in profile_posts %}
+          <button type="button" class="user-gallery-tile" data-modal-target="gallery-post-modal-{{ post.id }}" aria-label="{{ post.title }}">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+            <span class="user-gallery-tile-overlay">
+              <strong>{{ post.like_count }}</strong> hearts
+            </span>
+          </button>
+          <div class="user-post-modal" id="gallery-post-modal-{{ post.id }}" aria-hidden="true">
+            <div class="user-post-modal-backdrop" data-close-modal></div>
+            <div class="user-post-modal-dialog" role="dialog" aria-modal="true">
+              <button class="user-post-modal-close" data-close-modal>&times;</button>
+              <div class="user-post-modal-media"><img src="{{ post.image.url }}" alt="{{ post.title }}"></div>
+              <div class="user-post-modal-content">
+                <span class="user-post-modal-title">{{ post.title }}</span>
+                <small class="gallery-meta">{{ post.get_category_display }}</small>
+                {% if user.is_authenticated and user.id == post.submitted_by_id %}
+                <form method="post" action="{% url 'gallery-delete' post.id %}" class="gallery-delete-form" data-confirm="Delete this photo?">
+                  {% csrf_token %}<button type="submit" class="gallery-delete-btn">Delete Post</button>
+                </form>
+                {% endif %}
+                <div class="gallery-actions">
+                  <div class="gallery-toolbar">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'gallery-heart' post.id %}" class="gallery-heart-form">
+                      {% csrf_token %}
+                      <button type="submit" class="gallery-icon-btn gallery-heart-btn{% if post.id in profile_liked_post_ids %} is-liked{% endif %}">
+                        {% if post.id in profile_liked_post_ids %}<svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                        {% else %}<svg viewBox="0 0 24 24" width="18" height="18"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path></svg>{% endif %}
+                      </button>
+                    </form>
+                    <button type="button" class="gallery-icon-btn gallery-comments-toggle" aria-expanded="false" aria-controls="gallery-comments-{{ post.id }}">
+                      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-4 4V6a2 2 0 012-2zm0 2v11.17L7.17 14H20V6H4z"></path></svg>
+                    </button>
+                    {% else %}<a href="{% url 'login' %}">Login to interact</a>{% endif %}
+                  </div>
+                  <p class="gallery-like-summary">{{ post.like_count }} hearts</p>
+                </div>
+                <div class="gallery-comments" id="gallery-comments-{{ post.id }}">
+                  <p class="gallery-comments-title">Comments ({{ post.comment_count }})</p>
+                  {% if user.is_authenticated %}
+                  <form method="post" action="{% url 'gallery-comment' post.id %}" class="gallery-comment-form">
+                    {% csrf_token %}<input type="text" name="comment" maxlength="300" placeholder="Write a comment..." required><button type="submit">Post</button>
+                  </form>
+                  {% endif %}
+                  <ul class="gallery-comment-list">
+                    {% for comment in post.comments.all|slice:":5" %}
+                    <li>
+                      <div class="gallery-comment-head"><strong>{{ comment.user.username }}</strong>
+                        {% if user.id == comment.user_id or user.id == post.submitted_by_id %}
+                        <form method="post" action="{% url 'gallery-comment-delete' comment.id %}" class="gallery-comment-delete-form" data-confirm="Delete this comment?">{% csrf_token %}<button type="submit" class="gallery-comment-delete-btn">Delete</button></form>
+                        {% endif %}
+                      </div>
+                      <span>{{ comment.text }}</span>
+                    </li>
+                    {% empty %}<li class="meta">No comments yet.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="prf-empty">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <h3>No posts yet</h3>
+            <p>Share your first fashion moment.</p>
+            <a class="btn-primary inline-btn" href="{% url 'gallery-create' %}">Post a Photo</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="prf-card">
+      <div class="prf-card-section">
+        <p class="prf-sect-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Trend Reports
+        </p>
+        <div class="cards-grid">
+          {% for article in profile_trend_articles %}
+          <article class="card prf-article-card">
+            {% if article.moderation_status == 'approved' %}<span class="prf-pill prf-pill--green">Approved</span>
+            {% elif article.moderation_status == 'pending' %}<span class="prf-pill prf-pill--amber">Under Review</span>
+            {% else %}<span class="prf-pill prf-pill--red">Rejected</span>{% endif %}
+            <h4 class="prf-article-card__title">{{ article.title }}</h4>
+            <p class="prf-article-card__excerpt">{{ article.excerpt }}</p>
+            <p class="meta">{{ article.comment_count }} comment{{ article.comment_count|pluralize }}</p>
+            {% if article.moderation_status == 'approved' %}<a href="{% url 'trend-article-detail' article.slug %}">Read article &rarr;</a>{% endif %}
+          </article>
+          {% empty %}
+          <div class="prf-empty" style="grid-column:1/-1;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <h3>No trend reports yet</h3>
+            <p>Submit your first fashion insight.</p>
+            <a class="btn-primary inline-btn" href="{% url 'trend-create' %}">Submit an Article</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════  PASSWORD PANEL  ════════════════════════ -->
+  <div class="profile-tab-panel prf-main" id="tab-password" style="display:none;">
+    <header class="prf-panel-head">
+      <div>
+        <p class="prf-overline">Security</p>
+        <h1 class="prf-panel-title">Password</h1>
+      </div>
+    </header>
+    <div class="prf-card">
+      <div class="prf-card-section">
+        <p class="prf-sect-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Change Password
+        </p>
+        <p class="meta" style="margin-bottom:1.2rem;">Choose a strong password with at least 8 characters.</p>
+        <form method="post" class="prf-fgrid prf-fgrid--1" style="max-width:420px;">
+          {% csrf_token %}
+          {{ password_form.non_field_errors }}
+          <div class="form-row">{{ password_form.old_password.label_tag }}{{ password_form.old_password }}{{ password_form.old_password.errors }}</div>
+          <div class="form-row">{{ password_form.new_password1.label_tag }}{{ password_form.new_password1 }}{{ password_form.new_password1.errors }}</div>
+          <div class="form-row">{{ password_form.new_password2.label_tag }}{{ password_form.new_password2 }}{{ password_form.new_password2.errors }}</div>
+          <div><button type="submit" name="change_password" value="1" class="btn-primary">Update Password</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════  APPEARANCE PANEL  ══════════════════════ -->
+  <div class="profile-tab-panel prf-main" id="tab-appearance" style="display:none;">
+    <header class="prf-panel-head">
+      <div>
+        <p class="prf-overline">Personalization</p>
+        <h1 class="prf-panel-title">Appearance</h1>
+      </div>
+    </header>
+    <div class="prf-card">
+      <div class="prf-card-section">
+        <p class="prf-sect-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Theme
+        </p>
+        <p class="meta" style="margin-bottom:1rem;">Choose how FashionPulse looks.</p>
+        <div class="prf-theme-grid">
+          <button type="button" class="prf-theme-opt theme-btn" data-theme-choice="light">
+            <div class="prf-theme-opt__swatch prf-theme-opt__swatch--light"></div>
+            <span>Light Mode</span>
+          </button>
+          <button type="button" class="prf-theme-opt theme-btn" data-theme-choice="dark">
+            <div class="prf-theme-opt__swatch prf-theme-opt__swatch--dark"></div>
+            <span>Dark Mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+    var mainContent = document.querySelector('.profile-main');
+    var panels = document.querySelectorAll('.profile-tab-panel');
+    var navLinks = document.querySelectorAll('.profile-menu [data-tab]');
+
+    function showTab(tabId) {
+        var isEdit = tabId === 'tab-edit';
+        mainContent.style.display = isEdit ? '' : 'none';
+        panels.forEach(function (p) { p.style.display = p.id === tabId ? '' : 'none'; });
+        navLinks.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('data-tab') === tabId); });
+        history.replaceState(null, '', isEdit ? location.pathname : '#' + tabId);
+    }
+
+    navLinks.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var tab = a.getAttribute('data-tab');
+            if (!tab) return;
+            e.preventDefault();
+            showTab(tab);
+        });
+    });
+
+    var hash = location.hash.slice(1);
+    var pg = document.querySelector('.prf-page');
+    var serverTab = pg ? pg.getAttribute('data-active-tab') : null;
+    var initTab = (hash && document.getElementById(hash)) ? hash : (serverTab && serverTab !== 'tab-edit' ? serverTab : null);
+    if (initTab) showTab(initTab);
+
+    // Gallery modals
+    var lockedScrollY = 0;
+
+    function lockBodyScroll() {
+        // Disabled fixed position hack that caused modal jumping
+        // CSS class .is-modal-open handles overflow: hidden
+    }
+
+    function unlockBodyScroll() {
+        // Disabled fixed position hack
+    }
+
+    function openModal(id) {
+        var m = document.getElementById(id);
+        if (!m) return;
+        if (m.parentElement !== document.body) document.body.appendChild(m);
+        m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('is-modal-open');
+    }
+    function closeModal(m) {
+        if (!m) return;
+        m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true');
+        if (!document.querySelector('.user-post-modal.is-open')) {
+            document.body.classList.remove('is-modal-open');
+        }
+    }
+    document.addEventListener('click', function (e) {
+        var tile = e.target.closest('.user-gallery-tile');
+        if (tile) { openModal(tile.getAttribute('data-modal-target')); return; }
+        var cl = e.target.closest('[data-close-modal]');
+        if (cl) closeModal(cl.closest('.user-post-modal'));
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { var m = document.querySelector('.user-post-modal.is-open'); if (m) closeModal(m); }
+    });
+
+    // Image preview
+    var trigger = document.getElementById('profileImageTrigger');
+    var input = document.getElementById('id_profile_image');
+    if (trigger && input) {
+        trigger.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () {
+            var file = input.files[0]; if (!file) return;
+            var url = URL.createObjectURL(file);
+            document.querySelectorAll('.avatar-image').forEach(function (img) { img.src = url; img.classList.remove('is-hidden'); });
+            document.querySelectorAll('.avatar-circle').forEach(function (el) { el.classList.add('is-hidden'); });
+        });
+    }
+
+    // Theme switcher
+    document.querySelectorAll('.theme-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var t = btn.getAttribute('data-theme-choice');
+            document.documentElement.setAttribute('data-theme', t);
+            localStorage.setItem('theme', t);
+            document.querySelectorAll('.theme-btn').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-theme-choice') === t); });
+        });
+        var curr = localStorage.getItem('theme') || 'light';
+        if (btn.getAttribute('data-theme-choice') === curr) btn.classList.add('is-active');
+    });
+
+    // ── Color picker for cover & avatar ring ──
+    var colorPicker = document.getElementById('prfColorPicker');
+    var cover = document.getElementById('prfCover');
+    var sidebar = document.querySelector('.prf-sidebar');
+
+    function applyProfileColor(hex) {
+        if (!sidebar) return;
+        sidebar.style.setProperty('--prf-color', hex);
+    }
+
+    // Load saved color from DB (rendered in the input value)
+    var savedColor = colorPicker ? colorPicker.value : null;
+    if (savedColor) {
+        applyProfileColor(savedColor);
+    }
+
+    if (colorPicker) {
+        colorPicker.addEventListener('input', function () {
+            applyProfileColor(colorPicker.value);
+        });
+        colorPicker.addEventListener('change', function () {
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (!csrfToken) return;
+            var fd = new FormData();
+            fd.append('color', colorPicker.value);
+            fd.append('csrfmiddlewaretoken', csrfToken.value);
+            fetch('{% url "save-profile-color" %}', {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin',
+            });
+        });
+    }
+})();
+</script>
+
 {% endblock %}

@@ -3,78 +3,91 @@
 {% block title %}Contact | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Contact Page</p>
-    <h1>Contact</h1>
-    <p>Reach out for editorial collaborations, partnerships, and press requests.</p>
+
+<section class="contact-page-hero">
+    <p class="eyebrow">Get In Touch</p>
+    <h1>Contact Us</h1>
+    <p class="contact-hero-sub">Reach out for editorial collaborations, partnerships, and press requests.</p>
 </section>
 
-<section class="card contact-intro">
-    <h3>How We Can Help</h3>
-    <p>Whether you are a brand, journalist, stylist, or researcher, our team can support editorial partnerships, interview requests, and curated trend briefings.</p>
-</section>
+<div class="contact-layout">
 
-<section class="cards-grid two-col">
-    <article class="card contact-card">
-        <h3>Editorial Office</h3>
-        <p><strong>Email:</strong> albertvillasor@gmail.com</p>
-        <p><strong>Contact Number:</strong> 09368462663</p>
-        <p><strong>Hours:</strong> Monday to Friday, 9:00 AM - 6:00 PM</p>
-    </article>
-    <article class="card contact-card">
-        <h3>Partnerships</h3>
-        <p><strong>Email:</strong> KevinClide@gmail.com</p>
-        <p><strong>Press:</strong> KevinClide@fashionpulse</p>
-        <p>Include campaign timeline, target audience, and deliverables in your message.</p>
-    </article>
-</section>
-
-<section class="card contact-form-card">
-    <h3>Contact Form</h3>
-    <form method="post" class="contact-form">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-
-        <div class="form-row">
-            <label for="id_name">Name</label>
-            {{ form.name }}
-            {{ form.name.errors }}
+    <!-- Left: Info Panel -->
+    <aside class="contact-info-panel">
+        <div class="contact-info-block">
+            <div class="contact-info-icon">✉</div>
+            <div>
+                <h4>Editorial Office</h4>
+                <p>albertvillasor@gmail.com</p>
+                <p>09368462663</p>
+                <p class="contact-hours">Mon–Fri, 9:00 AM – 6:00 PM</p>
+            </div>
         </div>
 
-        <div class="form-row">
-            <label for="id_email">Email</label>
-            {{ form.email }}
-            {{ form.email.errors }}
+        <div class="contact-info-block">
+            <div class="contact-info-icon">🤝</div>
+            <div>
+                <h4>Partnerships</h4>
+                <p>KevinClide@gmail.com</p>
+                <p>JelynAbayan@gmail.com</p>
+                <p>NicolePunto@gmail.com</p>
+                <p class="contact-hours">Include campaign timeline, audience, and deliverables in your message.</p>
+            </div>
         </div>
 
-        <div class="form-row">
-            <label for="id_subject">Subject</label>
-            {{ form.subject }}
-            {{ form.subject.errors }}
+        <div class="contact-info-block">
+            <div class="contact-info-icon">⏱</div>
+            <div>
+                <h4>Response Times</h4>
+                <p class="contact-hours">General inquiries: 1–2 business days.<br>Partnership requests prioritized by timeline.</p>
+            </div>
         </div>
 
-        <div class="form-row">
-            <label for="id_message">Message</label>
-            {{ form.message }}
-            {{ form.message.errors }}
+        <div class="contact-tips">
+            <h4>Before You Submit</h4>
+            <ul class="clean-list contact-tips-list">
+                <li>Include your name, organization, and role.</li>
+                <li>Share key dates and expected deliverables.</li>
+                <li>Add relevant references or press materials.</li>
+            </ul>
         </div>
+    </aside>
 
-        <button type="submit" class="btn-primary">Send Message</button>
-    </form>
-</section>
+    <!-- Right: Form -->
+    <section class="contact-form-panel card contact-form-card">
+        <h3>Send a Message</h3>
+        <form method="post" class="contact-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-<section class="cards-grid two-col contact-extra">
-    <article class="card">
-        <h3>Response Times</h3>
-        <p>General editorial inquiries are answered within 1–2 business days. Partnership and media requests are prioritized based on campaign timelines.</p>
-    </article>
-    <article class="card">
-        <h3>Before You Submit</h3>
-        <ul class="clean-list">
-            <li>Include your name, organization, and role.</li>
-            <li>Share key dates and expected deliverables.</li>
-            <li>Add relevant references or press materials.</li>
-        </ul>
-    </article>
-</section>
+            <div class="contact-form-row-double">
+                <div class="form-row">
+                    <label for="id_name">Name</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+                <div class="form-row">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="id_subject">Subject</label>
+                {{ form.subject }}
+                {{ form.subject.errors }}
+            </div>
+
+            <div class="form-row">
+                <label for="id_message">Message</label>
+                {{ form.message }}
+                {{ form.message.errors }}
+            </div>
+
+            <button type="submit" class="btn-primary contact-submit-btn">Send Message</button>
+        </form>
+    </section>
+
+</div>
 {% endblock %}

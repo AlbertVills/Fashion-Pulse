@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} | FashionPulse{% endblock %}
+
+{% block content %}
+
+<!-- Hero banner: featured image full-width -->
+{% if article.featured_image %}
+<div class="tad-hero">
+    <img class="tad-hero__img" src="{{ article.featured_image.url }}"
+         alt="{{ article.featured_image_alt|default:article.title }}" loading="lazy">
+    <div class="tad-hero__overlay">
+        <p class="eyebrow tad-hero__eyebrow">Trend Report Article</p>
+        <h1 class="tad-hero__title">{{ article.title }}</h1>
+        {% if article.excerpt %}<p class="tad-hero__excerpt">{{ article.excerpt }}</p>{% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="tad-layout">
+
+    <!-- Main content column -->
+    <main class="tad-main">
+
+        {% if not article.featured_image %}
+        <header class="tad-no-hero-header">
+            <p class="eyebrow">Trend Report Article</p>
+            <h1>{{ article.title }}</h1>
+            {% if article.excerpt %}<p class="tad-excerpt">{{ article.excerpt }}</p>{% endif %}
+        </header>
+        {% endif %}
+
+        <!-- Author / meta bar -->
+        <div class="tad-meta-bar">
+            {% if article.author_profile_image_url %}
+            <img class="author-avatar" src="{{ article.author_profile_image_url }}"
+                 width="42" height="42" alt="{{ article.author }} photo" loading="lazy">
+            {% else %}
+            <span class="author-avatar author-avatar--fallback">{{ article.author|first|upper }}</span>
+            {% endif %}
+            <div class="tad-meta-info">
+                <span class="tad-meta-name">{{ article.author }}</span>
+                <span class="tad-meta-sub">
+                    {{ article.published_at|date:'F j, Y' }}
+                    &ensp;·&ensp;
+                    {{ article.read_time_minutes }} min read
+                    {% if article.category %}&ensp;·&ensp;{{ article.category }}{% endif %}
+                </span>
+            </div>
+            {% if article.tags %}
+            <div class="tad-tags">
+                {% for tag in article.tags.split %}
+                <span class="tad-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if article.author_bio %}
+        <p class="tad-bio">{{ article.author_bio }}</p>
+        {% endif %}
+
+        <!-- Article body -->
+        <div class="tad-body card">
+            {{ article.content|linebreaks }}
+        </div>
+
+        <!-- Attachment image section -->
+        {% if article.attachment %}
+        <div class="tad-attachment">
+            <p class="tad-attachment__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                Attachment
+            </p>
+            {% with article.attachment.name|lower as aname %}
+            {% if '.jpg' in aname or '.jpeg' in aname or '.png' in aname or '.gif' in aname or '.webp' in aname %}
+            <div class="tad-attachment__img-wrap">
+                <img class="tad-attachment__img" src="{{ article.attachment.url }}"
+                     alt="Article attachment image" loading="lazy">
+            </div>
+            {% else %}
+            <a class="tad-attachment__link" href="{{ article.attachment.url }}" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                Download attachment
+            </a>
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+
+        <!-- Comments -->
+        <section class="tad-comments card" id="article-comments">
+            <h3>Comments ({{ article_comments|length }})</h3>
+            {% if not article.allow_comments %}
+            <p class="meta">Comments are disabled for this article.</p>
+            {% else %}
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'article-comment-add' article.slug %}" class="gallery-comment-form">
+                {% csrf_token %}
+                <input type="text" name="comment" maxlength="500" placeholder="Write a comment..." required>
+                <button type="submit">Post</button>
+            </form>
+            {% else %}
+            <p><a href="{% url 'login' %}">Login to comment</a></p>
+            {% endif %}
+            <ul class="gallery-comment-list">
+                {% for comment in article_comments %}
+                <li>
+                    <div class="gallery-comment-head">
+                        <strong>{{ comment.user.username }}</strong>
+                        {% if user.is_authenticated %}
+                        {% if user.id == comment.user_id or user.id == article.submitted_by_id %}
+                        <form method="post" action="{% url 'article-comment-delete' comment.id %}" class="gallery-comment-delete-form" data-confirm="Delete this comment?">
+                            {% csrf_token %}
+                            <button type="submit" class="gallery-comment-delete-btn">Delete</button>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <span>{{ comment.text }}</span>
+                </li>
+                {% empty %}
+                <li class="meta">No comments yet.</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="tad-sidebar">
+
+        <!-- Quick actions -->
+        <div class="tad-sidebar-card">
+            <h4 class="tad-sidebar-card__title">Actions</h4>
+            <nav class="tad-sidebar-nav">
+                <a class="tad-sidebar-nav__link" href="{% url 'trends' %}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    All Trend Reports
+                </a>
+                {% if user.is_authenticated %}
+                <a class="tad-sidebar-nav__link" href="{% url 'trend-create' %}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Write an Article
+                </a>
+                {% if user.is_staff or user.is_superuser or user.id == article.submitted_by_id %}
+                <form method="post" action="{% url 'trend-delete' article.slug %}" data-confirm="Delete this article?">
+                    {% csrf_token %}
+                    <button type="submit" class="tad-sidebar-delete-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                        Delete Article
+                    </button>
+                </form>
+                {% endif %}
+                {% endif %}
+            </nav>
+        </div>
+
+        <!-- Article info -->
+        <div class="tad-sidebar-card">
+            <h4 class="tad-sidebar-card__title">About this Article</h4>
+            <ul class="tad-sidebar-info">
+                <li><span>Author</span><strong>{{ article.author }}</strong></li>
+                <li><span>Published</span><strong>{{ article.published_at|date:'M j, Y' }}</strong></li>
+                <li><span>Read time</span><strong>{{ article.read_time_minutes }} min</strong></li>
+                {% if article.category %}<li><span>Category</span><strong>{{ article.category }}</strong></li>{% endif %}
+                {% if article.tags %}<li><span>Tags</span><strong>{{ article.tags }}</strong></li>{% endif %}
+            </ul>
+        </div>
+
+        <!-- Featured image is shown in sidebar when no hero -->
+        {% if article.featured_image %}
+        <div class="tad-sidebar-card tad-sidebar-card--img">
+            <h4 class="tad-sidebar-card__title">Featured Image</h4>
+            <img class="tad-sidebar-featured-img" src="{{ article.featured_image.url }}"
+                 alt="{{ article.featured_image_alt|default:article.title }}" loading="lazy">
+        </div>
+        {% endif %}
+
+        <!-- Attachment preview in sidebar -->
+        {% if article.attachment %}
+        <div class="tad-sidebar-card">
+            <h4 class="tad-sidebar-card__title">Attachment</h4>
+            {% with article.attachment.name|lower as aname %}
+            {% if '.jpg' in aname or '.jpeg' in aname or '.png' in aname or '.gif' in aname or '.webp' in aname %}
+            <img class="tad-sidebar-featured-img" src="{{ article.attachment.url }}"
+                 alt="Attachment image" loading="lazy">
+            {% else %}
+            <a class="tad-attachment__link" href="{{ article.attachment.url }}" target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Download file
+            </a>
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+
+    </aside>
+
+</div>
+{% endblock %}

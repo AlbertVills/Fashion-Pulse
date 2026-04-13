@@ -1,0 +1,92 @@
+
+/* Typography – Text styles, headings, and text-level elements */
+
+.meta {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.hero p,
+.meta {
+    color: var(--muted);
+}
+
+.eyebrow {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    margin: 0;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.section-head {
+    margin: 1.75rem 0 0.75rem;
+}
+
+.section-head--with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.section-head h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.story-category {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.clean-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.article-subheading {
+    font-size: 1.15rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.article-quote {
+    margin: 1rem 0 0;
+    border-left: 3px solid var(--accent);
+    padding: 0.6rem 0.9rem;
+    background: rgba(137, 173, 255, 0.08);
+    color: var(--text);
+    border-radius: 0 10px 10px 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    font-style: italic;
+    line-height: 1.8;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

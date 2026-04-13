@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Trend Report | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="taf-page-header">
+    <div class="taf-page-header__inner">
+        <p class="eyebrow">Editorial Desk</p>
+        <h1>Submit a Trend Report</h1>
+        <p class="taf-page-header__sub">Share your fashion insight with the FashionPulse community. Your report will be reviewed by our editorial team before publication.</p>
+    </div>
+</section>
+
+<div class="taf-layout">
+
+    <!-- Left: form panel -->
+    <div class="taf-form-panel">
+        <div class="taf-form-card">
+            <h2 class="taf-form-card__title">Article Details</h2>
+            <form method="post" class="taf-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="form-row form-row--checkbox">
+                        <label class="checkbox-field" for="{{ field.id_for_label }}">
+                            {{ field }}
+                            <span class="checkbox-field__label">{{ field.label }}</span>
+                        </label>
+                        {% if field.help_text %}
+                        <small class="form-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% else %}
+                    <div class="form-row">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="taf-submit-row">
+                    <button class="taf-submit-btn" type="submit">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Submit for Review
+                    </button>
+                    <p class="taf-submit-note">Our editorial team reviews all submissions within 48&nbsp;hours.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right: info sidebar -->
+    <aside class="taf-sidebar">
+
+        <div class="taf-sidebar-card">
+            <div class="taf-sidebar-icon">&#9997;&#65039;</div>
+            <h3>Writing a Great Trend Report</h3>
+            <ul class="taf-sidebar-list">
+                <li>Open with a strong hook — a bold statement or striking statistic about the trend.</li>
+                <li>Reference real runway shows, street style, or cultural moments that sparked the trend.</li>
+                <li>Explain <em>why</em> the trend is relevant right now, not just <em>what</em> it is.</li>
+                <li>Use specific designer names, collections, or cities to add authority.</li>
+                <li>Close with a forward-looking take — where is this trend heading next season?</li>
+            </ul>
+        </div>
+
+        <div class="taf-sidebar-card">
+            <div class="taf-sidebar-icon">&#128338;</div>
+            <h3>Current Trending Topics</h3>
+            <ul class="taf-sidebar-list">
+                <li>&#x1F30F;&ensp;Quiet Luxury &amp; Stealth Wealth</li>
+                <li>&#x1F9F5;&ensp;Sheer &amp; Transparent Layering</li>
+                <li>&#x1F457;&ensp;Boho Revival — 70s Silhouettes</li>
+                <li>&#x1F9E5;&ensp;Oversized Outerwear &amp; Cocoon Coats</li>
+                <li>&#x1F460;&ensp;Ballet Flats &amp; Feminine Footwear</li>
+                <li>&#x1F4A5;&ensp;Color Drenching — Head-to-Toe Tones</li>
+            </ul>
+        </div>
+
+        <div class="taf-sidebar-card">
+            <div class="taf-sidebar-icon">&#128064;</div>
+            <h3>Editorial Standards</h3>
+            <p class="taf-sidebar-text">FashionPulse publishes thoughtful, well-researched content. Before submitting, please ensure your article:</p>
+            <ul class="taf-sidebar-checklist">
+                <li>Is at least 200 words in length</li>
+                <li>Cites specific collections, designers, or events</li>
+                <li>Is original — not republished from another source</li>
+                <li>Is free from hate speech or discriminatory language</li>
+            </ul>
+        </div>
+
+        <div class="taf-sidebar-card taf-sidebar-card--accent">
+            <div class="taf-sidebar-icon">&#127775;</div>
+            <h3>Did You Know?</h3>
+            <p class="taf-sidebar-text">The global fashion industry is worth over <strong>$1.7 trillion</strong>. Trend forecasting and editorial commentary are among the most influential forces that shape what consumers buy each season.</p>
+        </div>
+
+    </aside>
+</div>
+{% endblock %}

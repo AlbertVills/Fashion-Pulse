@@ -1,49 +1,47 @@
+import os
+import secrets
+from pathlib import Path
+
 from django.contrib import messages
-from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import LoginView
+from datetime import timedelta
+from django.conf import settings as django_settings
+from django.db.models import Count, Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.text import slugify
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
-from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 
 from .forms import (
-    AdminLoginForm,
-    AdminArticleForm,
-    AdminContactMessageForm,
-    AdminUserProfileForm,
+    ArticleCreateForm,
     ContactForm,
+    GalleryPostForm,
+    PasswordResetCodeConfirmForm,
+    PasswordResetCodeRequestForm,
     SignUpForm,
     UserAccountForm,
     UserProfileForm,
 )
-from .models import Article, ContactMessage, UserProfile
-
-
-staff_required = user_passes_test(
-    lambda user: user.is_authenticated and (user.is_staff or user.is_superuser),
-    login_url='admin-dashboard',
+from .models import (
+    ArticleComment,
+    Article,
+    ContactMessage,
+    EmailVerification,
+    GalleryPost,
+    GalleryPostComment,
+    GalleryPostLike,
+    PasswordResetCode,
+    UserNotification,
+    UserProfile,
 )
 
-
-class AdminLoginView(LoginView):
-    template_name = 'admin/login.html'
-    authentication_form = AdminLoginForm
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
-            return redirect('admin-dashboard')
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Admin login successful.')
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Admin login failed. Check your credentials.')
-        return super().form_invalid(form)
-
-    def get_success_url(self):
-        return self.get_redirect_url() or reverse_lazy('admin-dashboard')
 
 
 class AdminAwareLoginView(LoginView):
@@ -60,8 +58,126 @@ class AdminAwareLoginView(LoginView):
 
     def get_success_url(self):
         if self.request.user.is_staff or self.request.user.is_superuser:
-            return reverse_lazy('admin-dashboard')
+            return reverse_lazy('admin:index')
         return reverse_lazy('home')
+
+
+def _ensure_email_settings_loaded():
+    """Load SMTP credentials from .env at runtime for long-running dev servers."""
+    if django_settings.EMAIL_HOST_USER and django_settings.EMAIL_HOST_PASSWORD:
+        return
+
+    env_path = Path(django_settings.BASE_DIR).parent / '.env'
+    if not env_path.exists():
+        return
+
+    env_values = {}
+    for raw_line in env_path.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        env_values[key.strip()] = value.strip().strip('"').strip("'")
+
+    host_user = env_values.get('EMAIL_HOST_USER', '')
+    host_password = env_values.get('EMAIL_HOST_PASSWORD', '')
+    app_base_url = env_values.get('APP_BASE_URL', '').strip().rstrip('/')
+    if host_user:
+        os.environ['EMAIL_HOST_USER'] = host_user
+        django_settings.EMAIL_HOST_USER = host_user
+        django_settings.DEFAULT_FROM_EMAIL = host_user
+    if host_password:
+        os.environ['EMAIL_HOST_PASSWORD'] = host_password
+        django_settings.EMAIL_HOST_PASSWORD = host_password
+    if app_base_url:
+        os.environ['APP_BASE_URL'] = app_base_url
+        django_settings.APP_BASE_URL = app_base_url
+
+
+def _build_public_url(request, path):
+    base_url = (getattr(django_settings, 'APP_BASE_URL', '') or '').strip().rstrip('/')
+    if base_url:
+        path_str = str(path)
+        if not path_str.startswith('/'):
+            path_str = f'/{path_str}'
+        return f'{base_url}{path_str}'
+    return request.build_absolute_uri(path)
+
+
+def password_reset_request_code(request):
+    if request.method == 'POST':
+        form = PasswordResetCodeRequestForm(request.POST)
+        if form.is_valid():
+            _ensure_email_settings_loaded()
+            if not django_settings.EMAIL_HOST_USER or not django_settings.EMAIL_HOST_PASSWORD:
+                form.add_error(None, 'Password reset email is not configured yet. Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in .env.')
+                return render(request, 'registration/password_reset_form.html', {'form': form})
+
+            email = form.cleaned_data['email'].strip().lower()
+            User = get_user_model()
+            user = User.objects.filter(email__iexact=email, is_active=True).first()
+
+            if user:
+                reset_code = f'{secrets.randbelow(1000000):06d}'
+                PasswordResetCode.objects.update_or_create(
+                    user=user,
+                    defaults={'reset_code': reset_code},
+                )
+
+                from django.core.mail import send_mail
+                try:
+                    send_mail(
+                        subject='Your FashionPulse password reset code',
+                        message=(
+                            f'Hi {user.username},\n\n'
+                            f'Your FashionPulse password reset code is: {reset_code}\n\n'
+                            f'Enter this code on the reset page to create a new password.\n\n'
+                            f'If you did not request this, ignore this email.'
+                        ),
+                        from_email=django_settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[email],
+                        fail_silently=False,
+                    )
+                except Exception as exc:
+                    form.add_error(None, f'Unable to send password reset code: {exc}')
+                    return render(request, 'registration/password_reset_form.html', {'form': form})
+
+            return render(request, 'registration/password_reset_done.html', {'email': email})
+    else:
+        form = PasswordResetCodeRequestForm()
+
+    return render(request, 'registration/password_reset_form.html', {'form': form})
+
+
+def password_reset_code_confirm(request):
+    initial_email = request.GET.get('email', '').strip().lower()
+
+    if request.method == 'POST':
+        form = PasswordResetCodeConfirmForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email'].strip().lower()
+            code = form.cleaned_data['code']
+
+            User = get_user_model()
+            user = User.objects.filter(email__iexact=email, is_active=True).first()
+            if not user:
+                form.add_error(None, 'Invalid email or reset code.')
+                return render(request, 'registration/password_reset_confirm.html', {'form': form})
+
+            reset = PasswordResetCode.objects.filter(user=user).first()
+            if not reset or reset.reset_code != code:
+                form.add_error('code', 'Invalid reset code.')
+                return render(request, 'registration/password_reset_confirm.html', {'form': form})
+
+            user.set_password(form.cleaned_data['new_password1'])
+            user.save()
+            reset.delete()
+
+            return redirect('password_reset_complete')
+    else:
+        form = PasswordResetCodeConfirmForm(initial={'email': initial_email})
+
+    return render(request, 'registration/password_reset_confirm.html', {'form': form})
 
 
 def article_list(request):
@@ -98,88 +214,470 @@ def article_list(request):
             'author': 'Maya Lin',
             'date': 'February 27, 2026',
         },
-        {
-            'image': 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
-            'category': 'Street Style',
-            'title': 'Vintage Accessories Power the Season’s Signature Looks',
-            'excerpt': 'Structured handbags and statement eyewear create high-impact finishings.',
-            'author': 'Noah Ellis',
-            'date': 'February 26, 2026',
-        },
-        {
-            'image': 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80',
-            'category': 'Editorial',
-            'title': 'Minimalist Power Dressing Becomes a Daily Uniform',
-            'excerpt': 'Confident tailoring and disciplined palettes are defining modern authority.',
-            'author': 'Imani Hart',
-            'date': 'February 25, 2026',
-        },
     ]
 
-    gallery_items = [
-        {'image': 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80', 'title': 'Monochrome Street Layering'},
-        {'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80', 'title': 'Relaxed Suiting in Motion'},
-        {'image': 'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=900&q=80', 'title': 'Soft Utility Styling'},
-        {'image': 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80', 'title': 'Off-Duty Editorial Looks'},
-        {'image': 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80', 'title': 'Textured Neutral Pairings'},
-        {'image': 'https://images.unsplash.com/photo-1551163943-3f6a855d1153?auto=format&fit=crop&w=900&q=80', 'title': 'Urban Tailoring and Sneakers'},
-    ]
+    raw_gallery_category = request.GET.get('gallery_category', '').strip()
+    selected_gallery_category = raw_gallery_category
+    normalized_gallery_category = ''
 
-    return render(
-        request,
-        'index.html',
-        {
-            'trending_stories': trending_stories,
-            'gallery_items': gallery_items,
-        },
+    if raw_gallery_category:
+        lowered_query = raw_gallery_category.lower()
+        if lowered_query not in {'all', 'all category', 'all categories'}:
+            for value, label in GalleryPost.Category.choices:
+                if lowered_query in {value.lower(), label.lower()}:
+                    normalized_gallery_category = value
+                    break
+        else:
+            selected_gallery_category = ''
+
+    gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    if normalized_gallery_category:
+        gallery_posts = gallery_posts.filter(category=normalized_gallery_category)
+
+    gallery_posts = (
+        gallery_posts
+        .select_related('submitted_by')
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
     )
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=gallery_posts)
+            .values_list('post_id', flat=True)
+        )
+
+    context = {
+        'trending_stories': trending_stories,
+        'gallery_posts': gallery_posts,
+        'liked_post_ids': liked_post_ids,
+        'selected_gallery_category': selected_gallery_category,
+        'gallery_category_choices': GalleryPost.Category.choices,
+        'gallery_filter_active': bool(normalized_gallery_category),
+    }
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'gallery_grid_partial.html', context)
+    return render(request, 'index.html', context)
+
+
+@login_required
+def create_gallery_post(request):
+    if request.method == 'POST':
+        form = GalleryPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            gallery_post = form.save(commit=False)
+            gallery_post.submitted_by = request.user
+            gallery_post.save()
+            messages.success(request, 'Your photo was posted to the gallery.')
+            return redirect('home')
+    else:
+        form = GalleryPostForm()
+
+    return render(request, 'gallery_post_form.html', {'form': form})
+
+
+@login_required
+def toggle_gallery_heart(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id, is_visible=True)
+    like, created = GalleryPostLike.objects.get_or_create(post=post, user=request.user)
+
+    if created:
+        if post.submitted_by_id != request.user.id:
+            UserNotification.objects.create(
+                recipient=post.submitted_by,
+                actor=request.user,
+                notification_type=UserNotification.NotificationType.GALLERY_LIKE,
+                gallery_post=post,
+            )
+    else:
+        like.delete()
+
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if is_ajax:
+        like_count = GalleryPostLike.objects.filter(post=post).count()
+        return JsonResponse({'ok': True, 'liked': created, 'like_count': like_count})
+
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def add_gallery_comment(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id, is_visible=True)
+    text = request.POST.get('comment', '').strip()
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if not text:
+        if is_ajax:
+            return JsonResponse({'ok': False, 'error': 'Comment cannot be empty.'}, status=400)
+        return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+    comment = GalleryPostComment.objects.create(post=post, user=request.user, text=text[:300])
+    if post.submitted_by_id != request.user.id:
+        UserNotification.objects.create(
+            recipient=post.submitted_by,
+            actor=request.user,
+            notification_type=UserNotification.NotificationType.GALLERY_COMMENT,
+            gallery_post=post,
+            comment=comment,
+        )
+
+    if is_ajax:
+        comment_count = post.comments.count()
+        return JsonResponse({
+            'ok': True,
+            'comment_id': comment.id,
+            'username': request.user.username,
+            'text': comment.text,
+            'comment_count': comment_count,
+        })
+
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def delete_gallery_comment(request, comment_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    comment = get_object_or_404(GalleryPostComment.objects.select_related('post'), id=comment_id)
+    post = comment.post
+    can_delete = request.user.id == comment.user_id or request.user.id == post.submitted_by_id
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if not can_delete:
+        if is_ajax:
+            return JsonResponse({'ok': False, 'error': 'Not allowed.'}, status=403)
+        messages.error(request, 'You are not allowed to delete this comment.')
+        return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+    comment.delete()
+    comment_count = post.comments.count()
+
+    if is_ajax:
+        return JsonResponse({'ok': True, 'comment_count': comment_count})
+
+    messages.success(request, 'Comment deleted.')
+    return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+
+@login_required
+def delete_gallery_post(request, post_id):
+    if request.method != 'POST':
+        return redirect('home')
+
+    post = get_object_or_404(GalleryPost, id=post_id)
+    if post.submitted_by_id != request.user.id:
+        messages.error(request, 'You can only delete your own photo.')
+        return redirect(f"{reverse_lazy('home')}#gallery-post-{post.id}")
+
+    post.delete()
+    messages.success(request, 'Your photo was deleted.')
+    return redirect('home')
 
 
 def trends_page(request):
-    trend_reports = [
-        {'title': 'Spring / Summer 2026 Trend Forecast', 'season': 'Spring/Summer 2026', 'theme': 'Minimalism', 'style': 'Tailored', 'date': '2026-03-01', 'excerpt': 'Seasonal direction focused on clean proportions and practical elegance.', 'image': '/static/images/spring summer.png'},
-        {'title': 'Autumn Layers and Texture Forecast', 'season': 'Autumn/Winter 2026', 'theme': 'Texture', 'style': 'Layered', 'date': '2026-02-20', 'excerpt': 'Material contrast drives storytelling through knitwear and outerwear.', 'image': '/static/images/autumn.jpg'},
-        {'title': 'Resort 2026 Urban Ease Report', 'season': 'Resort 2026', 'theme': 'Mobility', 'style': 'Streetwear', 'date': '2026-02-12', 'excerpt': 'Designers prioritize movement with lightweight utility silhouettes.', 'image': '/static/images/resort.jpg'},
-        {'title': 'Power Basics in Retail Edit', 'season': 'Spring/Summer 2026', 'theme': 'Commercial', 'style': 'Minimal', 'date': '2026-02-05', 'excerpt': 'High-conviction essentials dominate both luxury and premium markets.', 'image': '/static/images/retail.jpg'},
-        {'title': 'Color Rhythm: 2026 Mid-Year Outlook', 'season': 'Mid-Year 2026', 'theme': 'Color', 'style': 'Contemporary', 'date': '2026-01-30', 'excerpt': 'Warm muted tones continue to outperform saturated brights globally.', 'image': '/static/images/color rhythm.png'},
-        {'title': 'Street Heritage and Luxury Blends', 'season': 'Autumn/Winter 2026', 'theme': 'Heritage', 'style': 'Hybrid', 'date': '2026-01-22', 'excerpt': 'Legacy tailoring codes merge with street-led styling language.', 'image': '/static/images/street heritage.jpg'},
-    ]
-    trend_reports = sorted(trend_reports, key=lambda item: item['date'], reverse=True)
-    return render(request, 'trends.html', {'trend_reports': trend_reports})
+    trend_reports = Article.objects.filter(
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    )
+    if request.user.is_authenticated:
+        trend_reports = trend_reports.filter(
+            Q(visibility=Article.Visibility.PUBLIC)
+            | Q(visibility=Article.Visibility.MEMBERS)
+            | Q(submitted_by=request.user)
+        )
+    else:
+        trend_reports = trend_reports.filter(visibility=Article.Visibility.PUBLIC)
+
+    trend_reports = trend_reports.select_related('submitted_by__profile')
+
+    form = None
+    if request.user.is_authenticated:
+        form = ArticleCreateForm()
+
+    return render(request, 'trends.html', {
+        'trend_reports': trend_reports,
+        'article_form': form,
+    })
 
 
 def full_article_page(request):
     return render(request, 'article_detail.html')
 
 
+@login_required
+def create_trend_article(request):
+    if request.method == 'POST':
+        form = ArticleCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.is_trending = False
+            article.moderation_status = Article.ModerationStatus.PENDING
+            if not article.author_name:
+                article.author_name = request.user.get_full_name() or request.user.username
+            article.author = article.author_name
+            article.submitted_by = request.user
+
+            if not article.meta_description:
+                article.meta_description = article.excerpt
+
+            if article.publish_status == Article.PublishStatus.SCHEDULED and article.scheduled_publish_at:
+                article.published_at = article.scheduled_publish_at.date()
+
+            if not article.slug:
+                base_slug = slugify(article.title)[:210] or 'trend-report'
+                slug = base_slug
+                suffix = 2
+                while Article.objects.filter(slug=slug).exists():
+                    slug = f"{base_slug}-{suffix}"
+                    suffix += 1
+                article.slug = slug
+            else:
+                submitted_slug = slugify(article.slug)[:220]
+                if not submitted_slug:
+                    submitted_slug = slugify(article.title)[:210] or 'trend-report'
+                slug = submitted_slug
+                suffix = 2
+                while Article.objects.filter(slug=slug).exclude(pk=article.pk).exists():
+                    slug = f"{submitted_slug}-{suffix}"
+                    suffix += 1
+                article.slug = slug
+
+            article.save()
+            messages.success(request, 'Your article was submitted to admin for review. It will appear in Trend Reports after approval.')
+            return redirect('trends')
+    else:
+        form = ArticleCreateForm()
+
+    return render(request, 'trend_article_form.html', {'form': form})
+
+
+def trend_article_detail(request, slug):
+    article_qs = Article.objects.select_related('submitted_by__profile').filter(
+        slug=slug,
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    )
+    if request.user.is_authenticated:
+        article_qs = article_qs.filter(
+            Q(visibility=Article.Visibility.PUBLIC)
+            | Q(visibility=Article.Visibility.MEMBERS)
+            | Q(submitted_by=request.user)
+        )
+    else:
+        article_qs = article_qs.filter(visibility=Article.Visibility.PUBLIC)
+
+    article = get_object_or_404(article_qs)
+    article_comments = article.comments.select_related('user')[:20]
+    return render(
+        request,
+        'trend_article_detail.html',
+        {
+            'article': article,
+            'article_comments': article_comments,
+        },
+    )
+
+
+@login_required
+def add_article_comment(request, slug):
+    if request.method != 'POST':
+        return redirect('trends')
+
+    article = get_object_or_404(
+        Article,
+        slug=slug,
+        is_trending=True,
+        moderation_status=Article.ModerationStatus.APPROVED,
+    )
+    if not article.allow_comments:
+        messages.error(request, 'Comments are disabled for this article.')
+        return redirect(reverse_lazy('trend-article-detail', kwargs={'slug': article.slug}))
+
+    text = request.POST.get('comment', '').strip()
+    if text:
+        ArticleComment.objects.create(article=article, user=request.user, text=text[:500])
+    return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
+
+
+@login_required
+def delete_article_comment(request, comment_id):
+    if request.method != 'POST':
+        return redirect('trends')
+
+    comment = get_object_or_404(ArticleComment.objects.select_related('article'), id=comment_id)
+    article = comment.article
+    can_delete = request.user.id == comment.user_id or request.user.id == article.submitted_by_id
+    if not can_delete:
+        messages.error(request, 'You are not allowed to delete this comment.')
+        return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
+
+    comment.delete()
+    messages.success(request, 'Comment deleted.')
+    return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}#article-comments")
+
+
+@login_required
+def delete_trend_article(request, slug):
+    if request.method != 'POST':
+        return redirect('trends')
+
+    article = get_object_or_404(Article, slug=slug)
+    can_delete = request.user.is_staff or request.user.is_superuser or request.user.id == article.submitted_by_id
+
+    if not can_delete:
+        messages.error(request, 'You are not allowed to delete this article.')
+        return redirect(f"{reverse_lazy('trend-article-detail', kwargs={'slug': article.slug})}")
+
+    article.delete()
+    messages.success(request, 'Article deleted.')
+    return redirect('trends')
+
+
+@ensure_csrf_cookie
 def insights_page(request):
-    insight_posts = [
+    gallery_to_outfit_category = {
+        GalleryPost.Category.MODERN: 'modern',
+        GalleryPost.Category.STREET: 'street',
+        GalleryPost.Category.MINIMAL: 'minimal',
+        GalleryPost.Category.VINTAGE: 'casual',
+        GalleryPost.Category.OTHER: 'casual',
+    }
+
+    raw_outfit_period = request.GET.get('outfit_period', '').strip().lower()
+    selected_outfit_period = raw_outfit_period if raw_outfit_period in {'all', 'today', 'this_week', 'yesterday'} else 'all'
+
+    gallery_outfit_cards = []
+    latest_gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    today = timezone.localdate()
+    if selected_outfit_period == 'today':
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date=today)
+    elif selected_outfit_period == 'yesterday':
+        yesterday = today - timedelta(days=1)
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date=yesterday)
+    elif selected_outfit_period == 'this_week':
+        week_start = today - timedelta(days=today.weekday())
+        latest_gallery_posts = latest_gallery_posts.filter(created_at__date__gte=week_start, created_at__date__lte=today)
+
+    latest_gallery_posts = latest_gallery_posts.select_related('submitted_by')[:8]
+
+    for post in latest_gallery_posts:
+        if not post.image:
+            continue
+
+        submitter_name = post.submitted_by.get_full_name() or post.submitted_by.username
+        gallery_outfit_cards.append(
+            {
+                'name': post.title,
+                'category': gallery_to_outfit_category.get(post.category, 'casual'),
+                'description': f"{post.get_category_display()} by {submitter_name} from the Home gallery.",
+                'image': post.image.url,
+                'owner_username': post.submitted_by.username,
+            }
+        )
+
+    # Use real gallery uploads only in Latest Collection.
+    outfit_cards = gallery_outfit_cards[:8]
+
+    catalogue_items = [
         {
-            'category': 'Fashion Psychology',
-            'title': 'Why Structured Clothing Signals Confidence',
-            'excerpt': 'How visual discipline in outfits influences self-perception and social response.',
-            'image': '/static/images/pyschology.jpg',
+            'label': 'Blue',
+            'image': '/static/images/blue.jpg',
+            'hover_image': '/static/images/blue1.jpg',
         },
         {
-            'category': 'Cultural Analysis',
-            'title': 'Minimalism as a Post-Excess Cultural Reset',
-            'excerpt': 'A wider cultural pivot toward utility, longevity, and quieter status symbols.',
-            'image': '/static/images/minimalism.jpg',
+            'label': 'White',
+            'image': '/static/images/white.jpg',
+            'hover_image': '/static/images/white1.jpg',
         },
         {
-            'category': 'Industry Commentary',
-            'title': 'What Buyers Want from 2026 Collections',
-            'excerpt': 'Retail buyers prioritize adaptable pieces with strong cross-season relevance.',
-            'image': '/static/images/buyers1.jpg',
+            'label': 'Black',
+            'image': '/static/images/black.jpg',
+            'hover_image': '/static/images/black1.jpg',
         },
         {
-            'category': 'Sustainability',
-            'title': 'Durability Is the New Luxury Metric',
-            'excerpt': 'Longevity and repairability now shape premium product value and brand trust.',
-            'image': '/static/images/sustainability.jpg',
+            'label': 'Beige',
+            'image': '/static/images/beige.jpg',
+            'hover_image': '/static/images/beige1.jpg',
+        },
+        {
+            'label': 'Shirt',
+            'image': '/static/images/shirt.jpg',
+            'hover_image': '/static/images/shirt1.jpg',
+        },
+        {
+            'label': 'Pants',
+            'image': '/static/images/pants.jpg',
+            'hover_image': '/static/images/pants1.png',
+        },
+        {
+            'label': 'Skirt',
+            'image': '/static/images/skirt.jpg',
+            'hover_image': '/static/images/skirt1.jpg',
+        },
+        {
+            'label': 'Style',
+            'image': '/static/images/style.jpg',
+            'hover_image': '/static/images/style1.png',
         },
     ]
-    return render(request, 'insights.html', {'insight_posts': insight_posts})
+    popular_feature = {
+        'title': 'Discover A/W Product Picks',
+        'excerpt': 'Fashion desk picks with strong shape, cleaner silhouettes, and practical layering for daily wear.',
+        'image': 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80',
+    }
+    popular_outfits = [
+        {
+            'title': 'Patterned Knit Jacket',
+            'tag': 'Article Pick',
+            'image': 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Pastel Office Sweat',
+            'tag': 'Street Edit',
+            'image': 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Urban Black Shoulder Bag',
+            'tag': 'Accessory',
+            'image': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Neutral Cotton Set',
+            'tag': 'Minimal',
+            'image': 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Relaxed Beige Blazer',
+            'tag': 'Runway Note',
+            'image': 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=700&q=80',
+        },
+        {
+            'title': 'Urban Soft Tee Dress',
+            'tag': 'Fresh Drop',
+            'image': 'https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=700&q=80',
+        },
+    ]
+    return render(
+        request,
+        'insights.html',
+        {
+            'outfit_cards': outfit_cards,
+            'selected_outfit_period': selected_outfit_period,
+            'outfit_period_filter_active': selected_outfit_period != 'all',
+            'catalogue_items': catalogue_items,
+            'popular_feature': popular_feature,
+            'popular_outfits': popular_outfits,
+        },
+    )
 
 
 def about_page(request):
@@ -213,19 +711,188 @@ def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Account created successfully.')
-            return redirect('home')
+            _ensure_email_settings_loaded()
+            if not django_settings.EMAIL_HOST_USER or not django_settings.EMAIL_HOST_PASSWORD:
+                form.add_error(None, 'Email verification is not configured yet. Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in .env.')
+                return render(request, 'registration/signup.html', {'form': form})
+
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+
+            verification_code = f'{secrets.randbelow(1000000):06d}'
+            EmailVerification.objects.update_or_create(
+                user=user,
+                defaults={'verification_code': verification_code},
+            )
+
+            verify_url = _build_public_url(
+                request,
+                reverse_lazy('verify-email'),
+            )
+            from django.core.mail import send_mail
+            try:
+                send_mail(
+                    subject='Verify your FashionPulse account',
+                    message=(
+                        f'Hi {user.username},\n\n'
+                        f'Your FashionPulse verification code is: {verification_code}\n\n'
+                        f'Enter this code on the verification page:\n{verify_url}\n\n'
+                        f'If you did not sign up, ignore this email.'
+                    ),
+                    from_email=django_settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as exc:
+                user.delete()
+                form.add_error(None, f'Unable to send verification email: {exc}. Check Gmail SMTP settings and App Password, then try again.')
+                return render(request, 'registration/signup.html', {'form': form})
+
+            return render(request, 'registration/verification_sent.html', {'email': user.email})
     else:
         form = SignUpForm()
 
     return render(request, 'registration/signup.html', {'form': form})
 
 
+def verify_email(request):
+    email = request.POST.get('email', '').strip().lower() if request.method == 'POST' else request.GET.get('email', '').strip().lower()
+
+    if request.method == 'POST':
+        code = request.POST.get('code', '').strip()
+        if not email or not code:
+            return render(
+                request,
+                'registration/verification_sent.html',
+                {'email': email, 'verify_error': 'Please enter both email and verification code.'},
+            )
+
+        try:
+            verification = EmailVerification.objects.select_related('user').get(user__email__iexact=email)
+        except EmailVerification.DoesNotExist:
+            return render(request, 'registration/verification_invalid.html')
+
+        if verification.user.is_active:
+            return render(request, 'registration/verification_invalid.html')
+
+        if verification.verification_code != code:
+            return render(
+                request,
+                'registration/verification_sent.html',
+                {'email': email, 'verify_error': 'Invalid verification code. Please try again.'},
+            )
+
+        user = verification.user
+        user.is_active = True
+        user.save()
+        verification.delete()
+
+        login(request, user)
+        messages.success(request, 'Email verified! Welcome to FashionPulse.')
+        return redirect('home')
+
+    return render(request, 'registration/verification_sent.html', {'email': email})
+
+
+@ensure_csrf_cookie
+def style_lens_page(request):
+    return render(request, 'style_lens.html')
+
+
+@require_POST
+def style_lens_analyze(request):
+    """Accept an uploaded image, send it to Hugging Face for classification
+    and object detection, then return detected fashion items as JSON."""
+    image_file = request.FILES.get('image')
+    if not image_file:
+        return JsonResponse({'ok': False, 'error': 'No image uploaded.'}, status=400)
+
+    # Validate file type
+    allowed_types = {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}
+    if image_file.content_type not in allowed_types:
+        return JsonResponse({'ok': False, 'error': 'Unsupported image format. Use JPEG, PNG, WEBP, or GIF.'}, status=400)
+
+    # Limit file size to 10 MB
+    if image_file.size > 10 * 1024 * 1024:
+        return JsonResponse({'ok': False, 'error': 'Image must be under 10 MB.'}, status=400)
+
+    token = getattr(django_settings, 'HUGGINGFACE_API_TOKEN', '')
+    if not token:
+        return JsonResponse({'ok': False, 'error': 'Hugging Face API token is not configured.'}, status=500)
+
+    import json
+    import urllib.request
+    import urllib.error
+
+    image_bytes = image_file.read()
+
+    def hf_post(model_url):
+        req = urllib.request.Request(
+            model_url,
+            data=image_bytes,
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/octet-stream',
+            },
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read())
+
+    items = []
+    seen_labels = set()
+
+    # 1. Image classification (ViT) – detects clothing categories
+    try:
+        classifications = hf_post(
+            'https://router.huggingface.co/hf-inference/models/google/vit-base-patch16-224'
+        )
+        for cls in classifications:
+            if isinstance(cls, dict):
+                label = cls.get('label', '').strip()
+                score = cls.get('score', 0)
+                if score >= 0.02 and label:
+                    key = label.lower()
+                    if key not in seen_labels:
+                        seen_labels.add(key)
+                        items.append({
+                            'label': label.replace('_', ' ').title(),
+                            'confidence': round(score * 100, 1),
+                        })
+    except Exception:
+        pass
+
+    # 2. Object detection (DETR) – detects accessories, bags, etc.
+    try:
+        detections = hf_post(
+            'https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50'
+        )
+        for det in detections:
+            if isinstance(det, dict):
+                label = det.get('label', '').strip()
+                score = det.get('score', 0)
+                if score >= 0.5 and label and label.lower() != 'person':
+                    key = label.lower()
+                    if key not in seen_labels:
+                        seen_labels.add(key)
+                        items.append({
+                            'label': label.replace('_', ' ').title(),
+                            'confidence': round(score * 100, 1),
+                        })
+    except Exception:
+        pass
+
+    if not items:
+        return JsonResponse({'ok': False, 'error': 'No fashion items detected. Try a clearer outfit photo.'}, status=200)
+
+    items.sort(key=lambda x: x['confidence'], reverse=True)
+    return JsonResponse({'ok': True, 'items': items})
+
+
 @login_required
 def profile_view(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    active_tab = 'tab-edit'
 
     if request.method == 'POST':
         if 'remove_profile_image' in request.POST:
@@ -236,16 +903,30 @@ def profile_view(request):
                 messages.success(request, 'Profile image removed.')
             return redirect('profile')
 
-        account_form = UserAccountForm(request.POST, instance=request.user)
-        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
-        if account_form.is_valid() and profile_form.is_valid():
-            account_form.save()
-            profile_form.save()
-            messages.success(request, 'Your profile was updated.')
-            return redirect('profile')
+        if 'change_password' in request.POST:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your password was updated.')
+                return redirect(f"{reverse_lazy('profile')}#tab-password")
+
+            account_form = UserAccountForm(instance=request.user)
+            profile_form = UserProfileForm(instance=profile)
+            active_tab = 'tab-password'
+        else:
+            account_form = UserAccountForm(request.POST, instance=request.user)
+            profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+            password_form = PasswordChangeForm(request.user)
+            if account_form.is_valid() and profile_form.is_valid():
+                account_form.save()
+                profile_form.save()
+                messages.success(request, 'Your profile was updated.')
+                return redirect('profile')
     else:
         account_form = UserAccountForm(instance=request.user)
         profile_form = UserProfileForm(instance=profile)
+        password_form = PasswordChangeForm(request.user)
 
     progress_items = [
         {'label': 'Setup account', 'done': bool(request.user.username and request.user.email)},
@@ -265,6 +946,25 @@ def profile_view(request):
     ]
     completed_count = sum(1 for item in progress_items if item['done'])
     completion_percent = int((completed_count / len(progress_items)) * 100)
+    notifications = UserNotification.objects.filter(recipient=request.user).select_related('actor', 'gallery_post')[:20]
+    unread_notifications_count = UserNotification.objects.filter(recipient=request.user, is_read=False).count()
+    profile_posts = (
+        GalleryPost.objects.filter(submitted_by=request.user, is_visible=True)
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+        .order_by('-created_at')
+    )
+    profile_trend_articles = (
+        Article.objects.filter(submitted_by=request.user)
+        .annotate(comment_count=Count('comments', distinct=True))
+        .order_by('-published_at', '-created_at')
+    )
+    profile_liked_post_ids = set()
+    if request.user.is_authenticated:
+        profile_liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=profile_posts)
+            .values_list('post_id', flat=True)
+        )
 
     return render(
         request,
@@ -274,196 +974,165 @@ def profile_view(request):
             'profile_form': profile_form,
             'progress_items': progress_items,
             'completion_percent': completion_percent,
+            'notifications': notifications,
+            'unread_notifications_count': unread_notifications_count,
+            'password_form': password_form,
+            'active_tab': active_tab,
+            'profile_posts': profile_posts,
+            'profile_liked_post_ids': profile_liked_post_ids,
+            'profile_trend_articles': profile_trend_articles,
         },
     )
 
 
-def admin_dashboard(request):
-    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
-        return AdminLoginView.as_view()(request)
+@login_required
+@require_POST
+def save_profile_color(request):
+    import re
+    color = (request.POST.get('color') or '').strip()
+    if not re.fullmatch(r'#[0-9a-fA-F]{6}', color):
+        return JsonResponse({'ok': False, 'error': 'Invalid color.'}, status=400)
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    profile.profile_color = color
+    profile.save(update_fields=['profile_color'])
+    return JsonResponse({'ok': True})
 
-    article_count = Article.objects.count()
-    trending_count = Article.objects.filter(is_trending=True).count()
-    profile_count = UserProfile.objects.count()
-    contact_count = ContactMessage.objects.count()
 
-    recent_articles = Article.objects.only('title', 'published_at', 'author')[:5]
-    recent_contacts = ContactMessage.objects.only('name', 'subject', 'created_at')[:6]
-    recent_profiles = UserProfile.objects.select_related('user').only('user__username', 'location')[:6]
+@login_required
+@require_POST
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(UserNotification, id=notification_id, recipient=request.user)
+    was_unread = not notification.is_read
+    if was_unread:
+        notification.is_read = True
+        notification.save(update_fields=['is_read'])
 
-    return render(
-        request,
-        'admin_dashboard.html',
+    unread_notifications_count = UserNotification.objects.filter(
+        recipient=request.user,
+        is_read=False,
+    ).count()
+    return JsonResponse(
         {
-            'article_count': article_count,
-            'trending_count': trending_count,
-            'profile_count': profile_count,
-            'contact_count': contact_count,
-            'recent_articles': recent_articles,
-            'recent_contacts': recent_contacts,
-            'recent_profiles': recent_profiles,
-        },
+            'ok': True,
+            'marked_read': was_unread,
+            'unread_count': unread_notifications_count,
+        }
     )
 
 
-@staff_required
-def admin_articles_list(request):
-    articles = Article.objects.all()
-    return render(request, 'admin/articles_list.html', {'articles': articles})
+@login_required
+def list_notifications(request):
+    notifications = UserNotification.objects.filter(recipient=request.user).select_related('actor', 'gallery_post', 'comment')[:50]
+    items = []
+    for n in notifications:
+        items.append({
+            'id': n.id,
+            'message': n.message,
+            'is_read': n.is_read,
+            'created_at': n.created_at.strftime('%b %d, %Y %I:%M %p'),
+            'gallery_post_id': n.gallery_post_id,
+            'read_url': f'/notifications/{n.id}/read/',
+            'delete_url': f'/notifications/{n.id}/delete/',
+        })
+    unread_count = sum(1 for n in notifications if not n.is_read)
+    return JsonResponse({'ok': True, 'notifications': items, 'unread_count': unread_count})
 
 
-@staff_required
-def admin_article_create(request):
-    if request.method == 'POST':
-        form = AdminArticleForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Article created successfully.')
-            return redirect('admin-articles-list')
-    else:
-        form = AdminArticleForm()
+@login_required
+@require_POST
+def delete_notification(request, notification_id):
+    notification = get_object_or_404(UserNotification, id=notification_id, recipient=request.user)
+    notification.delete()
+
+    unread_notifications_count = UserNotification.objects.filter(
+        recipient=request.user,
+        is_read=False,
+    ).count()
+    return JsonResponse({'ok': True, 'unread_count': unread_notifications_count})
+
+
+def gallery_page(request):
+    raw_gallery_category = request.GET.get('gallery_category', '').strip()
+    selected_gallery_category = raw_gallery_category
+    normalized_gallery_category = ''
+
+    if raw_gallery_category:
+        lowered_query = raw_gallery_category.lower()
+        if lowered_query not in {'all', 'all category', 'all categories'}:
+            for value, label in GalleryPost.Category.choices:
+                if lowered_query in {value.lower(), label.lower()}:
+                    normalized_gallery_category = value
+                    break
+        else:
+            selected_gallery_category = ''
+
+    gallery_posts = GalleryPost.objects.filter(is_visible=True)
+    if normalized_gallery_category:
+        gallery_posts = gallery_posts.filter(category=normalized_gallery_category)
+
+    gallery_posts = (
+        gallery_posts
+        .select_related('submitted_by', 'submitted_by__profile')
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+    )
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=gallery_posts)
+            .values_list('post_id', flat=True)
+        )
+
+    context = {
+        'gallery_posts': gallery_posts,
+        'liked_post_ids': liked_post_ids,
+        'selected_gallery_category': selected_gallery_category,
+        'gallery_category_choices': GalleryPost.Category.choices,
+        'gallery_filter_active': bool(normalized_gallery_category),
+    }
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'gallery_grid_partial.html', context)
+    return render(request, 'gallery.html', context)
+
+
+def user_gallery_page(request, username):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    owner = get_object_or_404(User, username=username)
+    try:
+        owner_profile = owner.profile
+    except UserProfile.DoesNotExist:
+        owner_profile = None
+
+    posts = (
+        GalleryPost.objects.filter(submitted_by=owner, is_visible=True)
+        .prefetch_related('comments__user')
+        .annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
+    )
+
+    trend_articles = Article.objects.filter(submitted_by=owner).annotate(comment_count=Count('comments', distinct=True))
+    total_photo_likes = sum(post.like_count for post in posts)
+    total_article_comments = sum(article.comment_count for article in trend_articles)
+
+    liked_post_ids = set()
+    if request.user.is_authenticated:
+        liked_post_ids = set(
+            GalleryPostLike.objects.filter(user=request.user, post__in=posts)
+            .values_list('post_id', flat=True)
+        )
 
     return render(
         request,
-        'admin/article_form.html',
+        'user_gallery.html',
         {
-            'form': form,
-            'form_title': 'Add Article',
-            'submit_label': 'Create Article',
+            'owner': owner,
+            'owner_profile': owner_profile,
+            'posts': posts,
+            'liked_post_ids': liked_post_ids,
+            'trend_articles': trend_articles,
+            'total_photo_likes': total_photo_likes,
+            'total_article_comments': total_article_comments,
         },
-    )
-
-
-@staff_required
-def admin_article_edit(request, article_id):
-    article = get_object_or_404(Article, pk=article_id)
-
-    if request.method == 'POST':
-        form = AdminArticleForm(request.POST, instance=article)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Article updated successfully.')
-            return redirect('admin-articles-list')
-    else:
-        form = AdminArticleForm(instance=article)
-
-    return render(
-        request,
-        'admin/article_form.html',
-        {
-            'form': form,
-            'form_title': 'Edit Article',
-            'submit_label': 'Save Changes',
-            'article': article,
-        },
-    )
-
-
-@staff_required
-def admin_article_delete(request, article_id):
-    article = get_object_or_404(Article, pk=article_id)
-
-    if request.method == 'POST':
-        article.delete()
-        messages.success(request, 'Article deleted successfully.')
-        return redirect('admin-articles-list')
-
-    return render(
-        request,
-        'admin/article_confirm_delete.html',
-        {'article': article},
-    )
-
-
-@staff_required
-def admin_contacts_list(request):
-    contacts = ContactMessage.objects.all()
-    return render(request, 'admin/contacts_list.html', {'contacts': contacts})
-
-
-@staff_required
-def admin_contact_edit(request, contact_id):
-    contact = get_object_or_404(ContactMessage, pk=contact_id)
-
-    if request.method == 'POST':
-        form = AdminContactMessageForm(request.POST, instance=contact)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Contact message updated successfully.')
-            return redirect('admin-contacts-list')
-    else:
-        form = AdminContactMessageForm(instance=contact)
-
-    return render(
-        request,
-        'admin/contact_form.html',
-        {
-            'form': form,
-            'form_title': 'Edit Contact Message',
-            'submit_label': 'Save Changes',
-            'contact': contact,
-        },
-    )
-
-
-@staff_required
-def admin_contact_delete(request, contact_id):
-    contact = get_object_or_404(ContactMessage, pk=contact_id)
-
-    if request.method == 'POST':
-        contact.delete()
-        messages.success(request, 'Contact message deleted successfully.')
-        return redirect('admin-contacts-list')
-
-    return render(
-        request,
-        'admin/contact_confirm_delete.html',
-        {'contact': contact},
-    )
-
-
-@staff_required
-def admin_profiles_list(request):
-    profiles = UserProfile.objects.select_related('user').all()
-    return render(request, 'admin/profiles_list.html', {'profiles': profiles})
-
-
-@staff_required
-def admin_profile_edit(request, profile_id):
-    profile = get_object_or_404(UserProfile.objects.select_related('user'), pk=profile_id)
-
-    if request.method == 'POST':
-        form = AdminUserProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'User profile updated successfully.')
-            return redirect('admin-profiles-list')
-    else:
-        form = AdminUserProfileForm(instance=profile)
-
-    return render(
-        request,
-        'admin/profile_form.html',
-        {
-            'form': form,
-            'form_title': f'Edit Profile: {profile.user.username}',
-            'submit_label': 'Save Changes',
-            'profile_obj': profile,
-        },
-    )
-
-
-@staff_required
-def admin_profile_delete(request, profile_id):
-    profile = get_object_or_404(UserProfile.objects.select_related('user'), pk=profile_id)
-
-    if request.method == 'POST':
-        profile.delete()
-        messages.success(request, 'User profile deleted successfully.')
-        return redirect('admin-profiles-list')
-
-    return render(
-        request,
-        'admin/profile_confirm_delete.html',
-        {'profile_obj': profile},
     )

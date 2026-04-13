@@ -1,56 +1,212 @@
 {% extends 'base.html' %}
 
-{% block title %}Insights | FashionPulse{% endblock %}
+{% block title %}Outfit | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Blog / Insights</p>
-    <h1>Editorial Insights</h1>
-    <p>Opinion-led analysis on fashion psychology, cultural shifts, industry commentary, and sustainability.</p>
+
+<!-- Page Hero -->
+<section class="outfit-page-hero">
+    <div class="outfit-page-hero__text">
+        <p class="eyebrow">Style & Looks</p>
+        <h1>The Collection</h1>
+        <p class="outfit-page-hero__sub">Each piece represents creativity, inspiration, and personal experiences.</p>
+    </div>
+    <div class="outfit-page-hero__actions">
+        <div class="outfit-search-wrap">
+            <input
+                id="outfitSearch"
+                class="outfit-search-input"
+                type="search"
+                placeholder="Search outfits…"
+                aria-label="Search outfits by name or category"
+            >
+        </div>
+        <form method="get" action="{% url 'insights' %}" class="outfit-filter-bar">
+            <label class="outfit-time-filter-label" for="outfit-period-select">Filter by</label>
+            <select id="outfit-period-select" name="outfit_period" class="outfit-period-select" onchange="this.form.submit()">
+                <option value="all" {% if selected_outfit_period == 'all' %}selected{% endif %}>All dates</option>
+                <option value="today" {% if selected_outfit_period == 'today' %}selected{% endif %}>Today</option>
+                <option value="this_week" {% if selected_outfit_period == 'this_week' %}selected{% endif %}>This week</option>
+                <option value="yesterday" {% if selected_outfit_period == 'yesterday' %}selected{% endif %}>Yesterday</option>
+            </select>
+        </form>
+        <a class="btn-primary inline-btn outfit-post-cta" href="{% url 'home' %}#style-gallery">Explore Gallery</a>
+    </div>
 </section>
 
-<section class="page-banner cardless">
-    <img
-        src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80"
-        data-slider-images="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80"
-        data-slider-interval="4200"
-        alt="Editorial insights moodboard"
-    >
-</section>
-
-<section class="card featured-insight">
-    <img class="wide-media" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1400&q=80" alt="Fashion editorial feature">
-    <p class="story-category">Featured Essay</p>
-    <h3>Why Consumers Are Choosing Fewer, Better Pieces</h3>
-    <p>Editorial teams are observing a clear shift toward intentional purchasing behavior. Readers are prioritizing adaptable essentials, stronger material quality, and long-term wearability over novelty-heavy cycles.</p>
-    <p>This shift is influencing both luxury and contemporary markets, where brands are now designing with durability, emotional value, and wardrobe integration in mind.</p>
-</section>
-
-<section class="cards-grid">
-    {% for post in insight_posts %}
-    <article class="card">
-        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}">
-        <p class="story-category">{{ post.category }}</p>
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.excerpt }}</p>
+<!-- Grid -->
+<section class="outfit-editorial-grid" aria-label="Outfit collection grid">
+    {% for outfit in outfit_cards %}
+    <article class="outfit-tile" data-category="{{ outfit.category }}" data-name="{{ outfit.name|lower }}" style="cursor:pointer;" onclick="openStyleLensModal('{{ outfit.image }}')">
+        <img src="{{ outfit.image }}" alt="{{ outfit.name }}">
+        <div class="outfit-tile__overlay">
+            <span class="outfit-tile__name">{{ outfit.name }}</span>
+            <span class="outfit-tile__category eyebrow">{{ outfit.category }}</span>
+        </div>
+        <span class="outfit-tile__lens-badge">&#128269; Style Lens</span>
+        <button
+            type="button"
+            class="outfit-quick-btn"
+            data-name="{{ outfit.name }}"
+            data-category="{{ outfit.category|title }}"
+            data-description="{{ outfit.description }}"
+            data-image="{{ outfit.image }}"
+            onclick="event.preventDefault(); event.stopPropagation();"
+        >Quick View</button>
     </article>
     {% endfor %}
 </section>
 
-<section class="cards-grid two-col insight-bottom">
-    <article class="card">
-        <h3>Topics We Cover Weekly</h3>
-        <ul class="clean-list">
-            <li>Fashion psychology and identity signaling</li>
-            <li>Cultural analysis behind global trend adoption</li>
-            <li>Industry strategy and retail behavior</li>
-            <li>Sustainability, durability, and circular systems</li>
-        </ul>
-    </article>
-    <article class="card">
-        <h3>Editorial Format</h3>
-        <p>Each insight article includes context, evidence-backed perspective, and a practical implication for readers, creators, and brands.</p>
-        <p>Our goal is to make complex fashion shifts clear, actionable, and intellectually grounded.</p>
+<p id="outfitEmptyState" class="outfit-empty{% if outfit_cards %} is-hidden{% endif %}">
+    {% if selected_outfit_period == 'today' %}
+    No outfit photos were posted today.
+    {% elif selected_outfit_period == 'yesterday' %}
+    No outfit photos were posted yesterday.
+    {% elif selected_outfit_period == 'this_week' %}
+    No outfit photos were posted this week.
+    {% else %}
+    No outfit matched your filter.
+    {% endif %}
+</p>
+
+<!-- Quick View Modal -->
+<section id="outfitQuickView" class="outfit-modal is-hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Outfit quick view">
+    <div class="outfit-modal__backdrop" data-modal-close="true"></div>
+    <article class="outfit-modal__panel" role="document">
+        <button type="button" class="outfit-modal__close" data-modal-close="true" aria-label="Close quick view">&times;</button>
+        <img id="outfitModalImage" src="" alt="Outfit preview">
+        <div class="outfit-modal__copy">
+            <p id="outfitModalCategory" class="story-category"></p>
+            <h3 id="outfitModalTitle"></h3>
+            <p id="outfitModalDescription"></p>
+            <a class="outfit-cta" href="{% url 'gallery-create' %}">Try this style</a>
+        </div>
     </article>
 </section>
+
+<!-- Style Lens Modal -->
+<section id="slModal" class="sl-modal is-hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Style Lens analysis">
+    <div class="sl-modal__backdrop" id="slModalBackdrop"></div>
+    <div class="sl-modal__panel">
+        <button type="button" class="sl-modal__close" id="slModalClose" aria-label="Close">&times;</button>
+        <div class="sl-modal__body">
+            <div class="sl-modal__image-wrap">
+                <img id="slModalImage" src="" alt="Outfit being analyzed">
+            </div>
+            <div class="sl-modal__results-wrap">
+                <h2 class="sl-modal__title">Style Lens</h2>
+                <div id="slModalLoading" class="sl-modal__loading">
+                    <span class="sl-loading__spinner"></span>
+                    <p>Analyzing outfit&hellip;</p>
+                </div>
+                <div id="slModalError" class="sl-modal__error" hidden></div>
+                <ul id="slModalList" class="sl-results__list"></ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(function () {
+    // Move modal to body so no parent transform breaks fixed positioning
+    var modal = document.getElementById('slModal');
+    document.body.appendChild(modal);
+
+    var backdrop  = document.getElementById('slModalBackdrop');
+    var closeBtn  = document.getElementById('slModalClose');
+    var modalImg  = document.getElementById('slModalImage');
+    var loading   = document.getElementById('slModalLoading');
+    var errorEl   = document.getElementById('slModalError');
+    var listEl    = document.getElementById('slModalList');
+
+    function getCookie(name) {
+        var val = null;
+        document.cookie.split(';').forEach(function (c) {
+            c = c.trim();
+            if (c.indexOf(name + '=') === 0) val = decodeURIComponent(c.substring(name.length + 1));
+        });
+        return val;
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    function openModal(imageUrl) {
+        modalImg.src = imageUrl;
+        loading.hidden = false;
+        errorEl.hidden = true;
+        errorEl.textContent = '';
+        listEl.innerHTML = '';
+        modal.classList.remove('is-hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        // Fetch image as blob, then POST to analyze
+        fetch(imageUrl)
+            .then(function (r) { return r.blob(); })
+            .then(function (blob) {
+                var ext = imageUrl.split('.').pop().split('?')[0] || 'jpg';
+                var mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+                var mime = mimeMap[ext.toLowerCase()] || 'image/jpeg';
+                var file = new File([blob], 'outfit.' + ext, { type: mime });
+
+                var formData = new FormData();
+                formData.append('image', file);
+
+                return fetch('{% url "style-lens-analyze" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                loading.hidden = true;
+                if (!data.ok || !data.items || data.items.length === 0) {
+                    errorEl.textContent = data.error || 'No fashion items detected. Try another photo.';
+                    errorEl.hidden = false;
+                    return;
+                }
+                data.items.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'sl-results__item';
+                    li.innerHTML =
+                        '<span class="sl-results__label">' + escapeHtml(item.label) + '</span>' +
+                        '<span class="sl-results__confidence">' + item.confidence + '%</span>' +
+                        '<div class="sl-results__bar"><div class="sl-results__bar-fill" style="width:' + item.confidence + '%"></div></div>';
+                    listEl.appendChild(li);
+                });
+            })
+            .catch(function () {
+                loading.hidden = true;
+                errorEl.textContent = 'Analysis failed. Please try again.';
+                errorEl.hidden = false;
+            });
+    }
+
+    function closeModal() {
+        modal.classList.add('is-hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        modalImg.src = '';
+        listEl.innerHTML = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) closeModal();
+    });
+
+    // Expose globally for tile onclick
+    window.openStyleLensModal = openModal;
+})();
+</script>
+
 {% endblock %}

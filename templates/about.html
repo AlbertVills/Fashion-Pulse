@@ -1,65 +1,150 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}About | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">About Page</p>
-    <h1>About FashionPulse</h1>
-    <p>An independent digital magazine dedicated to trend intelligence, cultural context, and industry-level fashion analysis.</p>
+
+<section class="about-hero">
+    <div class="about-hero__content">
+        <p class="eyebrow">Est. 2024 · Digital Magazine</p>
+        <h1>About FashionPulse</h1>
+        <p class="about-hero__sub">An independent digital magazine dedicated to trend intelligence, cultural context, and industry-level fashion analysis.</p>
+        <a class="btn-primary inline-btn" href="{% url 'contact' %}">Get In Touch</a>
+    </div>
+    <div class="about-hero__image">
+        <img
+            src="{% static 'images/jelyn.jpg' %}"
+            data-slider-images="{% static 'images/jelyn.jpg' %}"
+            data-slider-interval="4200"
+            alt="Magazine editorial room"
+        >
+        <div class="about-hero__stat-row">
+            <div class="about-stat">
+                <span class="about-stat__num">2026</span>
+                <span class="about-stat__label">Founded</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat__num">50+</span>
+                <span class="about-stat__label">Reports</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat__num">12K+</span>
+                <span class="about-stat__label">Readers</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="page-banner cardless">
-    <img
-        src="https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=1600&q=80"
-        data-slider-images="https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1495121553079-4c61bcce1894?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80"
-        data-slider-interval="4200"
-        alt="Magazine editorial room"
-    >
+<section class="about-identity">
+    <div class="about-identity__text">
+        <p class="eyebrow">Our Story</p>
+        <h2>Who We Are</h2>
+        <p>FashionPulse is built for readers who want more than quick trend summaries. We combine editorial storytelling with analytical depth to explain how and why fashion movements emerge, spread, and evolve.</p>
+        <p>Our publication sits at the intersection of runway observation, street-style documentation, and long-term market interpretation. We believe fashion is a language — one that deserves careful, honest translation.</p>
+        <p>From the emerging designers shaking up the industry to the cultural forces shaping what we wear, FashionPulse documents it all with clarity and depth.</p>
+    </div>
+    <div class="about-identity__image">
+        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=700&q=80" alt="Editorial desk">
+    </div>
 </section>
 
-<section class="card about-intro">
-    <img class="wide-media" src="https://images.unsplash.com/photo-1495121553079-4c61bcce1894?auto=format&fit=crop&w=1400&q=80" alt="Fashion editorial desk">
-    <h3>Who We Are</h3>
-    <p>FashionPulse is built for readers who want more than quick trend summaries. We combine editorial storytelling with analytical depth to explain how and why fashion movements emerge, spread, and evolve.</p>
-    <p>Our publication sits at the intersection of runway observation, street-style documentation, and long-term market interpretation.</p>
+<section class="about-pillars">
+    <div class="section-head">
+        <h2>What We Stand For</h2>
+    </div>
+    <div class="about-pillars-grid">
+        <div class="about-pillar-card">
+            <div class="about-pillar-icon">🎯</div>
+            <h3>Editorial Mission</h3>
+            <p>To translate global fashion signals into clear, high-value reporting that helps readers understand what matters now and what lasts.</p>
+        </div>
+        <div class="about-pillar-card">
+            <div class="about-pillar-icon">🔭</div>
+            <h3>Our Vision</h3>
+            <p>To become a trusted reference for thoughtful trend interpretation across runway, street style, and consumer behavior — globally relevant, locally aware.</p>
+        </div>
+        <div class="about-pillar-card">
+            <div class="about-pillar-icon">⚖️</div>
+            <h3>Editorial Standards</h3>
+            <p>Context-first reporting grounded in observable industry shifts, with a clear separation between journalism, opinion, and sponsored content.</p>
+        </div>
+        <div class="about-pillar-card">
+            <div class="about-pillar-icon">🌍</div>
+            <h3>Global Perspective</h3>
+            <p>We cover fashion from Lagos to Seoul, Milan to Manila, bringing diverse voices and a truly international lens to every story we publish.</p>
+        </div>
+    </div>
 </section>
 
-<section class="cards-grid two-col">
-    <article class="card">
-        <img class="card-thumb" src="/static/images/editorial mission.jpg" alt="Mission image">
-        <h3>Editorial Mission</h3>
-        <p>To translate global fashion signals into clear, high-value reporting that helps readers understand what matters now and what lasts.</p>
-    </article>
-    <article class="card">
-        <img class="card-thumb" src="/static/images/vision.jpg" alt="Vision image">
-        <h3>Vision</h3>
-        <p>To become a trusted magazine reference for thoughtful trend interpretation across runway, street style, and consumer behavior.</p>
-    </article>
-    <article class="card">
-        <img class="card-thumb" src="/static/images/contributors.jpg" alt="Contributors image">
-        <h3>Contributors</h3>
-        <p>Our contributors include fashion journalists, stylists, data-informed analysts, and cultural researchers from major fashion hubs.</p>
-    </article>
-    <article class="card">
-        <img class="card-thumb" src="/static/images/submission.jpg" alt="Submission guidelines image">
-        <h3>Submission Guidelines</h3>
-        <p>We accept original editorial submissions focused on trend analysis, fashion psychology, sustainability, and cultural commentary. Include a short pitch, writing sample, and relevant references.</p>
-    </article>
+<section class="about-team">
+    <div class="section-head">
+        <h2>Our Contributors</h2>
+        <p class="meta">A multidisciplinary team covering fashion from every angle.</p>
+    </div>
+    <div class="about-team-grid">
+        <div class="about-team-card">
+            <img src="{% static 'images/abayan.jpg' %}" alt="Jelyn Abayan">
+            <div class="about-team-card__info">
+                <h4>Jelyn Abayan</h4>
+                <span class="eyebrow">Editor in Chief</span>
+                <p>Leading editorial direction with 10+ years in fashion journalism. Former contributor at Vogue and Dazed.</p>
+            </div>
+        </div>
+        <div class="about-team-card">
+            <img src="{% static 'images/kevin.jpg' %}" alt="Kevin Clide Bautista">
+            <div class="about-team-card__info">
+                <h4>Kevin Clide Bautista</h4>
+                <span class="eyebrow">Trend Analyst</span>
+                <p>Data-informed analyst specializing in consumer behavior and retail forecasting. Based in London.</p>
+            </div>
+        </div>
+        <div class="about-team-card">
+            <img src="{% static 'images/nicole.jpg' %}" alt="Nicole Punto">
+            <div class="about-team-card__info">
+                <h4>Nicole Punto</h4>
+                <span class="eyebrow">Editorial Stylist</span>
+                <p>Runway stylist and cultural researcher documenting street style across Asia and Latin America.</p>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="cards-grid two-col about-extra">
-    <article class="card">
-        <h3>Editorial Standards</h3>
-        <ul class="clean-list">
-            <li>Context-first reporting grounded in observable industry shifts.</li>
-            <li>Clear separation between reporting, opinion, and sponsored content.</li>
-            <li>Global perspective with practical relevance for everyday readers.</li>
-        </ul>
-    </article>
-    <article class="card">
+<section class="about-bottom-grid">
+    <article class="about-bottom-card">
+        <div class="about-pillar-icon">📅</div>
         <h3>Publishing Rhythm</h3>
         <p>We publish daily updates, weekly insights, and monthly deep-dive trend dossiers. Seasonal forecast editions are released ahead of major retail planning cycles.</p>
+        <ul class="clean-list about-check-list">
+            <li>Daily trend signals</li>
+            <li>Weekly editorial features</li>
+            <li>Monthly deep dossiers</li>
+            <li>Seasonal forecast editions</li>
+        </ul>
+    </article>
+    <article class="about-bottom-card">
+        <div class="about-pillar-icon">✍️</div>
+        <h3>Submission Guidelines</h3>
+        <p>We accept original editorial submissions focused on trend analysis, fashion psychology, sustainability, and cultural commentary.</p>
+        <ul class="clean-list about-check-list">
+            <li>Include a short pitch and your bio</li>
+            <li>Attach a relevant writing sample</li>
+            <li>Reference sources and visual materials</li>
+            <li>Allow 5–7 business days for review</li>
+        </ul>
+        <a class="btn-primary inline-btn" style="margin-top:0.8rem" href="{% url 'contact' %}">Submit a Pitch</a>
+    </article>
+    <article class="about-bottom-card">
+        <div class="about-pillar-icon">🤝</div>
+        <h3>Partnerships</h3>
+        <p>We work with brands, institutions, and agencies to develop editorial partnerships, exclusive trend briefings, and co-branded content.</p>
+        <ul class="clean-list about-check-list">
+            <li>Sponsored editorial features</li>
+            <li>Brand trend intelligence reports</li>
+            <li>Event coverage and activations</li>
+            <li>Influencer collaboration campaigns</li>
+        </ul>
     </article>
 </section>
+
 {% endblock %}

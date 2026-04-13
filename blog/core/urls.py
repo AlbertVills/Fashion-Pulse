@@ -20,11 +20,22 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.urls import reverse_lazy
 
-from articles.views import AdminAwareLoginView, logout_view
+from articles.views import (
+    AdminAwareLoginView,
+    logout_view,
+    password_reset_code_confirm,
+    password_reset_request_code,
+)
 
 urlpatterns = [
     path('accounts/login/', AdminAwareLoginView.as_view(), name='login'),
     path('accounts/logout/', logout_view, name='logout'),
+    path(
+        'accounts/password_reset/',
+        password_reset_request_code,
+        name='password_reset',
+    ),
+    path('accounts/password-reset-code/', password_reset_code_confirm, name='password_reset_code_confirm'),
     path(
         'accounts/password-change/',
         auth_views.PasswordChangeView.as_view(

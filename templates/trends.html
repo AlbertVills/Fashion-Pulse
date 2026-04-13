@@ -1,66 +1,362 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Trend Reports | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Category Page</p>
-    <h1>Trend Reports</h1>
-    <p>Editorial forecasts tracking how runway direction translates into real-world wardrobes and market movement.</p>
-</section>
-
-<section class="page-banner cardless">
-    <img
-        src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80"
-        data-slider-images="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=1600&q=80"
-        data-slider-interval="4200"
-        alt="Trend report runway board"
-    >
-</section>
-
-<section class="cards-grid two-col trend-overview">
-    <article class="card">
-        <h3>Category Introduction</h3>
-        <p>This section curates long-form trend reports in chronological order, combining runway analysis, retail behavior, and cultural context to explain why each movement matters.</p>
-    </article>
-    <article class="card">
-        <h3>2026 Snapshot</h3>
-        <ul class="clean-list">
-            <li>Dominant Direction: Minimalist tailoring and quiet utility.</li>
-            <li>Fastest-Rising Theme: Texture-led layering.</li>
-            <li>Most Referenced Style Lens: Street-luxury hybrids.</li>
-        </ul>
-    </article>
-</section>
-
-<section class="card filter-card">
-    <div class="tag-filters" id="tagFilters">
-        <button class="tag-btn active" type="button" data-filter="all">All</button>
-        <button class="tag-btn" type="button" data-filter="Spring/Summer 2026">Spring/Summer 2026</button>
-        <button class="tag-btn" type="button" data-filter="Autumn/Winter 2026">Autumn/Winter 2026</button>
-        <button class="tag-btn" type="button" data-filter="Minimalism">Minimalism</button>
-        <button class="tag-btn" type="button" data-filter="Texture">Texture</button>
-        <button class="tag-btn" type="button" data-filter="Streetwear">Streetwear</button>
+<section class="trend-page-header">
+    <div class="trend-page-header__inner">
+        <p class="eyebrow">Editorial</p>
+        <h1>Trend Reports</h1>
+        <p class="trend-page-header__sub">Curated fashion analysis and seasonal insights from our editorial team.</p>
+        {% if user.is_authenticated %}
+        <button type="button" class="btn-primary inline-btn" id="openTrendModal">+ New Report</button>
+        {% else %}
+        <a class="btn-secondary inline-btn" href="{% url 'login' %}">Log in to publish</a>
+        {% endif %}
     </div>
 </section>
 
-<section>
-    <div class="cards-grid" id="trendGrid">
+<section class="trend-slider-section">
+    <div class="trend-slider-viewport" data-trend-slider>
+
         {% for report in trend_reports %}
-        <article class="card trend-item" data-season="{{ report.season }}" data-theme="{{ report.theme }}" data-style="{{ report.style }}">
-            <img class="card-thumb" src="{{ report.image }}" alt="{{ report.title }}">
-            <p class="meta">{{ report.date }}</p>
-            <h3>{{ report.title }}</h3>
-            <p>{{ report.excerpt }}</p>
-            <p class="meta">Season: {{ report.season }} · Theme: {{ report.theme }} · Style: {{ report.style }}</p>
+        <article class="trend-slider-card" data-index="{{ forloop.counter0 }}">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    {% if report.author_profile_image_url %}
+                    <img class="trend-slider-img" src="{{ report.author_profile_image_url }}" alt="{{ report.title }}">
+                    {% else %}
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=480&q=80" alt="{{ report.title }}">
+                    {% endif %}
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">{{ report.title }}</span>
+                        <span class="trend-slider-date">{{ report.published_at|date:'M j' }}</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <a class="trend-slider-cta-btn" href="{% url 'trend-article-detail' report.slug %}">
+                            <span class="trend-slider-cta-plus">+</span> Read Article
+                        </a>
+                        {% if user.is_authenticated %}{% if user.is_staff or user.is_superuser or user.id == report.submitted_by_id %}
+                        <form method="post" action="{% url 'trend-delete' report.slug %}" data-confirm="Delete this article?" style="display:inline;">
+                            {% csrf_token %}<button type="submit" class="gallery-comment-delete-btn" style="font-size:0.75rem;">Delete</button>
+                        </form>
+                        {% endif %}{% endif %}
+                    </div>
+                </div>
+            </div>
         </article>
         {% endfor %}
+
+        <!-- Example editorial cards -->
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=480&q=80" alt="Spring Color Forecast">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Spring/Summer 2026 Color Forecast</span>
+                        <span class="trend-slider-date">Mar 28</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=480&q=80" alt="Quiet Luxury">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Quiet Luxury Redefines Minimalism</span>
+                        <span class="trend-slider-date">Mar 22</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=480&q=80" alt="Streetwear Couture">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Streetwear Meets Haute Couture</span>
+                        <span class="trend-slider-date">Mar 15</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=480&q=80" alt="Bold Accessories">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">The Return of Bold Accessories</span>
+                        <span class="trend-slider-date">Mar 9</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=480&q=80" alt="Y2K Revival">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Y2K Revival: What's Actually Staying</span>
+                        <span class="trend-slider-date">Mar 3</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=480&q=80" alt="Sustainable Fashion">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Sustainable Fashion Goes Mainstream</span>
+                        <span class="trend-slider-date">Feb 24</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=480&q=80" alt="Power Suiting">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Power Suiting for the Modern Era</span>
+                        <span class="trend-slider-date">Feb 17</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=480&q=80" alt="Monochrome Dressing">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Monochrome Dressing: Head-to-Toe Impact</span>
+                        <span class="trend-slider-date">Feb 10</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="trend-slider-card trend-slider-card--demo">
+            <div class="trend-slider-card-inner">
+                <div class="trend-slider-top-icons">
+                    <button class="trend-slider-icon-btn" aria-label="Like" type="button">&#9825;</button>
+                    <button class="trend-slider-icon-btn" aria-label="Share" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </button>
+                </div>
+                <div class="trend-slider-img-wrap">
+                    <img class="trend-slider-img" src="https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=480&q=80" alt="Textured Fabrics">
+                </div>
+                <div class="trend-slider-info">
+                    <div class="trend-slider-title-row">
+                        <span class="trend-slider-title">Texture-Forward: Fabric as Statement</span>
+                        <span class="trend-slider-date">Feb 3</span>
+                    </div>
+                    <div class="trend-slider-cta-row">
+                        <span class="trend-slider-cta-btn"><span class="trend-slider-cta-plus">+</span> Read Article</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+    <div class="trend-slider-controls">
+        <button class="trend-slider-nav trend-slider-prev" aria-label="Previous">&#8249;</button>
+        <div class="trend-slider-dots" data-trend-dots></div>
+        <button class="trend-slider-nav trend-slider-next" aria-label="Next">&#8250;</button>
     </div>
 </section>
 
-<section class="card trend-notes">
-    <h3>Editorial Notes</h3>
-    <p>All reports prioritize cultural relevance, clear commercial implications, and practical translation from runway to daily wardrobes.</p>
-    <p>Use the tag filters above to navigate by season, theme, or styling direction.</p>
-</section>
+{% if article_form %}
+<!-- ═══════════════  SUBMIT TREND REPORT MODAL  ═══════════════ -->
+<div class="taf-modal is-hidden" id="tafModal">
+    <div class="taf-modal__backdrop" id="tafModalBackdrop"></div>
+    <div class="taf-modal__panel">
+        <button type="button" class="taf-modal__close" id="tafModalClose">&times;</button>
+
+        <div class="taf-modal__header">
+            <p class="eyebrow">Editorial Desk</p>
+            <h2 class="taf-modal__title">Submit a Trend Report</h2>
+            <p class="taf-modal__sub">Share your fashion insight with the FashionPulse community.</p>
+        </div>
+
+        <div class="taf-modal__body">
+            <form method="post" action="{% url 'trend-create' %}" class="taf-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ article_form.non_field_errors }}
+
+                {% for field in article_form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="form-row form-row--checkbox">
+                        <label class="checkbox-field" for="{{ field.id_for_label }}">
+                            {{ field }}
+                            <span class="checkbox-field__label">{{ field.label }}</span>
+                        </label>
+                        {% if field.help_text %}
+                        <small class="form-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% else %}
+                    <div class="form-row">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="taf-modal__footer">
+                    <button class="btn-primary" type="submit">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Submit for Review
+                    </button>
+                    <button type="button" class="btn-secondary" id="tafModalCancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var modal     = document.getElementById('tafModal');
+    if (!modal) return;
+
+    // Move to body to avoid parent transform issues
+    document.body.appendChild(modal);
+
+    var openBtn   = document.getElementById('openTrendModal');
+    var closeBtn  = document.getElementById('tafModalClose');
+    var cancelBtn = document.getElementById('tafModalCancel');
+    var backdrop  = document.getElementById('tafModalBackdrop');
+
+    function openModal() {
+        modal.classList.remove('is-hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.add('is-hidden');
+        document.body.style.overflow = '';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) closeModal();
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}

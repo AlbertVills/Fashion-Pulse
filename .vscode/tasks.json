@@ -8,7 +8,7 @@
 			"args": [
 				"-NoProfile",
 				"-Command",
-				"Start-Process chrome \"http://127.0.0.1:8000\"; c:/Users/alber/OneDrive/Desktop/IPT/dj-env/Scripts/python.exe manage.py runserver"
+				"$url = \"http://192.168.1.6:8000\"; $chrome = Join-Path $env:ProgramFiles \"Google/Chrome/Application/chrome.exe\"; if (-not (Test-Path $chrome)) { $chrome = Join-Path ${env:ProgramFiles(x86)} \"Google/Chrome/Application/chrome.exe\" }; if (Test-Path $chrome) { Start-Process -FilePath $chrome -ArgumentList $url } else { Write-Host \"Chrome not found in Program Files, opening default browser instead.\"; Start-Process $url }; c:/Users/alber/OneDrive/Desktop/IPT/dj-env/Scripts/python.exe manage.py runserver 0.0.0.0:8000"
 			],
 			"isBackground": true
 		}

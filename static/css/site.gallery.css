@@ -1,0 +1,950 @@
+.gallery-item {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 1rem;
+    text-decoration: none;
+    color: var(--text);
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(26, 52, 110, 0.08);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.gallery-item span {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    color: var(--muted);
+}
+
+.gallery-meta {
+    display: block;
+    padding: 0 0.75rem 0.7rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.gallery-delete-form {
+    padding: 0 0.75rem 0.55rem;
+}
+
+.gallery-delete-btn {
+    font: inherit;
+    border: 1px solid #e38a97;
+    background: #fff1f4;
+    color: #b43a50;
+    border-radius: 8px;
+    padding: 0.32rem 0.58rem;
+    cursor: pointer;
+    font-size: 0.82rem;
+}
+
+.gallery-delete-btn:hover {
+    background: #ffe6ec;
+}
+
+.gallery-actions {
+    padding: 0 0.75rem 0.5rem;
+}
+
+.gallery-section-head {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.gallery-search-form {
+    display: grid;
+    gap: 0.42rem;
+    width: min(640px, 100%);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    margin-bottom: 1.2rem;
+}
+
+.gallery-search-label {
+    font-size: 0.82rem;
+    color: #203a72;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.gallery-search-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.gallery-search-controls input,
+#gallery-category-search {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #3c67d5;
+    border-radius: 12px;
+    padding: 0.48rem 0.85rem;
+    min-height: 44px;
+    min-width: 280px;
+    flex: 1;
+    background: linear-gradient(180deg, #f8fbff 0%, #edf3ff 100%);
+    color: #1f3769;
+    font: 600 1rem/1.2 "Segoe UI", Arial, sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.gallery-category-input {
+    border: 2px solid #3c67d5 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(180deg, #f8fbff 0%, #edf3ff 100%) !important;
+    color: #1f3769 !important;
+    min-height: 44px;
+    padding: 0.5rem 0.9rem !important;
+    font: 600 1rem/1.2 "Segoe UI", Arial, sans-serif !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+.gallery-category-input:focus {
+    outline: none;
+    border-color: #2f58be !important;
+    box-shadow: 0 0 0 3px rgba(60, 103, 213, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+.gallery-search-controls input::placeholder,
+#gallery-category-search::placeholder {
+    color: #5a6c93;
+}
+
+.gallery-search-controls input:focus,
+#gallery-category-search:focus {
+    outline: none;
+    border-color: #2f58be;
+    box-shadow: 0 0 0 3px rgba(60, 103, 213, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.gallery-search-btn {
+    margin-top: 0;
+    border: 2px solid #3c67d5;
+    border-radius: 12px;
+    background: #f3f6ff;
+    color: #1b3268;
+    padding: 0.44rem 0.95rem;
+    font-weight: 700;
+}
+
+.gallery-search-btn:hover {
+    background: #e8efff;
+}
+
+.gallery-clear-link {
+    color: var(--muted);
+    font-size: 0.88rem;
+    text-decoration: none;
+    padding: 0.2rem 0.25rem;
+}
+
+.gallery-clear-link:hover {
+    color: var(--accent-strong);
+}
+
+.gallery-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.gallery-toolbar * {
+    box-sizing: border-box;
+}
+
+.gallery-heart-form {
+    margin: 0;
+}
+
+.gallery-icon-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: var(--text);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    cursor: pointer;
+    display: inline-grid !important;
+    place-items: center;
+    text-decoration: none !important;
+    padding: 0 !important;
+    line-height: 1;
+    overflow: hidden;
+    transition: background-color .2s ease, transform .15s ease;
+}
+
+.gallery-toolbar .gallery-icon-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    fill: currentColor;
+    display: block;
+    flex: none;
+}
+
+.gallery-icon-btn:hover {
+    background: rgba(54, 99, 217, 0.12);
+    transform: translateY(-1px);
+}
+
+.gallery-heart-btn {
+    color: #1e2948;
+}
+
+.gallery-heart-btn.is-liked {
+    color: #e34a67;
+}
+
+.gallery-like-summary {
+    margin: 0.35rem 0 0;
+    font-size: 0.84rem;
+    color: var(--muted);
+}
+
+.gallery-comments {
+    display: none;
+    padding: 0 0.75rem 0.8rem;
+}
+
+.gallery-item.comments-open .gallery-comments,
+.user-post-modal-content.comments-open .gallery-comments {
+    display: block;
+}
+
+.gallery-comments-title {
+    margin: 0 0 0.35rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.gallery-comment-form {
+    display: flex;
+    gap: 0.45rem;
+    margin-bottom: 0.55rem;
+}
+
+.gallery-comment-form input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    background: #ffffff;
+    color: var(--text);
+}
+
+.gallery-comment-form button {
+    font: inherit;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    cursor: pointer;
+}
+
+.gallery-comment-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.gallery-comment-list li {
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: #f8fbff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.5rem;
+    display: grid;
+    gap: 0.15rem;
+}
+
+.gallery-comment-list li strong {
+    color: #20315f;
+}
+
+.gallery-comment-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.gallery-comment-delete-form {
+    margin: 0;
+}
+
+.gallery-comment-delete-btn {
+    font: inherit;
+    font-size: 0.74rem;
+    border: 1px solid #e3a0ab;
+    background: #fff3f5;
+    color: #b03e53;
+    border-radius: 6px;
+    padding: 0.18rem 0.44rem;
+    cursor: pointer;
+}
+
+.gallery-comment-delete-btn:hover {
+    background: #ffe7ec;
+}
+
+/* ── Outfit card link (carousel click-to-owner) ─────────────────── */
+.outfit-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.outfit-card-link:hover .outfit-card {
+    box-shadow: 0 8px 28px rgba(26, 52, 110, 0.18);
+    transform: translateY(-2px);
+}
+
+/* ── Gallery owner link ────────────────────────────────────────────── */
+.gallery-owner-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.gallery-owner-link:hover {
+    color: var(--accent);
+}
+
+/* ── User Gallery Page ──────────────────────────────────────────────── */
+.user-gallery-page {
+    padding-top: 1rem;
+}
+
+.user-gallery-back {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-gallery-back:hover {
+    color: var(--accent);
+}
+
+/* ── Instagram-style User Profile ──────────────────────────────────── */
+.ig-profile {
+    max-width: 935px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 2rem;
+}
+
+/* Header: avatar left, info right */
+.ig-header {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Avatar */
+.ig-avatar {
+    flex-shrink: 0;
+}
+
+.ig-avatar__img,
+.ig-avatar__fallback {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-image:
+        linear-gradient(var(--surface, #fff), var(--surface, #fff)),
+        linear-gradient(135deg, var(--prf-color, #6d28d9), color-mix(in srgb, var(--prf-color, #6d28d9) 60%, #1d4ed8));
+    transition: background-image 0.4s ease;
+}
+
+.ig-avatar__fallback {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--prf-color, #6d28d9), color-mix(in srgb, var(--prf-color, #6d28d9) 60%, #1d4ed8));
+    color: #fff;
+    font-size: 3.2rem;
+    font-weight: 800;
+    border: 4px solid transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Info block */
+.ig-header__info {
+    flex: 1;
+    min-width: 0;
+    padding-top: 0.5rem;
+}
+
+.ig-header__top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+}
+
+.ig-settings-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+}
+.ig-settings-btn:hover { color: var(--text); }
+
+.ig-settings-wrap {
+    position: relative;
+}
+
+.ig-settings-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 200px;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border, #e0e0e0);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    z-index: 100;
+    padding: 6px 0;
+    overflow: hidden;
+}
+.ig-settings-dropdown.open { display: block; }
+
+html[data-theme="dark"] .ig-settings-dropdown {
+    background: #222;
+    border-color: #444;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+
+.ig-settings-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    color: var(--text);
+    text-decoration: none;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.ig-settings-dropdown__item:hover {
+    background: var(--hover-bg, rgba(0,0,0,.05));
+}
+html[data-theme="dark"] .ig-settings-dropdown__item:hover {
+    background: rgba(255,255,255,.08);
+}
+
+.ig-settings-dropdown__item--logout {
+    color: #e74c3c;
+}
+
+.ig-settings-dropdown__sep {
+    border: none;
+    border-top: 1px solid var(--border, #e0e0e0);
+    margin: 4px 0;
+}
+html[data-theme="dark"] .ig-settings-dropdown__sep {
+    border-color: #444;
+}
+
+.ig-username {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+}
+
+.ig-handle {
+    margin: 0 0 1rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* Stats row (desktop) */
+.ig-stats {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    gap: 2.2rem;
+}
+
+.ig-stats--mobile {
+    display: none;
+}
+
+.ig-stats__item {
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.ig-stats__item strong {
+    font-weight: 700;
+    margin-right: 0.2rem;
+}
+
+/* Bio */
+.ig-bio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ig-bio__style {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text);
+}
+
+.ig-bio__location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+}
+
+.ig-bio__location svg {
+    fill: var(--muted);
+}
+
+.ig-bio__age {
+    font-size: 0.88rem;
+    color: var(--muted);
+}
+
+.ig-bio__text {
+    margin: 0.15rem 0 0;
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.45;
+}
+
+/* Tab bar */
+.ig-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.ig-tabs__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.4rem;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.ig-tabs__btn svg {
+    fill: currentColor;
+    stroke: currentColor;
+    width: 15px;
+    height: 15px;
+}
+
+.ig-tabs__btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(47, 98, 216, 0.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(47, 98, 216, 0.12);
+}
+
+.ig-tabs__btn.is-active {
+    color: #fff;
+    background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(29, 78, 216, 0.35);
+}
+
+.ig-tabs__btn.is-active svg {
+    fill: #fff;
+    stroke: #fff;
+}
+
+[data-theme="dark"] .ig-tabs__btn {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .ig-tabs__btn:hover {
+    background: rgba(47, 98, 216, 0.15);
+}
+
+/* Gallery grid */
+.user-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 735px) {
+    .ig-header {
+        gap: 1.5rem;
+    }
+    .ig-avatar__img,
+    .ig-avatar__fallback {
+        width: 86px;
+        height: 86px;
+        font-size: 2rem;
+    }
+    .ig-username {
+        font-size: 1.25rem;
+    }
+    .ig-stats:not(.ig-stats--mobile) {
+        display: none;
+    }
+    .ig-stats--mobile {
+        display: flex;
+        justify-content: space-around;
+        padding: 0.8rem 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 0;
+    }
+    .ig-stats--mobile .ig-stats__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    .ig-stats--mobile .ig-stats__item strong {
+        display: block;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    .ig-tabs {
+        gap: 0;
+    }
+    .ig-tabs__btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .ig-profile {
+        padding: 1rem 0.5rem 1.5rem;
+    }
+    .ig-header {
+        gap: 1rem;
+        padding-bottom: 1rem;
+    }
+    .ig-avatar__img,
+    .ig-avatar__fallback {
+        width: 72px;
+        height: 72px;
+        font-size: 1.6rem;
+    }
+    .user-gallery-grid {
+        gap: 2px;
+    }
+}
+
+/* Dark mode */
+[data-theme="dark"] .ig-avatar__img,
+[data-theme="dark"] .ig-avatar__fallback {
+    background-image:
+        linear-gradient(var(--surface, #0f172a), var(--surface, #0f172a)),
+        linear-gradient(135deg, var(--prf-color, #4c1d95), color-mix(in srgb, var(--prf-color, #4c1d95) 60%, #1e3a8a));
+}
+
+.user-trend-articles {
+    margin-top: 0.5rem;
+    padding: 0.1rem;
+}
+
+.user-trend-card {
+    height: 100%;
+}
+
+.user-trend-cover {
+    height: 260px;
+    border-radius: 12px;
+    margin-bottom: 0.9rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.user-trend-empty {
+    grid-column: 1 / -1;
+}
+
+.user-gallery-tile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--border);
+    background: #dce5fa;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-gallery-tile img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.user-gallery-tile:hover {
+    border-color: #2f62d8;
+    box-shadow: 0 4px 16px rgba(47, 98, 216, 0.15);
+    transform: translateY(-2px);
+}
+
+.user-gallery-tile-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 20, 50, 0.52);
+    color: #fff;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+}
+
+.user-gallery-tile:hover .user-gallery-tile-overlay,
+.user-gallery-tile:focus-visible .user-gallery-tile-overlay {
+    opacity: 1;
+}
+
+body.is-modal-open .user-gallery-tile-overlay {
+    opacity: 0 !important;
+}
+
+body.is-modal-open .user-gallery-tile {
+    pointer-events: none;
+}
+
+body.is-modal-open .profile-form-wrap {
+    pointer-events: none;
+}
+
+.user-post-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    padding: 1rem;
+    backdrop-filter: blur(0px);
+}
+
+.user-post-modal.is-open {
+    display: grid;
+    place-items: center;
+    pointer-events: auto;
+}
+
+.user-post-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 17, 35, 0.75);
+    z-index: 1199;
+    pointer-events: auto;
+}
+
+.user-post-modal-dialog {
+    position: relative;
+    z-index: 1200;
+    width: min(1000px, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    box-shadow: 0 24px 60px rgba(6, 16, 35, 0.35);
+    pointer-events: auto;
+}
+
+.user-post-modal-media {
+    background: #0e172d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    min-height: 400px;
+}
+
+.user-post-modal-media img {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.user-post-modal-content {
+    padding: 1.25rem;
+    overflow-y: auto;
+    max-height: 90vh;
+    background: #fff;
+    border-left: 1px solid #e8eef5;
+}
+
+.user-post-modal-title {
+    display: block;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.35rem;
+    color: #1a2f5f;
+}
+
+.user-post-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0e172d;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-post-modal-close:hover {
+    background: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.is-modal-open {
+    overflow: hidden;
+}
+
+/* Disable hover effects inside modal */
+.user-post-modal-content .gallery-icon-btn:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
+.user-post-modal-content .gallery-comment-delete-btn:hover {
+    background: transparent !important;
+    color: var(--muted) !important;
+}
+
+.user-post-modal-content button:hover {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* ── Responsive modal layout for mobile ──────────────────────────────────── */
+@media (max-width: 768px) {
+    .user-post-modal.is-open {
+        place-items: stretch;
+        padding: 0.5rem;
+    }
+
+    .user-post-modal-dialog {
+        width: 100%;
+        max-height: calc(100vh - 1rem);
+        grid-template-columns: 1fr;
+        border-radius: 12px;
+    }
+
+    .user-post-modal-media {
+        min-height: 280px;
+        padding: 1rem;
+    }
+
+    .user-post-modal-media img {
+        max-height: 60vh;
+    }
+
+    .user-post-modal-content {
+        max-height: calc(100vh - 380px);
+        border-left: none;
+        border-top: 1px solid #e8eef5;
+    }
+}
+
+/* ── Standalone Gallery Page ──────────────────────────────────────── */
+.gallery-page .gallery-section-head,
+.gallery-page .section-head {
+    margin-bottom: 1rem;
+}
+

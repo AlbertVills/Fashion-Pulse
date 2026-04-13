@@ -1,0 +1,1089 @@
+/* Forms – Form inputs, file uploads, validation, and form layout */
+
+.auth-wrap {
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
+.auth-card {
+    width: min(520px, 100%);
+}
+
+.auth-form p {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.auth-form input {
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0.65rem 0.75rem;
+}
+
+.auth-form .forgot-link {
+    text-align: right;
+    margin: -0.2rem 0 0.2rem;
+    font-size: 0.82rem;
+}
+
+.auth-form .forgot-link a {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.auth-form .forgot-link a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.auth-layout {
+    width: min(900px, 100%);
+}
+
+.auth-aside {
+    align-self: start;
+}
+
+.auth-aside h3 {
+    margin-top: 0;
+}
+
+.contact-form-card {
+    margin-top: 0;
+}
+
+/* ── Contact Page Layout ──────────────────────────────── */
+.contact-page-hero {
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.contact-page-hero h1 {
+    margin: 0.2rem 0 0.5rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.contact-hero-sub {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0;
+    font-size: 1.02rem;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 3rem;
+}
+
+/* Info Panel */
+.contact-info-panel {
+    display: grid;
+    gap: 1.4rem;
+}
+
+.contact-info-block {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.contact-info-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    background: var(--surface-soft);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.contact-info-block h4 {
+    margin: 0 0 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text);
+}
+
+.contact-info-block p {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.contact-hours {
+    font-size: 0.82rem !important;
+    font-style: italic;
+}
+
+.contact-tips {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.contact-tips h4 {
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.contact-tips-list {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.contact-tips-list li {
+    font-size: 0.88rem;
+    color: var(--muted);
+    padding-left: 1.2rem;
+    position: relative;
+}
+
+.contact-tips-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.78rem;
+}
+
+/* Form Panel */
+.contact-form-panel {
+    position: sticky;
+    top: 88px;
+}
+
+.contact-form-panel h3 {
+    margin: 0 0 1.2rem;
+    font-size: 1.4rem;
+}
+
+.contact-form {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.contact-form-row-double {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+}
+
+.contact-submit-btn {
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+}
+
+.form-row {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.form-row label {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.form-help {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0.65rem 0.75rem;
+    width: 100%;
+}
+
+.pw-toggle-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.pw-toggle-wrap input[type="password"],
+.pw-toggle-wrap input[type="text"] {
+    width: 100%;
+    padding-right: 2.75rem;
+    box-sizing: border-box;
+}
+
+.pw-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pw-toggle-btn:hover {
+    color: var(--text);
+}
+
+.form-row input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.35rem;
+}
+
+.form-row textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.gallery-category-select {
+    appearance: none;
+    -webkit-appearance: none;
+    min-height: 48px;
+    border: 2px solid #5f87e6;
+    border-radius: 16px;
+    background:
+        linear-gradient(180deg, #fbfdff 0%, #eef3ff 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath fill='%233b5ea8' d='M1.6.6 7 5.9 12.4.6 14 2.2 7 8 0 2.2z'/%3E%3C/svg%3E") no-repeat right 0.9rem center;
+    padding-right: 2.25rem;
+    font-weight: 600;
+    color: #233f78;
+}
+
+.gallery-category-select:focus {
+    outline: none;
+    border-color: #3a67d2;
+    box-shadow: 0 0 0 3px rgba(95, 135, 230, 0.2);
+}
+
+.form-row input[type="file"],
+.custom-file-input {
+    border: 1px dashed var(--border);
+    background: #f4f8ff;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0.55rem;
+}
+
+.custom-file-picker {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.custom-file-name {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.custom-file-input--hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.custom-file-btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 600;
+    color: #2d4f93;
+    background: #eceff5;
+    border: 2px solid #6d8fdd;
+    border-radius: 12px;
+    padding: 0.48rem 1rem;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .12s ease;
+}
+
+.custom-file-btn:hover {
+    background: #e4eaf7;
+    transform: translateY(-1px);
+}
+
+.gallery-upload-preview {
+    display: block;
+    margin-top: 0.6rem;
+    width: 180px;
+    max-width: 180px;
+    height: 180px;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 22px rgba(20, 39, 80, 0.12);
+}
+
+.contact-form-card .gallery-upload-preview {
+    width: 180px !important;
+    max-width: 180px !important;
+    height: 180px !important;
+    max-height: 180px !important;
+}
+
+.form-row input[type="file"]::file-selector-button,
+.custom-file-input::file-selector-button {
+    font: inherit;
+    font-weight: 600;
+    border: 1px solid var(--accent);
+    background: #e8efff;
+    color: #1e3570;
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    margin-right: 0.65rem;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .12s ease;
+}
+
+.form-row input[type="file"]::file-selector-button:hover,
+.custom-file-input::file-selector-button:hover {
+    background: #dbe7ff;
+    transform: translateY(-1px);
+}
+
+.form-row input[type="file"]::-webkit-file-upload-button,
+.custom-file-input::-webkit-file-upload-button {
+    font: inherit;
+    font-weight: 600;
+    border: 1px solid var(--accent);
+    background: #e8efff;
+    color: #1e3570;
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    margin-right: 0.65rem;
+    cursor: pointer;
+}
+
+.errorlist {
+    margin: 0;
+    padding-left: 1rem;
+    color: #ff9ea5;
+    font-size: 0.85rem;
+}
+
+/* ── Trend Article Form Page ────────────────────────────────────── */
+.taf-page-header {
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+}
+
+.taf-page-header__inner {
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+.taf-page-header h1 {
+    margin: 0.25rem 0 0.6rem;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+}
+
+.taf-page-header__sub {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.taf-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 2rem;
+    padding: 2.5rem 0 3.5rem;
+    align-items: start;
+}
+
+/* Form panel */
+.taf-form-panel {
+    min-width: 0;
+}
+
+.taf-form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem 2.2rem;
+}
+
+.taf-form-card__title {
+    margin: 0 0 1.4rem;
+    font-size: 1.2rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.taf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.taf-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.8rem;
+    flex-wrap: wrap;
+}
+
+.taf-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.7rem 1.8rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.18s;
+    white-space: nowrap;
+}
+
+.taf-submit-btn:hover {
+    background: #2451c0;
+    transform: translateY(-2px);
+}
+
+.taf-submit-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Sidebar */
+.taf-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 5rem;
+}
+
+.taf-sidebar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.3rem 1.4rem;
+}
+
+.taf-sidebar-card--accent {
+    background: linear-gradient(135deg, rgba(47, 98, 216, 0.06), rgba(47, 98, 216, 0.02));
+    border-color: rgba(47, 98, 216, 0.25);
+}
+
+.taf-sidebar-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.55rem;
+    line-height: 1;
+}
+
+.taf-sidebar-card h3 {
+    margin: 0 0 0.7rem;
+    font-size: 0.98rem;
+}
+
+.taf-sidebar-text {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 0.6rem;
+}
+
+.taf-sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.taf-sidebar-list li {
+    font-size: 0.86rem;
+    color: var(--muted);
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.taf-sidebar-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.78rem;
+    top: 0.1em;
+}
+
+.taf-sidebar-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+}
+
+.taf-sidebar-checklist li {
+    font-size: 0.86rem;
+    color: var(--muted);
+    padding-left: 1.4rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.taf-sidebar-checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #2a9e6e;
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+
+
+/* -----------------------------------------------------------
+   Gallery Post Form  (gpost-*)
+----------------------------------------------------------- */
+
+/* -- Page grid --------------------------------------------- */
+.gpost-page {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 2.5rem;
+    align-items: start;
+    padding-block: 2rem;
+}
+
+/* -- Upload column ----------------------------------------- */
+.gpost-upload-col {
+    position: sticky;
+    top: 92px;
+}
+
+.gpost-file-input {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden; opacity: 0;
+    pointer-events: none;
+}
+
+/* -- Drop zone --------------------------------------------- */
+.gpost-dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 580px;
+    border-radius: 20px;
+    border: 2.5px dashed var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: border-color .2s, background .2s;
+    box-shadow: 0 2px 14px rgba(0,0,0,.05);
+}
+
+.gpost-dropzone:hover,
+.gpost-dropzone.is-drag-over {
+    border-color: var(--accent);
+    background: rgba(47,98,216,.04);
+}
+
+.gpost-dropzone.is-drag-over {
+    border-style: solid;
+    box-shadow: 0 0 0 4px rgba(47,98,216,.12);
+}
+
+/* Empty state */
+.gpost-dropzone__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 2rem;
+    pointer-events: none;
+    user-select: none;
+}
+
+.gpost-dropzone__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background: rgba(47,98,216,.08);
+    display: grid;
+    place-items: center;
+    margin-bottom: 0.4rem;
+    border: 1.5px solid rgba(47,98,216,.14);
+}
+
+.gpost-dropzone__icon svg {
+    width: 34px;
+    height: 34px;
+    color: var(--accent);
+    stroke: currentColor;
+}
+
+.gpost-dropzone__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.gpost-dropzone__sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.gpost-dropzone__link {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.gpost-dropzone__hint {
+    font-size: 0.77rem;
+    color: var(--muted);
+    margin: 0.2rem 0 0;
+    opacity: 0.7;
+}
+
+/* Preview */
+.gpost-dropzone__preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+/* Change overlay (appears when image loaded) */
+.gpost-dropzone__change {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 0 0 18px 18px;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+/* -- Form column ------------------------------------------- */
+.gpost-form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.gpost-header {
+    margin-bottom: 1.8rem;
+}
+
+.gpost-overline {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--accent);
+    margin: 0 0 0.3rem;
+}
+
+.gpost-title {
+    margin: 0 0 0.4rem;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.gpost-lead {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* -- Form -------------------------------------------------- */
+.gpost-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 1.8rem;
+    box-shadow: 0 2px 14px rgba(0,0,0,.05);
+}
+
+.gpost-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.38rem;
+}
+
+.gpost-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+}
+
+.gpost-input {
+    width: 100%;
+    padding: 0.72rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.97rem;
+    transition: border-color .18s, box-shadow .18s;
+    outline: none;
+}
+
+.gpost-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(47,98,216,.12);
+}
+
+.gpost-input::placeholder { color: var(--muted); opacity: 0.65; }
+
+/* Select wrapper */
+.gpost-select-wrap {
+    position: relative;
+}
+
+.gpost-select {
+    width: 100%;
+    padding: 0.72rem 2.4rem 0.72rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.97rem;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .18s, box-shadow .18s;
+}
+
+.gpost-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(47,98,216,.12);
+}
+
+.gpost-select-arrow {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: var(--muted);
+    pointer-events: none;
+    stroke: currentColor;
+}
+
+/* File feedback row */
+.gpost-file-feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+}
+
+.gpost-file-feedback svg { flex-shrink: 0; color: var(--accent); stroke: currentColor; }
+
+/* Submit button */
+.gpost-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.97rem;
+    font-weight: 700;
+    border-radius: 12px;
+    margin-top: 0.2rem;
+}
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 860px) {
+    .gpost-page {
+        grid-template-columns: 1fr;
+        gap: 1.6rem;
+    }
+    .gpost-upload-col {
+        position: static;
+    }
+    .gpost-dropzone {
+        aspect-ratio: 16 / 9;
+        max-height: 320px;
+    }
+}
+
+/* -- Dark mode --------------------------------------------- */
+html[data-theme="dark"] .gpost-dropzone {
+    background: #161616;
+    border-color: #333;
+}
+html[data-theme="dark"] .gpost-dropzone:hover,
+html[data-theme="dark"] .gpost-dropzone.is-drag-over {
+    background: rgba(47,98,216,.08);
+    border-color: var(--accent);
+}
+html[data-theme="dark"] .gpost-form {
+    background: #181818;
+    border-color: #2a2a2a;
+}
+html[data-theme="dark"] .gpost-input,
+html[data-theme="dark"] .gpost-select,
+html[data-theme="dark"] .gpost-file-feedback {
+    background: #111;
+    border-color: #2a2a2a;
+    color: #e5e5e5;
+}
+html[data-theme="dark"] .gpost-input:focus,
+html[data-theme="dark"] .gpost-select:focus {
+    border-color: var(--accent);
+}
+
+/* -- Contact char counter ------------------------------------------------- */
+.contact-char-counter {
+    font-size: 0.78rem;
+    color: var(--muted, #888);
+    text-align: right;
+    margin-top: 0.3rem;
+    transition: color 0.2s;
+}
+.contact-char-counter--warn { color: #f59e0b; }
+
+/* ── Trend Article Form Modal ─────────────────────────────────────── */
+.taf-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.taf-modal.is-hidden {
+    display: none !important;
+}
+
+.taf-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.taf-modal__panel {
+    position: relative;
+    z-index: 1;
+    background: var(--surface, #fff);
+    border-radius: 18px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+    max-width: 640px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    border: 1.5px solid var(--border);
+}
+
+.taf-modal__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.taf-modal__close:hover {
+    background: rgba(0, 0, 0, 0.12);
+    color: var(--text);
+}
+
+.taf-modal__header {
+    padding: 1.8rem 2rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.taf-modal__header .eyebrow {
+    margin-bottom: 0.3rem;
+}
+
+.taf-modal__title {
+    margin: 0 0 0.4rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.taf-modal__sub {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.taf-modal__body {
+    padding: 1.5rem 2rem;
+}
+
+.taf-modal__body .form-row {
+    margin-bottom: 1rem;
+}
+
+.taf-modal__body .form-row label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text);
+}
+
+.taf-modal__body .form-row input,
+.taf-modal__body .form-row select,
+.taf-modal__body .form-row textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.taf-modal__footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+}
+
+.taf-modal__footer .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.taf-modal__footer .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 0.55rem 1.2rem;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.taf-modal__footer .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+/* Dark mode */
+[data-theme="dark"] .taf-modal__panel {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+}
+
+[data-theme="dark"] .taf-modal__close {
+    background: rgba(255, 255, 255, 0.08);
+    color: #999;
+}
+
+[data-theme="dark"] .taf-modal__close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .taf-modal {
+        padding: 0.75rem;
+    }
+    .taf-modal__header {
+        padding: 1.2rem 1.2rem 0.8rem;
+    }
+    .taf-modal__body {
+        padding: 1rem 1.2rem;
+    }
+    .taf-modal__title {
+        font-size: 1.2rem;
+    }
+}

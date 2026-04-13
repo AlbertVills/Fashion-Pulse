@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Style Gallery | FashionPulse{% endblock %}
+
+{% block content %}
+<section class="gallery-page">
+    <div class="section-head gallery-section-head">
+        <div class="section-head--with-action">
+            <h1 id="style-gallery">Style Gallery</h1>
+            {% if user.is_authenticated %}
+            <a class="btn-primary inline-btn" href="{% url 'gallery-create' %}">Post Your Picture</a>
+            {% else %}
+            <a href="{% url 'login' %}">Login to post</a>
+            {% endif %}
+        </div>
+        <form method="get" action="{% url 'gallery' %}#style-gallery" class="gallery-search-form" role="search">
+            <div class="gallery-search-controls">
+                <input
+                    id="gallery-category-search"
+                    class="gallery-category-input"
+                    type="text"
+                    name="gallery_category"
+                    list="gallery-categories"
+                    placeholder="Search category"
+                    value="{{ selected_gallery_category }}"
+                >
+                <datalist id="gallery-categories">
+                    <option value="All Categories"></option>
+                    {% for value, label in gallery_category_choices %}
+                    <option value="{{ label }}"></option>
+                    {% endfor %}
+                </datalist>
+                <button type="submit" class="btn-primary gallery-search-btn">Search</button>
+            </div>
+        </form>
+    </div>
+
+    {% include 'gallery_grid_partial.html' %}
+</section>
+
+<script>
+(function () {
+    var form = document.querySelector('.gallery-search-form');
+    var input = document.getElementById('gallery-category-search');
+    if (!form || !input) return;
+
+    var lastValue = '';
+
+    function fetchGrid(queryVal) {
+        var grid = document.querySelector('.masonry-grid');
+        if (grid) grid.style.opacity = '0.5';
+
+        var url = '{% url "gallery" %}' + (queryVal ? '?gallery_category=' + encodeURIComponent(queryVal) : '');
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            var newGrid = wrapper.querySelector('.masonry-grid');
+            if (!newGrid) return;
+
+            var oldGrid = document.querySelector('.masonry-grid');
+            if (oldGrid) oldGrid.replaceWith(newGrid);
+            newGrid.style.opacity = '1';
+        })
+        .catch(function () {
+            var grid = document.querySelector('.masonry-grid');
+            if (grid) grid.style.opacity = '1';
+        });
+    }
+
+    input.addEventListener('focus', function () {
+        lastValue = input.value;
+        input.value = '';
+    });
+
+    input.addEventListener('blur', function () {
+        if (!input.value && lastValue) input.value = lastValue;
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var val = input.value.trim();
+        lastValue = val;
+        fetchGrid(val);
+    });
+}());
+</script>
+{% endblock %}

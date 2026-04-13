@@ -1,69 +1,240 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Home | FashionPulse{% endblock %}
 
 {% block content %}
-<section class="hero-feature">
+
+<!-- HERO -->
+<section class="hero-feature hp-hero">
     <img
         src="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80"
         data-slider-images="https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80|https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80"
         data-slider-interval="4500"
         alt="Runway editorial"
     >
-    <div class="hero-feature__content">
-        <p class="eyebrow">Hero Feature</p>
-        <h1>The Defining Trends of 2026</h1>
-        <p>From precision tailoring to heritage textures, fashion is balancing authority and wearability like never before.</p>
-        <a class="btn-primary inline-btn" href="{% url 'article-detail' %}">Read Article</a>
+    <div class="hp-hero__overlay">
+        <div class="hp-hero__left">
+            <span class="hp-hero__badge">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                FashionPulse 2026
+            </span>
+            <h1 class="hp-hero__title">The Defining<br>Trends of 2026</h1>
+            <p class="hp-hero__sub">From precision tailoring to heritage textures, fashion is balancing authority and wearability like never before.</p>
+            <div class="hp-hero__actions">
+                <a class="hp-hero__cta" href="{% url 'trends' %}">Explore Trend Reports</a>
+                <a class="hp-hero__link" href="#style-gallery">Style Gallery &darr;</a>
+            </div>
+        </div>
+        <div class="hp-hero__stats">
+            <div class="hp-hero__stat">
+                <span class="hp-hero__stat-num">4</span>
+                <span class="hp-hero__stat-lbl">Stories Live</span>
+            </div>
+            <div class="hp-hero__stat">
+                <span class="hp-hero__stat-num">2026</span>
+                <span class="hp-hero__stat-lbl">Season</span>
+            </div>
+            <div class="hp-hero__stat">
+                <span class="hp-hero__stat-num">SS</span>
+                <span class="hp-hero__stat-lbl">Collection</span>
+            </div>
+        </div>
     </div>
 </section>
 
-<section>
-    <div class="section-head">
-        <h2>Trending Stories</h2>
+<!-- TRENDING STORIES -->
+<section class="hp-editorial">
+    <div class="hp-section-head">
+        <div>
+            <p class="eyebrow">Editor&apos;s Picks</p>
+            <h2 class="hp-section-head__title">Trending Stories</h2>
+        </div>
+        <a class="hp-section-head__link" href="{% url 'trends' %}">View all reports &rarr;</a>
     </div>
-    <div class="cards-grid trend-grid">
-        {% for story in trending_stories %}
-        <article class="card story-card">
-            <img src="{{ story.image }}" alt="{{ story.title }}">
-            <p class="story-category">{{ story.category }}</p>
-            <h3>{{ story.title }}</h3>
-            <p>{{ story.excerpt }}</p>
-            <p class="meta">By {{ story.author }} · {{ story.date }}</p>
+
+    <div class="hp-stories-grid">
+        {% with trending_stories.0 as s %}
+        {% if s %}
+        <article class="hp-story-card hp-story-card--featured">
+            <div class="hp-story-card__img-wrap">
+                <img src="{{ s.image }}" alt="{{ s.title }}" loading="lazy">
+                <span class="hp-story-card__cat">{{ s.category }}</span>
+            </div>
+            <div class="hp-story-card__body">
+                <h3 class="hp-story-card__title">{{ s.title }}</h3>
+                <p class="hp-story-card__excerpt">{{ s.excerpt }}</p>
+                <p class="hp-story-card__meta">By {{ s.author }} &ensp;&middot;&ensp; {{ s.date }}</p>
+            </div>
         </article>
-        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="hp-stories-side">
+            {% for s in trending_stories|slice:"1:4" %}
+            <article class="hp-story-card hp-story-card--side">
+                <img class="hp-story-card__side-img" src="{{ s.image }}" alt="{{ s.title }}" loading="lazy">
+                <div class="hp-story-card__body">
+                    <span class="hp-story-card__cat">{{ s.category }}</span>
+                    <h4 class="hp-story-card__title">{{ s.title }}</h4>
+                    <p class="hp-story-card__excerpt">{{ s.excerpt }}</p>
+                    <p class="hp-story-card__meta">{{ s.author }} &ensp;&middot;&ensp; {{ s.date }}</p>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
     </div>
 </section>
 
-<section class="split-section">
-    <article class="card">
+<!-- SEASONAL + DESIGNER + QUICK LINKS -->
+<section class="hp-spotlight-grid">
+
+    <div class="hp-spotlight-card hp-spotlight-card--accent">
         <p class="eyebrow">Seasonal Highlight</p>
-        <h3>Spring/Summer 2026 Trend Forecast</h3>
-        <p>A clear shift toward lightweight tailoring, muted earthy tones, and refined utility details defines this season’s most commercial direction.</p>
-        <a href="{% url 'trends' %}">Read full report</a>
-    </article>
+        <h3>Spring / Summer 2026 Trend Forecast</h3>
+        <p>Lightweight tailoring, muted earthy tones, and refined utility details define this season&apos;s most commercial direction across global runways.</p>
+        <div class="hp-spotlight-card__tags">
+            <span>Minimalism</span><span>Utility</span><span>Earth Tones</span>
+        </div>
+        <a class="hp-spotlight-card__cta" href="{% url 'trends' %}">Read full report &rarr;</a>
+    </div>
 
-    <article class="card spotlight-card">
-        <p class="eyebrow">Designer Spotlight</p>
-        <h3>Amara Voss</h3>
-        <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80" alt="Designer portrait">
-        <p>Amara Voss has become one of the defining voices in contemporary tailoring, known for architectural cuts softened by fluid movement.</p>
-        <p>Her latest collection reframes minimalist power dressing through softened shoulders, low-contrast palettes, and precision construction that moves with the body.</p>
-        <p>Editors and buyers are watching her approach closely as it bridges runway clarity with everyday utility.</p>
-    </article>
+    <div class="hp-spotlight-card hp-spotlight-card--portrait">
+        <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80" alt="Amara Voss" loading="lazy">
+        <div class="hp-spotlight-card__body">
+            <p class="eyebrow">Designer Spotlight</p>
+            <h3>Amara Voss</h3>
+            <p>Architectural cuts softened by fluid movement. Amara&apos;s latest collection reframes minimalist power dressing through precision construction that moves with the body.</p>
+            <p class="hp-spotlight-card__meta">Editors and buyers are watching her approach closely as it bridges runway clarity with everyday utility.</p>
+        </div>
+    </div>
+
+    <div class="hp-spotlight-card hp-spotlight-card--links">
+        <p class="eyebrow">Explore FashionPulse</p>
+        <h3>What&apos;s on the site</h3>
+        <nav class="hp-quicklinks">
+            <a href="{% url 'trends' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                Trend Reports
+            </a>
+            <a href="{% url 'gallery' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Style Gallery
+            </a>
+            <a href="{% url 'insights' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Insights
+            </a>
+            <a href="{% url 'about' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                About Us
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'trend-create' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Submit an Article
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Login / Sign Up
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+
 </section>
 
-<section>
-    <div class="section-head">
-        <h2>Street Style Gallery</h2>
+<!-- STYLE GALLERY -->
+<section class="hp-gallery-section">
+    <div class="hp-section-head">
+        <div>
+            <p class="eyebrow">Community</p>
+            <h2 class="hp-section-head__title" id="style-gallery">Style Gallery</h2>
+        </div>
+        <div style="display:flex;gap:.8rem;align-items:center;">
+            {% if user.is_authenticated %}
+            <a class="btn-primary inline-btn" href="{% url 'gallery-create' %}">Post Your Picture</a>
+            {% else %}
+            <a class="hp-section-head__link" href="{% url 'login' %}">Login to post</a>
+            {% endif %}
+        </div>
     </div>
-    <div class="masonry-grid">
-        {% for item in gallery_items %}
-        <a class="gallery-item" href="{% url 'article-detail' %}" title="Open full story: {{ item.title }}">
-            <img src="{{ item.image }}" alt="{{ item.title }}">
-            <span>{{ item.title }}</span>
-        </a>
-        {% endfor %}
-    </div>
+
+    <form method="get" action="{% url 'home' %}#style-gallery" class="gallery-search-form" role="search">
+        <div class="gallery-search-controls">
+            <input
+                id="gallery-category-search"
+                class="gallery-category-input"
+                type="text"
+                name="gallery_category"
+                list="gallery-categories"
+                placeholder="Search category"
+                value="{{ selected_gallery_category }}"
+            >
+            <datalist id="gallery-categories">
+                <option value="All Categories"></option>
+                {% for value, label in gallery_category_choices %}
+                <option value="{{ label }}"></option>
+                {% endfor %}
+            </datalist>
+            <button type="submit" class="btn-primary gallery-search-btn">Search</button>
+        </div>
+    </form>
+
+    {% include 'gallery_grid_partial.html' %}
 </section>
+
+<script>
+(function () {
+    var form = document.querySelector('.gallery-search-form');
+    var input = document.getElementById('gallery-category-search');
+    if (!form || !input) return;
+
+    var lastValue = '';
+
+    function fetchGrid(queryVal) {
+        var grid = document.querySelector('.masonry-grid');
+        if (grid) grid.style.opacity = '0.5';
+
+        var url = '{% url "home" %}' + (queryVal ? '?gallery_category=' + encodeURIComponent(queryVal) : '');
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            var newGrid = wrapper.querySelector('.masonry-grid');
+            if (!newGrid) return;
+
+            var oldGrid = document.querySelector('.masonry-grid');
+            if (oldGrid) oldGrid.replaceWith(newGrid);
+            newGrid.style.opacity = '1';
+        })
+        .catch(function () {
+            var grid = document.querySelector('.masonry-grid');
+            if (grid) grid.style.opacity = '1';
+        });
+    }
+
+    input.addEventListener('focus', function () {
+        lastValue = input.value;
+        input.value = '';
+    });
+
+    input.addEventListener('blur', function () {
+        if (!input.value && lastValue) input.value = lastValue;
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var val = input.value.trim();
+        lastValue = val;
+        fetchGrid(val);
+    });
+}());
+</script>
+
 {% endblock %}
