@@ -8,12 +8,18 @@ from django.contrib.auth.models import User
 from .models import Article, GalleryPost, UserProfile
 
 
+
+
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].help_text = ''
 
     def clean_email(self):
         email = self.cleaned_data['email'].strip().lower()

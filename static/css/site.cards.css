@@ -1,9 +1,7 @@
-/* Cards – Card containers, card layout, and variants */
-
 .cardless {
     background: transparent;
 }
-
+s
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

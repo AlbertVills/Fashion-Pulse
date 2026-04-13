@@ -549,8 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
         toggle.addEventListener('click', () => {
             const isHidden = input.type === 'password';
             input.type = isHidden ? 'text' : 'password';
-            toggle.querySelector('.pw-eye-open').style.display = isHidden ? 'none' : '';
-            toggle.querySelector('.pw-eye-closed').style.display = isHidden ? '' : 'none';
+            // Fix: Show open eye when visible, closed eye when hidden
+            toggle.querySelector('.pw-eye-open').style.display = isHidden ? '' : 'none';
+            toggle.querySelector('.pw-eye-closed').style.display = isHidden ? 'none' : '';
             toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
             toggle.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
         });

@@ -43,6 +43,7 @@ from .models import (
 )
 
 
+
 class AdminAwareLoginView(LoginView):
     template_name = 'registration/login.html'
     redirect_authenticated_user = True
